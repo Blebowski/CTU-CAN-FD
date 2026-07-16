@@ -547,43 +547,43 @@
       <spirit:name>xilinx_anylanguagesynthesis_view_fileset</spirit:name>
 
       <spirit:file>
-        <spirit:name>bus_sampling/bit_err_detector.vhd</spirit:name>
+        <spirit:name>bus_management/bm_bit_err_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>bus_sampling/bus_sampling.vhd</spirit:name>
+        <spirit:name>bus_management/bm_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>bus_sampling/data_edge_detector.vhd</spirit:name>
+        <spirit:name>bus_management/bm_data_edge_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>bus_sampling/sample_mux.vhd</spirit:name>
+        <spirit:name>bus_management/bm_sample_mux.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>bus_sampling/ssp_generator.vhd</spirit:name>
+        <spirit:name>bus_management/bm_ssp_generator.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>bus_sampling/trv_delay_meas.vhd</spirit:name>
+        <spirit:name>bus_management/bm_trv_delay_meas.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>bus_sampling/tx_data_cache.vhd</spirit:name>
+        <spirit:name>bus_management/bm_tx_data_cache.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
@@ -1079,49 +1079,49 @@
       <spirit:name>xilinx_anylanguagebehavioralsimulation_view_fileset</spirit:name>
 
       <spirit:file>
-        <spirit:name>bus_sampling/bit_err_detector.vhd</spirit:name>
+        <spirit:name>bus_management/bm_bit_err_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>bus_sampling/bus_sampling.vhd</spirit:name>
+        <spirit:name>bus_management/bm_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>bus_sampling/data_edge_detector.vhd</spirit:name>
+        <spirit:name>bus_management/bm_data_edge_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>bus_sampling/sample_mux.vhd</spirit:name>
+        <spirit:name>bus_management/bm_sample_mux.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>bus_sampling/ssp_generator.vhd</spirit:name>
+        <spirit:name>bus_management/bm_ssp_generator.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>bus_sampling/trv_delay_meas.vhd</spirit:name>
+        <spirit:name>bus_management/bm_trv_delay_meas.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>bus_sampling/tx_data_cache.vhd</spirit:name>
+        <spirit:name>bus_management/bm_tx_data_cache.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>

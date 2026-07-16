@@ -87,7 +87,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity ssp_generator is
+entity bm_ssp_generator is
     generic(
         -- Width of SSP generator counters (BTMC, SSPC)
         G_SSP_CTRS_WIDTH     :      natural;
@@ -131,7 +131,7 @@ entity ssp_generator is
     );
 end entity;
 
-architecture rtl of ssp_generator is
+architecture rtl of bm_ssp_generator is
 
     -- Bit time measuremend counter
     signal btmc_d               : std_logic_vector(G_SSP_CTRS_WIDTH - 1 downto 0);

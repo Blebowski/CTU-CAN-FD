@@ -1329,7 +1329,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Bus Sampling
     -----------------------------------------------------------------------------------------------
-    i_bus_sampling : entity ctu_can_fd_rtl.bus_sampling
+    i_bm_top : entity ctu_can_fd_rtl.bm_top
     generic map(
         G_SSP_DELAY_SAT_VAL             => C_SSP_DELAY_SAT_VAL,
         G_TX_CACHE_DEPTH                => C_TX_CACHE_DEPTH,

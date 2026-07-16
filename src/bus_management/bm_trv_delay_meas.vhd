@@ -135,7 +135,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity trv_delay_measurement is
+entity bm_trv_delay_meas is
     generic (
         -- Width (number of bits) in transceiver delay measurement counter
         G_TRV_CTR_WIDTH          :     natural;
@@ -194,7 +194,7 @@ entity trv_delay_measurement is
     );
 end entity;
 
-architecture rtl of trv_delay_measurement is
+architecture rtl of bm_trv_delay_meas is
 
     -- Transceiver delay measurement progress register
     signal trv_meas_progress_d          : std_logic;

@@ -87,7 +87,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity tx_data_cache is
+entity bm_tx_data_cache is
     generic (
         -- Depth of FIFO (Number of bits that can be stored)
         G_TX_CACHE_DEPTH        :     natural range 4 to 32;
@@ -125,7 +125,7 @@ entity tx_data_cache is
     );
 end entity;
 
-architecture rtl of tx_data_cache is
+architecture rtl of bm_tx_data_cache is
 
     -- Cache Memory (FIFO in DFFs)
     signal tx_cache_mem         : std_logic_vector(G_TX_CACHE_DEPTH - 1 downto 0);

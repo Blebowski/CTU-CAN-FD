@@ -33,13 +33,13 @@ source_list:
     - file: frame_filters/range_filter.vhd
     - file: frame_filters/frame_filters.vhd
 
-    - file: bus_sampling/data_edge_detector.vhd
-    - file: bus_sampling/ssp_generator.vhd
-    - file: bus_sampling/trv_delay_meas.vhd
-    - file: bus_sampling/bit_err_detector.vhd
-    - file: bus_sampling/tx_data_cache.vhd
-    - file: bus_sampling/sample_mux.vhd
-    - file: bus_sampling/bus_sampling.vhd
+    - file: bus_management/bm_data_edge_detector.vhd
+    - file: bus_management/bm_ssp_generator.vhd
+    - file: bus_management/bm_trv_delay_meas.vhd
+    - file: bus_management/bm_bit_err_detector.vhd
+    - file: bus_management/bm_tx_data_cache.vhd
+    - file: bus_management/bm_sample_mux.vhd
+    - file: bus_management/bm_top.vhd
 
     - file: prescaler/bit_time_fsm.vhd
     - file: prescaler/segment_end_detector.vhd

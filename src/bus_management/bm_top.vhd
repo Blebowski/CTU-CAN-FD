@@ -91,7 +91,7 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity bus_sampling is
+entity bm_top is
     generic (
         -- Secondary sampling point Shift registers length
         G_SSP_DELAY_SAT_VAL     :     natural;
@@ -195,7 +195,7 @@ entity bus_sampling is
     );
 end entity;
 
-architecture rtl of bus_sampling is
+architecture rtl of bm_top is
 
     -------------------------------------------------------------------------------------------
     -- Internal registers and signals
@@ -264,7 +264,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Unit for measurement of transceiver delay and calculation of secondary sampling point.
     -------------------------------------------------------------------------------------------
-    i_trv_delay_measurement : entity ctu_can_fd_rtl.trv_delay_measurement
+    i_bm_trv_delay_meas : entity ctu_can_fd_rtl.bm_trv_delay_meas
     generic map (
         G_TRV_CTR_WIDTH             => G_TRV_CTR_WIDTH,
         G_SSP_POS_WIDTH             => G_SSP_POS_WIDTH,
@@ -292,7 +292,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Edge detector on TX, RX Data
     -------------------------------------------------------------------------------------------
-    i_data_edge_detector : entity ctu_can_fd_rtl.data_edge_detector
+    i_bm_data_edge_detector : entity ctu_can_fd_rtl.bm_data_edge_detector
     port map (
         clk_sys                     => clk_sys,                 -- IN
         rst_n                       => rst_n,                   -- IN
@@ -352,7 +352,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Generator of secondary sampling point
     -------------------------------------------------------------------------------------------
-    i_ssp_generator : entity ctu_can_fd_rtl.ssp_generator
+    i_bm_ssp_generator : entity ctu_can_fd_rtl.bm_ssp_generator
     generic map (
         G_SSP_CTRS_WIDTH            => G_SSP_CTRS_WIDTH,
         G_SSP_POS_WIDTH             => G_SSP_POS_WIDTH
@@ -392,7 +392,7 @@ begin
     -- data when Sample point steps out of shift register. This gets the TX data which
     -- correspond to the RX Bit in Secondary sampling point.
     -------------------------------------------------------------------------------------------
-    i_tx_data_cache : entity ctu_can_fd_rtl.tx_data_cache
+    i_bm_tx_data_cache : entity ctu_can_fd_rtl.bm_tx_data_cache
     generic map (
         G_TX_CACHE_DEPTH            => G_TX_CACHE_DEPTH,
         G_TX_CACHE_RST_VAL          => RECESSIVE,
@@ -412,7 +412,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Bit error detector
     -------------------------------------------------------------------------------------------
-    i_bit_err_detector : entity ctu_can_fd_rtl.bit_err_detector
+    i_bm_bit_err_detector : entity ctu_can_fd_rtl.bm_bit_err_detector
     port map (
         clk_sys                     => clk_sys,                 -- IN
         rst_n                       => rst_n,                   -- IN
@@ -431,7 +431,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Sampling of bus value
     -------------------------------------------------------------------------------------------
-    i_sample_mux : entity ctu_can_fd_rtl.sample_mux
+    i_bm_sample_mux : entity ctu_can_fd_rtl.bm_sample_mux
     port map (
         clk_sys                     => clk_sys,                 -- IN
         rst_n                       => rst_n,                   -- IN

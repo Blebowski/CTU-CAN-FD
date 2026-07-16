@@ -68,14 +68,27 @@
 
 --------------------------------------------------------------------------------
 -- Module:
---  Bit error detector.
+--  Data edge detector.
 --
 -- Purpose:
---  Detects bit error in:
---   1. Regular sampling point (compares actual TX data to actual RX data),
---      in Nominal Bit Rate.
---   2. Secondary sampling point (compares actual RX data to delayed TX data),
---      in Data Bit-Rate of Transmitter (Secondary sampling).
+--  Detection of edge on TX and RX data. Selectable DFF may be inserted on
+--  output.
+--
+--  Edge on RX Data is signaled only when:
+--    1. Edge is detected on "rx_edge" input
+--    2. Previously sampled value of RX data is different from value after
+--       the edge.
+--    3. Actual value of data is DOMINANT.
+--  By these conditions it is satisfied that only RECESSIE to DOMINANT edge
+--  with previous bit value detected as RECESSIVE is signalled. In CAN, this
+--  is the only valid, HARD SYNCHRONISATION or RE-SYNCHRONISATION edge.
+--
+--  Edge on TX Data is signalled only when:
+--    1. There is an edge on TX Data.
+--    2. New TX-Data are dominant.
+--
+--  TX Edge is used for TRV DELAY measurement which is in EDL to R0 edge.
+--  Thus only RECESSIVE to DOMINANT edge is needed.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -89,139 +102,113 @@ use ctu_can_fd_rtl.can_types_pkg.all;
 use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
-entity bit_err_detector is
+entity bm_data_edge_detector is
     port (
         -------------------------------------------------------------------------------------------
-        -- Clock and Async reset
+        -- Clock and Asynchronous reset
         -------------------------------------------------------------------------------------------
         clk_sys                  :in   std_logic;
         rst_n                    :in   std_logic;
 
         -------------------------------------------------------------------------------------------
-        -- Control signals from CAN core
+        -- Inputs
         -------------------------------------------------------------------------------------------
-        -- Sample control
-        sp_control               :in   std_logic_vector(1 downto 0);
+        -- TX Data from CAN Core
+        tx_data                  :in   std_logic;
 
-        -- RX Trigger
-        rx_trigger               :in   std_logic;
+        -- RX Data (from CAN Bus)
+        rx_data                  :in   std_logic;
 
-        -- RX Trigger - Secondary Sample
-        sample_sec               :in   std_logic;
+        -- RX Data value from previous Sample point.
+        prev_rx_sample           :in   std_logic;
 
-        -- Bit error enable
-        bit_err_enable           :in   std_logic;
-
-        -------------------------------------------------------------------------------------------
-        -- Memory registers interface
-        -------------------------------------------------------------------------------------------
-        mr_settings_ena          :in   std_logic;
+        -- Time quanta edge
+        tq_edge                  :in   std_logic;
 
         -------------------------------------------------------------------------------------------
-        -- TX / RX Datapath
+        -- Outputs
         -------------------------------------------------------------------------------------------
-        -- Actually transmitted data on CAN bus
-        data_tx                  :in   std_logic;
+        -- Edge detected on TX Data
+        tx_edge                  :out  std_logic;
 
-        -- Delayed transmitted data (for detection in secondary sampling point)
-        data_tx_delayed          :in   std_logic;
+        -- Edge detected on RX Data
+        rx_edge                  :out  std_logic;
 
-        -- RX Data (Synchronised)
-        data_rx_synced           :in   std_logic;
-
-        -------------------------------------------------------------------------------------------
-        -- Status outputs
-        -------------------------------------------------------------------------------------------
-        -- Bit error detected
-        bit_err                  : out std_logic
+        -- Synchronisation edge
+        sync_edge                :out  std_logic
     );
 end entity;
 
-architecture rtl of bit_err_detector is
 
-    -- Bit error detected value
-    signal bit_err_d                : std_logic;
-    signal bit_err_q                : std_logic;
+architecture rtl of bm_data_edge_detector is
 
-    -- Capture register for Secondary sampling point bit error
-    signal bit_err_ssp_capt_d       : std_logic;
-    signal bit_err_ssp_capt_q       : std_logic;
+    -- Previous values on rx_data, tx_data inputs to detect edge
+    signal rx_data_prev         :   std_logic;
+    signal tx_data_prev         :   std_logic;
+    signal rx_data_sync_prev    :   std_logic;
 
-    -- Valid Bit error detected by Secondary sampling
-    signal bit_err_ssp_valid        : std_logic;
-    signal bit_err_ssp_condition    : std_logic;
-
-    -- Valid Bit Error detected by regular sampling
-    signal bit_err_norm_valid       : std_logic;
+    -- Internal value of output signals
+    signal rx_edge_i            :   std_logic;
+    signal tx_edge_i            :   std_logic;
 
 begin
 
     -------------------------------------------------------------------------------------------
-    -- Condition for SSP bit error is valid when TX Data cache output is not equal to CAN RX
-    -- in the moment of SSP!
+    -- Registering previous value of rx_data, tx_data to detect edge in the data stream
     -------------------------------------------------------------------------------------------
-    bit_err_ssp_condition <= '1' when (data_tx_delayed /= data_rx_synced and
-                                       sample_sec = '1' and
-                                       bit_err_enable = '1')
-                                 else
-                             '0';
-
-    -------------------------------------------------------------------------------------------
-    -- Capture register for secondary sampling point bit error:
-    --  1. Clear upon next regular sample point.
-    --  2. Set when Bit error is detected by secondary sampling point.
-    -------------------------------------------------------------------------------------------
-    bit_err_ssp_capt_d <= '0' when (rx_trigger = '1') else
-                          '1' when (bit_err_ssp_condition = '1') else
-          bit_err_ssp_capt_q;
-
-    p_bit_error_ssp_capt_reg : process(clk_sys, rst_n)
+    p_data_reg : process(clk_sys, rst_n)
     begin
         if (rst_n = '0') then
-            bit_err_ssp_capt_q <= '0';
+            rx_data_prev        <= RECESSIVE;
+            tx_data_prev        <= RECESSIVE;
+            rx_data_sync_prev   <= RECESSIVE;
         elsif (rising_edge(clk_sys)) then
-            bit_err_ssp_capt_q <= bit_err_ssp_capt_d;
+            rx_data_prev        <= rx_data;
+            tx_data_prev        <= tx_data;
+
+            if (tq_edge = '1') then
+                rx_data_sync_prev <= rx_data;
+            end if;
         end if;
     end process;
 
     -------------------------------------------------------------------------------------------
-    -- Bit Error for SSP is processed in Sample point (RX Trigger). We must look at capture
-    -- register (bit_err_ssp_capt_q) and also SSP condition because SSP might occur at the same
-    -- cycle as RX Trigger and in this case bit error is processed immediately and not captured!
+    -- Valid TX Edge (Used to start transceiver delay measurement):
+    --  1. Edge on tx_data
+    --  2. RECESSIVE to DOMINANT
     -------------------------------------------------------------------------------------------
-    bit_err_ssp_valid <= '1' when (sp_control = SECONDARY_SAMPLE and rx_trigger = '1' and
-                                   (bit_err_ssp_capt_q = '1' or bit_err_ssp_condition = '1'))
-                             else
-                         '0';
-
-    bit_err_norm_valid <= '1' when (sp_control /= SECONDARY_SAMPLE and
-                                    data_rx_synced /= data_tx and
-                                    rx_trigger = '1' and
-                                    bit_err_enable = '1')
-                              else
-                          '0';
-
-    -------------------------------------------------------------------------------------------
-    -- Expected data is not equal to actual data in sample point -> Bit Error!
-    -------------------------------------------------------------------------------------------
-    bit_err_d <= '0' when (mr_settings_ena = CTU_CAN_DISABLED) else
-                 '1' when (bit_err_ssp_valid = '1') else
-                 '1' when (bit_err_norm_valid = '1') else
+    tx_edge_i <= '1' when (tx_data_prev /= tx_data) and (tx_data_prev = RECESSIVE)
+                     else
                  '0';
 
     -------------------------------------------------------------------------------------------
-    -- Bit error register
+    -- Valid RX Edge (used to stop transceiver delay measurement)
+    --  1. Edge on rx_data
+    --  2. RECESSIVE to DOMINANT
     -------------------------------------------------------------------------------------------
-    p_bit_err_reg : process(clk_sys, rst_n)
-    begin
-        if (rst_n = '0') then
-            bit_err_q <= '0';
-        elsif (rising_edge(clk_sys)) then
-            bit_err_q <= bit_err_d;
-        end if;
-    end process;
+    rx_edge_i <= '1' when (rx_data_prev /= rx_data) and (rx_data_prev = RECESSIVE)
+                     else
+                 '0';
 
-    -- Propagation to output
-    bit_err <= bit_err_q;
+    -------------------------------------------------------------------------------------------
+    -- Synchronisation edge:
+    --  1. Edge on RX data, aligned with Time Quanta
+    --  2. Recessive to Dominant
+    --  3. Data sampled in previous Sample point are different from actual
+    --     rx_data immediately after edge!
+    --  4. Aligned with time quanta!
+    -------------------------------------------------------------------------------------------
+    sync_edge <= '1' when (rx_data_sync_prev /= rx_data) and
+                          (rx_data_sync_prev = RECESSIVE) and
+                          (prev_rx_sample /= rx_data) and
+                          (tq_edge = '1')
+                     else
+                 '0';
+
+    -------------------------------------------------------------------------------------------
+    -- Internal signals to output propagation
+    -------------------------------------------------------------------------------------------
+    rx_edge <= rx_edge_i;
+    tx_edge <= tx_edge_i;
 
 end architecture;
