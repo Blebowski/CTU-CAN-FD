@@ -253,7 +253,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>scan_mode</spirit:name>
+        <spirit:name>scan_enable</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:wireTypeDefs>
@@ -547,13 +547,55 @@
       <spirit:name>xilinx_anylanguagesynthesis_view_fileset</spirit:name>
 
       <spirit:file>
-        <spirit:name>bus_management/bm_bit_err_detector.vhd</spirit:name>
+        <spirit:name>bit_timing_logic/btl_cfg_capture.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>bus_management/bm_top.vhd</spirit:name>
+        <spirit:name>bit_timing_logic/btl_counters.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>bit_timing_logic/btl_fsm.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>bit_timing_logic/btl_segment_end_detector.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>bit_timing_logic/btl_segment_meter.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>bit_timing_logic/btl_synchronisation_checker.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>bit_timing_logic/btl_top.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>bit_timing_logic/btl_trigger_generator.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>bus_management/bm_bit_err_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
@@ -577,6 +619,12 @@
       </spirit:file>
 
       <spirit:file>
+        <spirit:name>bus_management/bm_top.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
         <spirit:name>bus_management/bm_trv_delay_meas.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
@@ -584,144 +632,6 @@
 
       <spirit:file>
         <spirit:name>bus_management/bm_tx_data_cache.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_bit_destuffing.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_bit_stuffing.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_bus_traffic_counters.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_top.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_crc_top.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_pc_control_counter.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_crc_calc.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_fc_err_counters.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_pc_err_detector.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_fc_top.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_fc_fsm.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_fc_rules.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_operation_control.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_pc_top.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_pc_fsm.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_pc_reintegration_counter.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_pc_retransmitt_counter.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_pc_rx_shift_reg.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_trigger_mux.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_pc_tx_shift_reg.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>can_top_ahb.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>can_top_apb.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>can_top_level.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
@@ -817,19 +727,43 @@
       </spirit:file>
 
       <spirit:file>
+        <spirit:name>ctu_can_fd_top.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>ctu_can_fd_top_ahb.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>ctu_can_fd_top_apb.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>ctu_can_fd_top_avalon.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
         <spirit:name>frame_filters/ff_bit_filter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>frame_filters/ff_top.vhd</spirit:name>
+        <spirit:name>frame_filters/ff_range_filter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>frame_filters/ff_range_filter.vhd</spirit:name>
+        <spirit:name>frame_filters/ff_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
@@ -847,13 +781,133 @@
       </spirit:file>
 
       <spirit:file>
+        <spirit:name>interrupt_manager/im_channel.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
         <spirit:name>interrupt_manager/im_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>interrupt_manager/im_channel.vhd</spirit:name>
+        <spirit:name>medium_access_control/mac_bit_destuffing.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_bit_stuffing.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_bus_traffic_counters.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_crc_calc.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_crc_top.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_fc_err_counters.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_fc_fsm.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_fc_rules.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_fc_top.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_operation_control.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_pc_control_counter.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_pc_err_detector.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_pc_fsm.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_pc_reintegration_counter.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_pc_retransmitt_counter.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_pc_rx_shift_reg.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_pc_top.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_pc_tx_shift_reg.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_top.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_trigger_mux.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
@@ -961,60 +1015,6 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>bit_timing_logic/btl_segment_meter.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>bit_timing_logic/btl_cfg_capture.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>bit_timing_logic/btl_counters.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>bit_timing_logic/btl_fsm.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>bit_timing_logic/btl_top.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>bit_timing_logic/btl_segment_end_detector.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>bit_timing_logic/btl_synchronisation_checker.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>bit_timing_logic/btl_trigger_generator.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>rx_buffer/rxb_top.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
         <spirit:name>rx_buffer/rxb_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
@@ -1033,6 +1033,18 @@
       </spirit:file>
 
       <spirit:file>
+        <spirit:name>rx_buffer/rxb_top.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>tx_arbitrator/txarb_fsm.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
         <spirit:name>tx_arbitrator/txarb_priority_decoder.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
@@ -1040,12 +1052,6 @@
 
       <spirit:file>
         <spirit:name>tx_arbitrator/txarb_top.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>tx_arbitrator/txarb_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
@@ -1079,14 +1085,63 @@
       <spirit:name>xilinx_anylanguagebehavioralsimulation_view_fileset</spirit:name>
 
       <spirit:file>
-        <spirit:name>bus_management/bm_bit_err_detector.vhd</spirit:name>
+        <spirit:name>bit_timing_logic/btl_cfg_capture.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>bus_management/bm_top.vhd</spirit:name>
+        <spirit:name>bit_timing_logic/btl_counters.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>bit_timing_logic/btl_fsm.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>bit_timing_logic/btl_segment_end_detector.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>bit_timing_logic/btl_segment_meter.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>bit_timing_logic/btl_synchronisation_checker.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>bit_timing_logic/btl_top.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>bit_timing_logic/btl_trigger_generator.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>bus_management/bm_bit_err_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
@@ -1114,6 +1169,13 @@
       </spirit:file>
 
       <spirit:file>
+        <spirit:name>bus_management/bm_top.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
         <spirit:name>bus_management/bm_trv_delay_meas.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
@@ -1122,167 +1184,6 @@
 
       <spirit:file>
         <spirit:name>bus_management/bm_tx_data_cache.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_bit_destuffing.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_bit_stuffing.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_bus_traffic_counters.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_top.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_crc_top.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_pc_control_counter.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_crc_calc.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_fc_err_counters.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_pc_err_detector.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_fc_top.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_fc_fsm.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_fc_rules.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_operation_control.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_pc_top.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_pc_fsm.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_pc_reintegration_counter.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_pc_retransmitt_counter.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_pc_rx_shift_reg.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_trigger_mux.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>medium_access_control/mac_pc_tx_shift_reg.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>can_top_ahb.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>can_top_apb.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>can_top_level.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
@@ -1394,6 +1295,34 @@
       </spirit:file>
 
       <spirit:file>
+        <spirit:name>ctu_can_fd_top.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>ctu_can_fd_top_ahb.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>ctu_can_fd_top_apb.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>ctu_can_fd_top_avalon.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
         <spirit:name>frame_filters/ff_bit_filter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
@@ -1401,14 +1330,14 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>frame_filters/ff_top.vhd</spirit:name>
+        <spirit:name>frame_filters/ff_range_filter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>frame_filters/ff_range_filter.vhd</spirit:name>
+        <spirit:name>frame_filters/ff_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
@@ -1429,6 +1358,13 @@
       </spirit:file>
 
       <spirit:file>
+        <spirit:name>interrupt_manager/im_channel.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
         <spirit:name>interrupt_manager/im_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
@@ -1436,7 +1372,140 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>interrupt_manager/im_channel.vhd</spirit:name>
+        <spirit:name>medium_access_control/mac_bit_destuffing.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_bit_stuffing.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_bus_traffic_counters.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_crc_calc.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_crc_top.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_fc_err_counters.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_fc_fsm.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_fc_rules.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_fc_top.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_operation_control.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_pc_control_counter.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_pc_err_detector.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_pc_fsm.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_pc_reintegration_counter.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_pc_retransmitt_counter.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_pc_rx_shift_reg.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_pc_top.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_pc_tx_shift_reg.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_top.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>medium_access_control/mac_trigger_mux.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
@@ -1562,69 +1631,6 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>bit_timing_logic/btl_segment_meter.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>bit_timing_logic/btl_cfg_capture.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>bit_timing_logic/btl_counters.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>bit_timing_logic/btl_fsm.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>bit_timing_logic/btl_top.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>bit_timing_logic/btl_segment_end_detector.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>bit_timing_logic/btl_synchronisation_checker.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>bit_timing_logic/btl_trigger_generator.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>rx_buffer/rxb_top.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
         <spirit:name>rx_buffer/rxb_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
@@ -1646,6 +1652,20 @@
       </spirit:file>
 
       <spirit:file>
+        <spirit:name>rx_buffer/rxb_top.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>tx_arbitrator/txarb_fsm.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
         <spirit:name>tx_arbitrator/txarb_priority_decoder.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
@@ -1654,13 +1674,6 @@
 
       <spirit:file>
         <spirit:name>tx_arbitrator/txarb_top.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
-        <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
-      </spirit:file>
-
-      <spirit:file>
-        <spirit:name>tx_arbitrator/txarb_fsm.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>ctu_can_fd_rtl</spirit:logicalName>
