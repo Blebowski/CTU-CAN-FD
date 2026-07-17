@@ -795,7 +795,7 @@ jobs:
         run: |
           cd test
           pwd
-          nvc --cover-report --output=code_coverage_report --exclude-file=exclude_files/nvc_exclusions_2v7.txt merged.ncdb
+          nvc --cover-report --output=code_coverage_report --exclude-file=exclude_files/nvc_exclusions_3v0.txt merged.ncdb
 
       - name: Export cobertura coverage report
         run: |
