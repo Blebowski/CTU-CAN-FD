@@ -156,9 +156,9 @@ end entity;
 architecture test of rx_buffer_tb is
 
     -- Port width determining constants
-    constant C_RX_BUFF_SIZE             : natural := 256;
-    constant C_RX_BUFF_PTR_WIDTH        : natural := integer(ceil(log2(real(C_RX_BUFF_SIZE))));
-    constant C_RX_BUF_FRAME_CNT_WIDTH   : natural := integer(ceil(log2(real(C_RX_BUFF_SIZE)))) - 1;
+    constant C_RX_BUF_SIZE             : natural := 256;
+    constant C_RX_BUF_PTR_WIDTH        : natural := integer(ceil(log2(real(C_RX_BUF_SIZE))));
+    constant C_RX_BUF_FRAME_CNT_WIDTH   : natural := integer(ceil(log2(real(C_RX_BUF_SIZE)))) - 1;
 
     -- Common test specific data
     signal error_ctr                : integer := 0;
@@ -166,7 +166,7 @@ architecture test of rx_buffer_tb is
 
     -- System clock and reset
     signal clk_sys                  : std_logic := '0';
-    signal res_n                    : std_logic := '0';
+    signal rst_n                    : std_logic := '0';
 
     -- Metadata and idntifier
     signal rec_ident                : std_logic_vector(28 downto 0) := (others => '0');
@@ -192,9 +192,9 @@ architecture test of rx_buffer_tb is
     signal rx_full                  : std_logic;
     signal rx_empty                 : std_logic;
     signal rx_frame_count           : std_logic_vector(C_RX_BUF_FRAME_CNT_WIDTH-1 downto 0);
-    signal rx_mem_free              : std_logic_vector(C_RX_BUFF_PTR_WIDTH downto 0);
-    signal rx_read_pointer          : std_logic_vector(C_RX_BUFF_PTR_WIDTH-1 downto 0);
-    signal rx_write_pointer         : std_logic_vector(C_RX_BUFF_PTR_WIDTH-1 downto 0);
+    signal rx_mem_free              : std_logic_vector(C_RX_BUF_PTR_WIDTH downto 0);
+    signal rx_read_pointer          : std_logic_vector(C_RX_BUF_PTR_WIDTH-1 downto 0);
+    signal rx_write_pointer         : std_logic_vector(C_RX_BUF_PTR_WIDTH-1 downto 0);
     signal rx_data_overrun          : std_logic;
 
     signal rxb_port_b_data_out      : std_logic_vector(31 downto 0);
@@ -602,17 +602,17 @@ begin
     ----------------------------------------------------------------------------
     i_rxb_top : entity ctu_can_fd_rtl.rxb_top
     generic map(
-        G_RX_BUFF_SIZE              => C_RX_BUFF_SIZE,
-        G_RX_BUFF_PTR_WIDTH         => C_RX_BUFF_PTR_WIDTH,
+        G_RX_BUF_SIZE               => C_RX_BUF_SIZE,
+        G_RX_BUF_PTR_WIDTH          => C_RX_BUF_PTR_WIDTH,
         G_RX_BUF_FRAME_CNT_WIDTH    => C_RX_BUF_FRAME_CNT_WIDTH,
-        G_SUP_PARITY                => true,
+        G_PARITY_EN                 => true,
         G_RESET_RX_BUF_RAM          => false,
         G_TECHNOLOGY                => C_TECH_FPGA
     )
     port map(
         clk_sys                  => clk_sys,
-        res_n                    => res_n,
-        scan_enable              => '0',
+        rst_n                    => rst_n,
+        scan_mode                => '0',
 
         rec_ident                => rec_ident,
         rec_dlc                  => rec_dlc,
@@ -704,10 +704,10 @@ begin
 
 	-- Common input memory is not filled totally so that one iteration
 	-- of test won't take too long!
-    in_mem_full <= true when in_pointer + C_RX_BUFF_SIZE + 1 > 300 else
+    in_mem_full <= true when in_pointer + C_RX_BUF_SIZE + 1 > 300 else
                    false;
 
-    out_mem_full <= true when out_pointer + C_RX_BUFF_SIZE + 1 > 300 else
+    out_mem_full <= true when out_pointer + C_RX_BUF_SIZE + 1 > 300 else
                     false;
 
     ----------------------------------------------------------------------------
@@ -722,7 +722,7 @@ begin
         test_runner_setup(runner, runner_cfg);
         info_m("Restarting RX Buffer test!");
         wait for 5 ns;
-        res_n <= '1';
+        rst_n <= '1';
 
         apply_rand_seed(seed);
 
