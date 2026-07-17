@@ -139,6 +139,47 @@ jobs:
             test/tb_rtl_rx_buffer_unit.xml
             test/tb_rtl_rx_buffer_unit_summary
 
+  test_unit_apb:
+    runs-on: [self-hosted, lds_runner]
+    needs: build_done
+    container: *sim_container
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Checkout CTU-CAN-FD
+        uses: actions/checkout@v4
+        with:
+          repository: Logic-Design-Services/CTU-CAN-FD
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: Download compliance lib
+        uses: actions/download-artifact@v4
+        with:
+          name: compliance-lib
+          path: test/main_tb/iso-16845-compliance-tests/build
+
+      - name: Run test
+        run: |
+          cd test
+          make tb_rtl_apb_unit
+
+      - name: Generate logs
+        if: always()
+        run: |
+          cd test
+          make tb_rtl_apb_unit_logs
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test_unit_apb
+          path: |
+            test/tb_rtl_apb_unit.xml
+            test/tb_rtl_apb_unit_summary
+
   ##############################################################################
   # Unit test gate (fan-in — add new unit test jobs to needs here)
   ##############################################################################
@@ -147,6 +188,7 @@ jobs:
     runs-on: [self-hosted, lds_runner]
     needs:
       - test_unit_rx_buffer
+      - test_unit_apb
     steps:
       - run: echo "All unit tests completed"
 
