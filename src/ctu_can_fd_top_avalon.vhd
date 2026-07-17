@@ -147,7 +147,7 @@ entity ctu_can_fd_top_avalon is
         write               : in  std_logic;
         response            : out std_logic_vector(1 downto 0);
         readdata            : out std_logic_vector(31 downto 0);
-        writedata           : out std_logic_vector(31 downto 0);
+        writedata           : in  std_logic_vector(31 downto 0);
         waitrequest         : out std_logic;
         readdatavalid       : out std_logic
   );
