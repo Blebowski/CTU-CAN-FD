@@ -110,7 +110,7 @@ begin
     ---------------------------------------------------------------------------
     -- Comunication receiver process
     ---------------------------------------------------------------------------
-    receiver_proc : process
+    p_receiver : process
         variable cmd : integer;
         variable reply_code : integer;
 

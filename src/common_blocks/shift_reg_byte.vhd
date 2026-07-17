@@ -98,7 +98,7 @@ entity shift_reg_byte is
         -- Clock and Asyncrhonous reset
         -------------------------------------------------------------------------------------------
         clk                 : in  std_logic;
-        res_n               : in  std_logic;
+        rst_n               : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Control signals
@@ -131,15 +131,15 @@ architecture rtl of shift_reg_byte is
 
 begin
 
-    byte_shift_reg_gen : for i in 0 to G_NUM_BYTES - 1 generate
+    g_byte_shift_reg : for i in 0 to G_NUM_BYTES - 1 generate
     begin
 
-        first_byte_gen : if (i = 0) generate
+        g_first_byte : if (i = 0) generate
             shift_reg_in(i) <= input;
         end generate;
 
         -- Shift register input mux
-        next_bytes_gen : if (i > 0) generate
+        g_next_bytes : if (i > 0) generate
             shift_reg_in(i) <= shift_reg_q(i - 1)(7) when (byte_input_sel(i) = '0')
                                                      else
                                                input;
@@ -148,9 +148,9 @@ begin
         -------------------------------------------------------------------------------------------
         -- Shift register assignment
         -------------------------------------------------------------------------------------------
-        shift_reg_proc : process(clk, res_n)
+        p_shift_reg : process(clk, rst_n)
         begin
-            if (res_n = G_RESET_POLARITY) then
+            if (rst_n = G_RESET_POLARITY) then
                 shift_reg_q(i) <= (others => '0'); -- G_RESET_VALUE(i * 8 + 7 downto i * 8);
             elsif (rising_edge(clk)) then
                 if (byte_clock_ena(i) = '1') then

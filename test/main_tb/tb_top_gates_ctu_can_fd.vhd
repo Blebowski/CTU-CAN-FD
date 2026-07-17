@@ -129,16 +129,16 @@ entity tb_top_ctu_can_fd is
         cfg_ssp_offset          : natural := 10;
 
         -- DUT configuration
-        rx_buffer_size          : natural := 64;
-        txt_buffer_count        : natural range 2 to 8 := 4;
-        sup_filtA               : boolean := true;
-        sup_filtB               : boolean := true;
-        sup_filtC               : boolean := true;
-        sup_range               : boolean := true;
-        sup_traffic_ctrs        : boolean := true;
-        sup_parity              : boolean := true;
-        target_technology       : natural := C_TECH_ASIC;
-        reset_buffer_rams       : boolean := false;
+        G_RX_BUF_SIZE          : natural := 64;
+        G_TXT_BUF_COUNT        : natural range 2 to 8 := 4;
+        G_FILT_A_EN               : boolean := true;
+        G_FILT_B_EN               : boolean := true;
+        G_FILT_C_EN               : boolean := true;
+        G_FILT_RANGE_EN               : boolean := true;
+        G_TRAFFIC_CTRS_EN        : boolean := true;
+        G_PARITY_EN              : boolean := true;
+        G_TECHNOLOGY       : natural := C_TECH_ASIC;
+        G_RESET_BUF_RAMS       : boolean := false;
 
         -- Seed
         seed                    : natural := 0
@@ -182,8 +182,8 @@ architecture tb of tb_top_ctu_can_fd is
        func_cov_en             : boolean;
 
        -- DUT configuration
-       rx_buffer_size          : natural;
-       txt_buffer_count        : natural range 2 to 8 := 8;
+       G_RX_BUF_SIZE          : natural;
+       G_TXT_BUF_COUNT        : natural range 2 to 8 := 8;
 
        -- DUT Clock period
        cfg_sys_clk_period      : string;
@@ -246,14 +246,14 @@ begin
     ---------------------------------------------------------------------------
     -- DUT (Use RAM-like memory bus)
     ---------------------------------------------------------------------------
-    dut : entity ctu_can_fd_gates.can_top_level
-    port map(
+    i_dut : entity ctu_can_fd_gates.ctu_can_fd_top
+    port map (
         -- Clock and Asynchronous reset
         clk_sys     => clk_sys,
         res_n       => res_n,
 
         -- DFT support
-        scan_enable => scan_enable,
+        scan_mode   => scan_enable,
 
         -- Memory interface
         data_in     => write_data,
@@ -284,14 +284,14 @@ begin
     ---------------------------------------------------------------------------
     -- CTU CAN FD VIP
     ---------------------------------------------------------------------------
-    ctu_can_fd_vip_inst : ctu_can_fd_vip
+    i_ctu_can_fd_vip : ctu_can_fd_vip
     generic map(
         test_name               => test_name,
         test_type               => test_type,
         func_cov_en             => func_cov_en,
 
-        rx_buffer_size          => rx_buffer_size,
-        txt_buffer_count        => txt_buffer_count,
+        G_RX_BUF_SIZE          => G_RX_BUF_SIZE,
+        G_TXT_BUF_COUNT        => G_TXT_BUF_COUNT,
 
         cfg_sys_clk_period      => cfg_sys_clk_period,
         finish_on_error         => finish_on_error,
@@ -325,7 +325,7 @@ begin
 
         -- Clock, reset
         clk_sys     => clk_sys,
-        res_n       => res_n,
+        rst_n       => res_n,
 
         -- DFT support
         scan_enable => scan_enable,
@@ -357,7 +357,7 @@ begin
     ---------------------------------------------------------------------------
     -- Vunit manager - controls CTU CAN FD VIP
     ---------------------------------------------------------------------------
-    vunit_manager_proc : process
+    p_vunit_manager : process
     begin
         test_runner_setup(runner, runner_cfg);
         wait for 10 ns;
@@ -378,15 +378,15 @@ begin
         info("  Force support: " & boolean'image(is_force_supported));
         info("");
         info("DUT configuration:");
-        info("  RX buffer size: " & integer'image(rx_buffer_size));
-        info("  TXT Buffer count: " & integer'image(txt_buffer_count));
-        info("  Filter A: " & boolean'image(sup_filtA));
-        info("  Filter B: " & boolean'image(sup_filtB));
-        info("  Filter C: " & boolean'image(sup_filtC));
-        info("  Range filter: " & boolean'image(sup_range));
-        info("  Traffic counters: " & boolean'image(sup_traffic_ctrs));
-        info("  Target technology: " & integer'image(target_technology));
-        info("  Reset Buffer RAMS: " & boolean'image(reset_buffer_rams));
+        info("  RX buffer size: " & integer'image(G_RX_BUF_SIZE));
+        info("  TXT Buffer count: " & integer'image(G_TXT_BUF_COUNT));
+        info("  Filter A: " & boolean'image(G_FILT_A_EN));
+        info("  Filter B: " & boolean'image(G_FILT_B_EN));
+        info("  Filter C: " & boolean'image(G_FILT_C_EN));
+        info("  Range filter: " & boolean'image(G_FILT_RANGE_EN));
+        info("  Traffic counters: " & boolean'image(G_TRAFFIC_CTRS_EN));
+        info("  Target technology: " & integer'image(G_TECHNOLOGY));
+        info("  Reset Buffer RAMS: " & boolean'image(G_RESET_BUF_RAMS));
         info("");
         info("Bit timing settings (Nominal):");
         info("  BRP: " & integer'image(cfg_brp));
@@ -441,7 +441,7 @@ begin
     ---------------------------------------------------------------------------
     -- Spawn watchdog
     ---------------------------------------------------------------------------
-    watchdog: if time'value(timeout) > 0 ns generate
+    g_watchdog: if time'value(timeout) > 0 ns generate
         test_runner_watchdog(runner, time'value(timeout));
     end generate;
 

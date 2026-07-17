@@ -92,7 +92,7 @@ entity clk_gate is
         clk_en              : in    std_logic;
 
         -- Scan Enable
-        scan_enable         : in    std_logic;
+        scan_mode           : in    std_logic;
 
         -- Gated clocks
         clk_out             : out   std_logic
@@ -108,10 +108,10 @@ begin
     g_tech_asic : if (G_TECHNOLOGY = C_TECH_ASIC) generate
 
         -- Latching enable - transparent in zero since we use AND gating
-        clk_en_latch_proc : process(clk_in, clk_en, scan_enable)
+        p_clk_en_latch : process(clk_in, clk_en, scan_mode)
         begin
             if (clk_in = '0') then
-                clk_en_q <= clk_en or scan_enable;
+                clk_en_q <= clk_en or scan_mode;
             end if;
         end process;
 

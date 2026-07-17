@@ -99,7 +99,7 @@ architecture rtl of rst_sync is
 begin
 
     -- Reset synchroniser process
-    rst_sync_proc : process (clk, arst)
+    p_rst_sync : process (clk, arst)
     begin
         if (arst = G_RESET_POLARITY) then
             rff <= G_RESET_POLARITY;

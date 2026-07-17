@@ -96,7 +96,7 @@ entity dp_inf_ram is
         -- Synchronous read
         G_SYNC_READ            :     boolean := true;
 
-        -- If true, res_n causes RAM to be reset
+        -- If true, rst_n causes RAM to be reset
         G_RESETABLE            :     boolean := false
     );
   port (
@@ -104,7 +104,7 @@ entity dp_inf_ram is
         -- Clock and Reset
         -------------------------------------------------------------------------------------------
         clk_sys     : in  std_logic;
-        res_n       : in  std_logic;
+        rst_n       : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Port A - Data input
@@ -137,9 +137,9 @@ begin
     -----------------------------------------------------------------------------------------------
     -- RAM memory (non-resetable version)
     -----------------------------------------------------------------------------------------------
-    ram_rst_false_gen : if (not G_RESETABLE) generate
+    g_ram_rst_false : if (not G_RESETABLE) generate
 
-        ram_write_process : process(clk_sys)
+        p_ram_write : process(clk_sys)
         begin
             if (rising_edge(clk_sys)) then
                 if (write = '1') then
@@ -153,11 +153,11 @@ begin
     -----------------------------------------------------------------------------------------------
     -- RAM memory (resetable version)
     -----------------------------------------------------------------------------------------------
-    ram_rst_true_gen : if (G_RESETABLE) generate
+    g_ram_rst_true : if (G_RESETABLE) generate
 
-        ram_write_process : process(clk_sys, res_n)
+        p_ram_write : process(clk_sys, rst_n)
         begin
-            if (res_n = '0') then
+            if (rst_n = '0') then
                 ram_memory <= (others => (others => '0'));
             elsif (rising_edge(clk_sys)) then
                 if (write = '1') then
@@ -174,8 +174,8 @@ begin
     int_read_data <= ram_memory(to_integer(unsigned(addr_B)));
 
     -- Synchronous read
-    sync_read_gen : if (G_SYNC_READ) generate
-        ram_read_process : process(clk_sys)
+    g_sync : if (G_SYNC_READ) generate
+        p_ram_read : process(clk_sys)
         begin
             if (rising_edge(clk_sys)) then
                 data_out <= int_read_data;
@@ -184,7 +184,7 @@ begin
     end generate;
 
     -- Asynchronous read
-    async_read_gen : if (not G_SYNC_READ) generate
+    g_async : if (not G_SYNC_READ) generate
         data_out <= int_read_data;
     end generate;
 

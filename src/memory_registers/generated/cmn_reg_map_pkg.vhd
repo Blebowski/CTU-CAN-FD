@@ -98,7 +98,7 @@ component address_decoder is
     );
     port(
         signal clk_sys                :in   std_logic;
-        signal res_n                  :in   std_logic;
+        signal rst_n                  :in   std_logic;
         signal address                :in   std_logic_vector(address_width - 1 downto 0);
         signal enable                 :in   std_logic;
         signal addr_dec               :out  std_logic_vector(address_entries - 1 downto 0)
@@ -118,7 +118,7 @@ component data_mux is
     );
     port(
         signal clk_sys                :in   std_logic;
-        signal res_n                  :in   std_logic;
+        signal rst_n                  :in   std_logic;
         signal data_selector          :in   std_logic_vector(sel_width - 1 downto 0);
         signal data_in                :in   std_logic_vector(data_in_width - 1 downto 0);
         signal data_mask_n            :in   std_logic_vector(data_out_width - 1 downto 0);
@@ -139,7 +139,7 @@ component memory_reg_rw is
     );
     port(
         signal clk_sys                :in   std_logic;
-        signal res_n                  :in   std_logic;
+        signal rst_n                  :in   std_logic;
         signal data_in                :in   std_logic_vector(data_width - 1 downto 0);
         signal write                  :in   std_logic;
         signal cs                     :in   std_logic;
@@ -157,7 +157,7 @@ component memory_reg_os is
     );
     port(
         signal clk_sys                :in   std_logic;
-        signal res_n                  :in   std_logic;
+        signal rst_n                  :in   std_logic;
         signal data_in                :in   std_logic_vector(data_width - 1 downto 0);
         signal write                  :in   std_logic;
         signal cs                     :in   std_logic;
@@ -175,7 +175,7 @@ component memory_reg_rw_lock is
     );
     port(
         signal clk_sys                :in   std_logic;
-        signal res_n                  :in   std_logic;
+        signal rst_n                  :in   std_logic;
         signal data_in                :in   std_logic_vector(data_width - 1 downto 0);
         signal write                  :in   std_logic;
         signal cs                     :in   std_logic;
@@ -194,7 +194,7 @@ component memory_reg_os_lock is
     );
     port(
         signal clk_sys                :in   std_logic;
-        signal res_n                  :in   std_logic;
+        signal rst_n                  :in   std_logic;
         signal data_in                :in   std_logic_vector(data_width - 1 downto 0);
         signal write                  :in   std_logic;
         signal cs                     :in   std_logic;
@@ -213,7 +213,7 @@ component read_access_signaller is
     );
     port(
         signal clk_sys                :in   std_logic;
-        signal res_n                  :in   std_logic;
+        signal rst_n                  :in   std_logic;
         signal cs                     :in   std_logic;
         signal read                   :in   std_logic;
         signal be                     :in   std_logic_vector(data_width / 8 - 1 downto 0);

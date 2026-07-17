@@ -488,7 +488,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="23" columns="4">
+<lyxtabular version="3" rows="24" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -1037,7 +1037,7 @@ Keep NBTM counter enabled always even in data bit rate.
 Add 
 \series bold
 \shape italic
-res_n_out
+rst_n_out
 \series default
 \shape default
  synchronized reset output.
@@ -1120,7 +1120,7 @@ Add Parity Check use-case in TXT buffer.
  Add 
 \series bold
 \shape italic
-sup_parity
+G_PARITY_EN
 \series default
 \shape default
  generic.
@@ -1164,13 +1164,13 @@ sup_parity
 Add 
 \series bold
 \shape italic
-reset_buffer_rams
+G_RESET_BUF_RAMS
 \series default
 \shape default
  and 
 \series bold
 \shape italic
-active_timestamp_bits
+G_ACTIVE_TS_BITS
 \series default
 \shape default
  generic.
@@ -1373,7 +1373,7 @@ Move to new release of CTU CAN FD
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1382,16 +1382,16 @@ Move to new release of CTU CAN FD
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-2.7
+
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1400,11 +1400,78 @@ Move to new release of CTU CAN FD
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Update repository link
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.23
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+15-7-2026
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Changed name of top level generics.
+ Separated Avalon wrapper from RAM-like.
+ Changed name of top-level entities.
+ 
+\series bold
+\shape italic
+scan_enable
+\series default
+\shape default
+ was renamed to 
+\series bold
+\shape italic
+scan_mode
+\series default
+\shape default
+ to better fit standard DFT terminology.
+ 
+\series bold
+\shape italic
+res_n 
+\series default
+\shape default
+was renamed to 
+\series bold
+\shape italic
+rst_n
+\series default
+\shape default
+.
+ Renamed modules in the hierarchy to match CTU CAN XL.
 \end_layout
 
 \end_inset
@@ -1737,10 +1804,12 @@ When CTU CAN FD GIT repository is clonned, register map can be generated
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 ./update_reg_map
 \end_layout
 
@@ -1762,10 +1831,12 @@ src/component.xml
 \end_layout
 
 \begin_layout Verbatim
+
 cd scripts
 \end_layout
 
 \begin_layout Verbatim
+
 python gen_vivado_component.py
 \end_layout
 
@@ -2276,7 +2347,7 @@ The MAC sub-layer shall store the whole message to be transmitted in a temporary
  buffer and RX buffer if 
 \series bold
 \shape italic
-sup_parity
+G_PARITY_EN
 \series default
 \shape default
 =true.
@@ -2467,7 +2538,7 @@ Supported via MODE[ROM].
 \begin_inset Text
 
 \begin_layout Plain Layout
-Separate prescalers for Nominal and Data Bit Rate
+Separate Bit Timing Logics for Nominal and Data Bit Rate
 \end_layout
 
 \end_inset
@@ -2485,7 +2556,7 @@ Supported
 \begin_inset Text
 
 \begin_layout Plain Layout
-Prescalers are separate in BTR[BRP] and BTR_FD[BRP_FD] registers.
+Bit Timing Logics are separate in BTR[BRP] and BTR_FD[BRP_FD] registers.
 \end_layout
 
 \end_inset
@@ -2792,7 +2863,7 @@ Secondary sample point
 \color red
 minimum time quanta
 \color inherit
- regardless of bit rate prescaler seettings.
+ regardless of bit rate Bit Timing Logic seettings.
 \end_layout
 
 \end_inset
@@ -2885,11 +2956,16 @@ Memory Bus
 \end_layout
 
 \begin_layout Standard
-CTU CAN FD is a slave device accessible via one of three memory buses:
+CTU CAN FD is a slave device accessible via one of the following memory
+ buses:
 \end_layout
 
 \begin_layout Itemize
 RAM-like interface
+\end_layout
+
+\begin_layout Itemize
+Avalon
 \end_layout
 
 \begin_layout Itemize
@@ -2901,7 +2977,7 @@ AHB
 \end_layout
 
 \begin_layout Standard
-Each interface can be used via dedicated wrapper.
+Each interface can be used via dedicated VHDL entity.
  SW shall not access CTU CAN FD sooner than two clock cycles after external
  reset was released (due to reset synchronisation) (see Table 
 \begin_inset CommandInset ref
@@ -2934,7 +3010,7 @@ name "subsec:RAM-like-interface"
 \end_layout
 
 \begin_layout Description
-Wrapper can_top_level.vhd
+Entity ctu_can_fd_top
 \end_layout
 
 \begin_layout Standard
@@ -3599,8 +3675,23 @@ name "fig:rx-buffer-burst-read"
 
 \end_layout
 
+\begin_layout Subsection
+Avalon interface
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:avalon-like-interface"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Entity ctu_can_fd_top_avalon
+\end_layout
+
 \begin_layout Standard
-RAM-like interface is Avalon compatible (according to 
+Avalon compatible to 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-3"
@@ -3608,48 +3699,10 @@ literal "false"
 
 \end_inset
 
-) and mapping of RAM like signals to Avalon Memory-mapped slave signals
- is shown in Table 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "tab:RAM-like-avalon-mappping"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
 .
  When connected to Avalon MM master, write access to reserved address has
  no effect and read access returns all zeroes instead of responding with
  DECODEERROR response.
- 
-\series bold
-\shape italic
-response
-\series default
-\shape default
- signal shall be connected to 
-\begin_inset Quotes eld
-\end_inset
-
-00
-\begin_inset Quotes erd
-\end_inset
-
-, 
-\series bold
-\shape italic
-writeresponsevalid
-\series default
-\shape default
- and 
-\series bold
-\shape italic
-readdatavalid
-\series default
-\shape default
- shall be connected to '1'.
 \end_layout
 
 \begin_layout Standard
@@ -3663,34 +3716,11 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="8" columns="3">
+<lyxtabular version="3" rows="10" columns="2">
 <features tabularvalignment="middle">
-<column alignment="left" valignment="top" width="15text%">
 <column alignment="left" valignment="top" width="15text%">
 <column alignment="left" valignment="top" width="61.5text%">
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-RAM-like signal name
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-cellcolor{gray}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -3737,42 +3767,7 @@ cellcolor{gray}
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-\shape italic
-data_in
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-\shape italic
-write_data
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Data written to Avalon MM slave.
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3784,19 +3779,7 @@ address
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-\shape italic
-address
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3807,52 +3790,29 @@ Address for read/write of Avalon MM slave.
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \series bold
 \shape italic
-scs
+byteenable
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Shall correspond to chip select of slave if more than 1 slave is connected
- to given bus.
- If single slave is connected, shall be connected to 1.
+Byte enable, used for both read and write transfers.
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-\shape italic
-srd
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -3876,19 +3836,7 @@ Read indication
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-\shape italic
-swr
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3900,7 +3848,7 @@ write
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3918,19 +3866,7 @@ Write indication
 
 \series bold
 \shape italic
-sbe
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-\shape italic
-byteenable
+response
 \end_layout
 
 \end_inset
@@ -3939,7 +3875,76 @@ byteenable
 \begin_inset Text
 
 \begin_layout Plain Layout
-Byte enable, used for both read and write transfers.
+Always returns 00 (OKAY).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+readdata
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data read from Avalon MM slave.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+writedata
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data written to Avalon MM slave.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\shape italic
+waitrequest
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Always driven by CTU CAN FD to 0.
 \end_layout
 
 \end_inset
@@ -3953,19 +3958,7 @@ Byte enable, used for both read and write transfers.
 
 \series bold
 \shape italic
-data_out
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-\shape italic
-readdata
+readdatavalid
 \end_layout
 
 \end_inset
@@ -3974,7 +3967,7 @@ readdata
 \begin_inset Text
 
 \begin_layout Plain Layout
-Data read from Avalon MM slave.
+Always driven by CTU CAN FD to 1.
 \end_layout
 
 \end_inset
@@ -4018,7 +4011,7 @@ APB
 \end_layout
 
 \begin_layout Description
-Wrapper can_top_apb.vhd
+Entity ctu_can_fd_top_apb
 \end_layout
 
 \begin_layout Standard
@@ -4696,7 +4689,7 @@ AHB
 \end_layout
 
 \begin_layout Description
-Wrapper CAN_top_ahb.vhd
+Entity ctu_can_fd_top_ahb
 \end_layout
 
 \begin_layout Standard
@@ -5651,7 +5644,7 @@ timestamp
  Integrating system shall also set 
 \series bold
 \shape italic
-active_timestamp_bits 
+G_ACTIVE_TS_BITS 
 \series default
 \shape default
 to width of such counter - 1 (e.g.
@@ -5664,7 +5657,7 @@ timestamp[31:0]
  and 
 \series bold
 \shape italic
-active_timestamp_bits=
+G_ACTIVE_TS_BITS=
 \series default
 \shape default
 31).
@@ -5732,13 +5725,13 @@ hclk
  
 \series bold
 \shape italic
-res_n_out
+rst_n_out
 \series default
 \shape default
  signal output contains synchronized version of 
 \series bold
 \shape italic
-res_n
+rst_n
 \series default
 \shape default
 /
@@ -5865,7 +5858,7 @@ sys_clk
 
 \series bold
 \shape italic
-res_n
+rst_n
 \end_layout
 
 \end_inset
@@ -6019,7 +6012,7 @@ CTU CAN FD design is DFT insertion friendly.
  When 
 \series bold
 \shape italic
-scan_enable
+scan_mode
 \series default
 \shape default
  = 1, CTU CAN FD is in scan mode.
@@ -6040,7 +6033,7 @@ All resets which depend on value of other flip-flops are gated (to avoid
 
 \series bold
 \shape italic
-scan_enable
+scan_mode
 \series default
 \shape default
  input shall be controlled by SoC level DFT controller, and it shall be
@@ -6049,20 +6042,20 @@ s.
  If CTU CAN FD is used in FPGA (
 \series bold
 \shape italic
-target_technology
+G_TECHNOLOGY
 \series default
 \shape default
  = 1), 
 \series bold
 \shape italic
-scan_enable
+scan_mode
 \series default
 \shape default
  shall be tied low.
  
 \series bold
 \shape italic
-scan_enable
+scan_mode
 \series default
 \shape default
  signal shall be driven synchronous to System clock.
@@ -6225,7 +6218,7 @@ cellcolor{gray}
 
 \series bold
 \shape italic
-rx_buf_size
+G_RX_BUF_SIZE
 \end_layout
 
 \end_inset
@@ -6286,7 +6279,7 @@ noprefix "false"
 
 \series bold
 \shape italic
-txt_buffer_count
+G_TXT_BUF_COUNT
 \end_layout
 
 \end_inset
@@ -6347,7 +6340,7 @@ noprefix "false"
 
 \series bold
 \shape italic
-sup_filt_A
+G_FILT_A_EN
 \end_layout
 
 \end_inset
@@ -6408,7 +6401,7 @@ noprefix "false"
 
 \series bold
 \shape italic
-sup_filt_B
+G_FILT_B_EN
 \end_layout
 
 \end_inset
@@ -6469,7 +6462,7 @@ noprefix "false"
 
 \series bold
 \shape italic
-sup_filt_C
+G_FILT_C_EN
 \end_layout
 
 \end_inset
@@ -6530,7 +6523,7 @@ noprefix "false"
 
 \series bold
 \shape italic
-sup_range
+G_FILT_RANGE_EN
 \end_layout
 
 \end_inset
@@ -6591,7 +6584,7 @@ noprefix "false"
 
 \series bold
 \shape italic
-sup_traffic_counters
+G_TRAFFIC_CTRS_EN
 \end_layout
 
 \end_inset
@@ -6652,7 +6645,7 @@ noprefix "false"
 
 \series bold
 \shape italic
-target_technology
+G_TECHNOLOGY
 \end_layout
 
 \end_inset
@@ -6702,7 +6695,7 @@ Target technology (set 0 for ASIC, set 1 for FPGA).
 
 \series bold
 \shape italic
-sup_test_registers
+G_TEST_REGS_EN
 \end_layout
 
 \end_inset
@@ -6752,7 +6745,7 @@ Synthesize test registers.
 
 \series bold
 \shape italic
-sup_parity
+G_PARITY_EN
 \end_layout
 
 \end_inset
@@ -6802,7 +6795,7 @@ Add parity protection to TXT buffers / RX buffer.
 
 \series bold
 \shape italic
-reset_buffer_rams
+G_RESET_BUF_RAMS
 \end_layout
 
 \end_inset
@@ -6841,7 +6834,7 @@ true/false
 When true, TXT buffer and RX buffer RAMs are reset by 
 \series bold
 \shape italic
-res_n
+rst_n
 \series default
 \shape default
 .
@@ -6858,7 +6851,7 @@ res_n
 
 \series bold
 \shape italic
-active_timestamp_bits
+G_ACTIVE_TS_BITS
 \end_layout
 
 \end_inset
@@ -7159,7 +7152,7 @@ RAM like interface:
 \begin_inset Newline newline
 \end_inset
 
-res_n
+rst_n
 \series default
 \shape default
  = 0.
@@ -7178,7 +7171,7 @@ To be used by HW reset structure integrating CTU CAN FD (e.g.
  reset was de-asserted (or until 
 \series bold
 \shape italic
-res_n_out
+rst_n_out
 \series default
 \shape default
  = 1).
@@ -7470,7 +7463,7 @@ clock gating
 If 
 \series bold
 \shape italic
-target_technology
+G_TECHNOLOGY
 \series default
 \shape default
  = 0 (ASIC), hand-written clock gating is implemented for Memory registers,
@@ -7478,7 +7471,7 @@ target_technology
  If 
 \series bold
 \shape italic
-target_technology
+G_TECHNOLOGY
 \series default
 \shape default
  = 1 (FPGA), no hand-written clock gating is implemented, clocks for memory
@@ -7497,7 +7490,7 @@ The manually used clock gating cell (clk_gate.vhd) has Latch + AND type.
 If 
 \series bold
 \shape italic
-target_technology
+G_TECHNOLOGY
 \series default
 \shape default
  = 1 (FPGA), then clk_gate.vhd does not gate clocks, but only connects input
@@ -7531,7 +7524,7 @@ Memory testability - Allows direct read/write access to TXT buffer RAMs
 d (
 \series bold
 \shape italic
-sup_test_registers
+G_TEST_REGS_EN
 \series default
 \shape default
  = true).
@@ -7539,7 +7532,7 @@ sup_test_registers
  (
 \series bold
 \shape italic
-target_technology
+G_TECHNOLOGY
 \series default
 \shape default
  = 0).
@@ -7552,7 +7545,7 @@ target_technology
 Scan mode (via 
 \series bold
 \shape italic
-scan_enable
+scan_mode
 \series default
 \shape default
  input) - In scan mode, all clock gates are enabled, and all reset signals
@@ -8183,7 +8176,7 @@ noprefix "false"
 If 
 \series bold
 \shape italic
-reset_buffer_rams
+G_RESET_BUF_RAMS
 \series default
 \shape default
  = false, TXT buffer RAMs and RX buffer RAM are not reset.
@@ -8212,7 +8205,7 @@ ASIC fault-coverage can be achieved by functional test via Test Registers.
 If 
 \series bold
 \shape italic
-reset_buffer_rams
+G_RESET_BUF_RAMS
 \series default
 \shape default
  = true, TXT buffer RAMs and RX buffer RAM are reset.
@@ -8592,7 +8585,7 @@ rx_buffer_ram
 \begin_inset Text
 
 \begin_layout Plain Layout
-CAN Core
+Medium Access Control
 \end_layout
 
 \end_inset
@@ -8693,7 +8686,7 @@ Memory registers
 \begin_inset Text
 
 \begin_layout Plain Layout
-CAN Core
+Medium Access Control
 \end_layout
 
 \end_inset
@@ -8810,7 +8803,7 @@ information processing time
 \color red
 time quanta
 \color inherit
- (prescaler is 1).
+ (Bit Timing Logic is 1).
  Since processing takes two clock periods 
 \color red
 information processing time
@@ -9132,7 +9125,7 @@ Sample point
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bus Sampling, Bit Destuffing
+Bus Management, Bit Destuffing
 \end_layout
 
 \end_inset
@@ -9479,7 +9472,7 @@ Bus value is sampled to save information about previous sampled bus value
 can_rx
 \series default
 \shape default
- and propagated to Prescaler.
+ and propagated to Bit Timing Logic.
  
 \series bold
 \shape italic
@@ -9504,7 +9497,7 @@ Destuff
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bus Sampling
+Bus Management
 \end_layout
 
 \end_inset
@@ -10925,7 +10918,7 @@ Test registers are writable, therefore it is possible to directly read/write
  This feature is available only when 
 \series bold
 \shape italic
-sup_test_registers
+G_TEST_REGS_EN
 \series default
 \shape default
  = true.
@@ -11036,15 +11029,15 @@ Sub-blocks architecture
 \end_layout
 
 \begin_layout Section
-CAN Core
+Medium Access Control
 \end_layout
 
 \begin_layout Description
-File: can_core.vhd
+File: mac_top.vhd
 \end_layout
 
 \begin_layout Standard
-CAN core block diagram is shown in Figure 
+Medium Access Control block diagram is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:CAN-Core-Block-diagam-1"
@@ -11055,8 +11048,8 @@ noprefix "false"
 \end_inset
 
 .
- CAN core is structural entity that instantiates other modules and by itself
- it implements nearly no logic.
+ Medium Access Control is structural entity that instantiates other modules
+ and by itself it implements nearly no logic.
  An exception to this rule are two multiplexers as shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -11121,8 +11114,8 @@ bit stuffing
 can_rx
 \series default
 \shape default
- from input of CAN core (this corresponds to re-routing transmitted bit
- value internally as defined in 10.14 of 
+ from input of Medium Access Control (this corresponds to re-routing transmitted
+ bit value internally as defined in 10.14 of 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-1"
@@ -11158,7 +11151,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-CAN Core - Block diagram
+Medium Access Control - Block diagram
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:CAN-Core-Block-diagam-1"
@@ -11190,7 +11183,7 @@ Protocol control
 \end_layout
 
 \begin_layout Description
-File: protocol_control.vhd
+File: mac_pc_top.vhd
 \end_layout
 
 \begin_layout Standard
@@ -11265,7 +11258,7 @@ Protocol control FSM
 \end_layout
 
 \begin_layout Description
-File: protocol_control_fsm.vhd
+File: mac_pc_fsm.vhd
 \end_layout
 
 \begin_layout Standard
@@ -11650,7 +11643,7 @@ Control counter
 \end_layout
 
 \begin_layout Description
-File: control_counter.vhd
+File: mac_pc_control_counter.vhd
 \end_layout
 
 \begin_layout Standard
@@ -12229,7 +12222,7 @@ Retransmitt counter
 \end_layout
 
 \begin_layout Description
-File: retransmitt_counter.vhd
+File: mac_pc_retransmitt_counter.vhd
 \end_layout
 
 \begin_layout Standard
@@ -12734,7 +12727,7 @@ name "subsec:Reintegration-counter"
 \end_layout
 
 \begin_layout Description
-File: reintegration_counter.vhd
+File: mac_pc_reintegration_counter.vhd
 \end_layout
 
 \begin_layout Standard
@@ -13190,7 +13183,7 @@ name "subsec:TX-Shift-Register"
 \end_layout
 
 \begin_layout Description
-File: tx_shift_reg.vhd
+File: mac_pc_tx_shift_reg.vhd
 \end_layout
 
 \begin_layout Standard
@@ -14696,7 +14689,7 @@ name "subsec:RX-Shift-Register"
 \end_layout
 
 \begin_layout Description
-File: rx_shift_reg.vhd
+File: mac_pc_rx_shift_reg.vhd
 \end_layout
 
 \begin_layout Standard
@@ -17035,7 +17028,7 @@ name "subsec:Error-detector"
 \end_layout
 
 \begin_layout Description
-File: err_detector.vhd
+File: mac_pc_err_detector.vhd
 \end_layout
 
 \begin_layout Standard
@@ -17274,7 +17267,7 @@ Can occur anywhere
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit error detector in Bus sampling module
+Bit error detector in Bus Management module
 \end_layout
 
 \end_inset
@@ -17302,12 +17295,12 @@ noprefix "false"
 \color red
 bit error
 \color inherit
- detection by Bus sampling module.
+ detection by Bus Management module.
  
 \color red
 Bit error
 \color inherit
- detection by Bus sampling module is enabled always, it is only ignored
+ detection by Bus Management module is enabled always, it is only ignored
  in bit fields as described in 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -17377,7 +17370,7 @@ bit error
 \color inherit
  detected by 
 \color red
-Bus sampling
+Bus Management
 \color inherit
  is ignored by Error detector.
  Instead 
@@ -18467,7 +18460,7 @@ Bit error
 \color red
 bit error
 \color inherit
- detected by Bus sampling module is ignored.
+ detected by Bus Management module is ignored.
 \end_layout
 
 \end_inset
@@ -18505,7 +18498,7 @@ CRC
 \color red
 Bit error
 \color inherit
- detected by Bus sampling module is ignored if unit is 
+ detected by Bus Management module is ignored if unit is 
 \color red
 receiver
 \color inherit
@@ -18560,7 +18553,7 @@ form error
 \color red
 bit error
 \color inherit
- detected by Bus sampling module is ignored.
+ detected by Bus Management module is ignored.
 \end_layout
 
 \end_inset
@@ -18927,7 +18920,7 @@ bit error
 \color red
 Bit error
 \color inherit
- by Bus sampling module exceptions
+ by Bus Management module exceptions
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:Bit-error-exceptions"
@@ -19052,7 +19045,7 @@ Operation control
 \end_layout
 
 \begin_layout Description
-File: operation_control.vhd
+File: mac_operation_control.vhd
 \end_layout
 
 \begin_layout Standard
@@ -19837,7 +19830,7 @@ Fault confinement
 \end_layout
 
 \begin_layout Description
-File: fault_confinement.vhd
+File: mac_fc_top.vhd
 \end_layout
 
 \begin_layout Standard
@@ -20384,7 +20377,7 @@ Bit stuffing
 \end_layout
 
 \begin_layout Description
-File: bit_stuffing.vhd
+File: mac_bit_stuffing.vhd
 \end_layout
 
 \begin_layout Standard
@@ -20404,7 +20397,7 @@ fixed stuff bits
 \end_layout
 
 \begin_layout Itemize
-Halts CAN core for one bit time when 
+Halts Protocol Controller for one bit time when 
 \color red
 stuff bit
 \color inherit
@@ -21214,7 +21207,7 @@ name "subsec:Bit-Destuffing"
 \end_layout
 
 \begin_layout Description
-File: bit_destuffing.vhd
+File: mac_bit_destuffing.vhd
 \end_layout
 
 \begin_layout Standard
@@ -21238,7 +21231,7 @@ fixed stuff bits
 \end_layout
 
 \begin_layout Itemize
-Halts CAN core for one bit time when 
+Halts Protocol Controller for one bit time when 
 \color red
 stuff bit
 \color inherit
@@ -21994,7 +21987,7 @@ CAN CRC
 \end_layout
 
 \begin_layout Description
-File: can_crc.vhd
+File: mac_crc_top.vhd
 \end_layout
 
 \begin_layout Standard
@@ -22896,13 +22889,13 @@ Trigger multiplexor
 \end_layout
 
 \begin_layout Description
-File: trigger_mux.vhd
+File: mac_trigger_mux.vhd
 \end_layout
 
 \begin_layout Standard
-Trigger multiplexor creates trigger signals for other blocks within CAN
- core from trigger signals generated by Prescaler as described in Table
- 
+Trigger multiplexor creates trigger signals for other blocks within Medium
+ Access Control from trigger signals generated by Bit Timing Logic as described
+ in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:trigger-signals"
@@ -22923,7 +22916,7 @@ noprefix "false"
 
 \end_inset
 
- on how are trigger signals generated by Prescaler.
+ on how are trigger signals generated by Bit Timing Logic.
 \end_layout
 
 \begin_layout Standard
@@ -23350,7 +23343,7 @@ name "subsec:Bus-traffic-counters"
 \end_layout
 
 \begin_layout Description
-File: bus_traffic_counters.vhd
+File: mac_bus_traffic_counters.vhd
 \end_layout
 
 \begin_layout Standard
@@ -23398,7 +23391,7 @@ Both counters can be erased by SW via COMMAND[TXFRCRST] and COMMAND[RXFRCRST]
  Bus traffic counters are instantiated only when 
 \series bold
 \shape italic
-sup_traffic_counters
+G_TRAFFIC_CTRS_EN
 \series default
 \shape default
 =
@@ -23425,7 +23418,7 @@ name "sec:RX-Buffer"
 \end_layout
 
 \begin_layout Description
-File: rx_buffer.vhd
+File: rxb_top.vhd
 \end_layout
 
 \begin_layout Standard
@@ -25022,7 +25015,7 @@ RX buffer Parity
 If enabled at synthesis time by 
 \series bold
 \shape italic
-sup_parity
+G_PARITY_EN
 \series default
 \shape default
  , each RX buffer memory word has additional parity bit.
@@ -25579,7 +25572,7 @@ name "subsec:rx-buffer-RAM"
 If 
 \series bold
 \shape italic
-target_technology
+G_TECHNOLOGY
 \series default
 \shape default
  = 0 (ASIC), clock for RX buffer RAM are gated if RX buffer RAM is not written
@@ -25605,7 +25598,7 @@ name "subsec:Frame-Filters"
 \end_layout
 
 \begin_layout Description
-File: frame_filters.vhd
+File: ff_top.vhd
 \end_layout
 
 \begin_layout Standard
@@ -25631,13 +25624,13 @@ Frame filters implement two types of filters: Bit filter and Range filter.
  Each instance is selectively synthesizable by 
 \series bold
 \shape italic
-sup_filt_A/B/C
+G_FILT_A_EN/B/C
 \series default
 \shape default
  or 
 \series bold
 \shape italic
-sup_range
+G_FILT_RANGE_EN
 \series default
 \shape default
  generics.
@@ -26487,7 +26480,7 @@ name "sec:TXT-Buffer"
 \end_layout
 
 \begin_layout Description
-File: txt_buffer.vhd
+File: txtb_even_top.vhd, txtb_odd_top.vhd
 \end_layout
 
 \begin_layout Standard
@@ -26511,7 +26504,7 @@ Number of TXT buffers in CTU CAN FD is configurable at synthesis time by
  
 \series bold
 \shape italic
-txt_buffer_count
+G_TXT_BUF_COUNT
 \series default
 \shape default
 .
@@ -27454,7 +27447,7 @@ TXT buffer RAM
 \end_layout
 
 \begin_layout Description
-File: txt_buffer_ram.vhd
+File: txtb_ram.vhd
 \end_layout
 
 \begin_layout Standard
@@ -27544,7 +27537,7 @@ TXT buffer Parity
 If enabled at synthesis time by 
 \series bold
 \shape italic
-sup_parity
+G_PARITY_EN
 \series default
 \shape default
  , each memory word of TXT buffer has additional parity bit.
@@ -28824,7 +28817,7 @@ name "sec:TX-Arbitrator"
 \end_layout
 
 \begin_layout Description
-File: tx_arbitrator.vhd
+File: txarb_top.vhd
 \end_layout
 
 \begin_layout Standard
@@ -28837,7 +28830,7 @@ Picks TXT buffer for transmission.
 
 \begin_layout Itemize
 Loads CAN frame metadata and Identifier from TXT buffer, and provides them
- to CAN core for transmission.
+ to Medium Access Control for transmission.
 \end_layout
 
 \begin_layout Itemize
@@ -28857,12 +28850,13 @@ timestamp
 \end_layout
 
 \begin_layout Itemize
-Signals to CAN core that CAN frame was validated, and can be locked for
- transmission.
+Signals to Medium Access Control that CAN frame was validated, and can be
+ locked for transmission.
 \end_layout
 
 \begin_layout Itemize
-Holds index of TXT buffer from which CAN core is actually transmitting.
+Holds index of TXT buffer from which Medium Access Control is actually transmitt
+ing.
 \end_layout
 
 \begin_layout Itemize
@@ -29290,7 +29284,7 @@ Validated
 \begin_layout Plain Layout
 TXT buffer is Validated when it is Available for transmission, its Timestamp
  comparison has been executed and Metadata from TXT buffer RAM (Frame format
- word) has been loaded to capture registers for CAN core.
+ word) has been loaded to capture registers for Medium Access Control.
 \end_layout
 
 \end_inset
@@ -29310,8 +29304,8 @@ Used
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT buffer is Used after CAN core issues Lock command on Validated TXT buffer
- and is transmitting from this TXT buffer.
+TXT buffer is Used after Medium Access Control issues Lock command on Validated
+ TXT buffer and is transmitting from this TXT buffer.
 \end_layout
 
 \end_inset
@@ -29638,7 +29632,7 @@ timestamp
 \begin_layout Plain Layout
 TX arbitrator FSM loads TX frame metadata from TXT buffer 1 RAM (Frame format
  word) to double-buffer registers.
- These are not visible to CAN Core, they hold metadata internally.
+ These are not visible to Medium Access Control, they hold metadata internally.
 \end_layout
 
 \end_inset
@@ -29719,7 +29713,7 @@ validated
 \end_inset
 
  and TXT arbitrator signals that there is a valid TX frame for transmission
- to CAN core.
+ to Medium Access Control.
 \end_layout
 
 \end_inset
@@ -29829,7 +29823,8 @@ Protocol control transmitts frame from TXT buffer 1, and issues Unlock -
 ion, now there is no TXT buffer which is Available.
  Therefore no TXT buffer is Selected, and no TXT buffer validation is in
  progress.
- TX arbitrator signals there is no Validated TXT buffer to CAN Core.
+ TX arbitrator signals there is no Validated TXT buffer to Medium Access
+ Control.
 \end_layout
 
 \end_inset
@@ -30041,8 +30036,8 @@ TXT buffer 1 FSM goes to Ready state and therefore TXT buffer 1 becomes
 TX arbitrator performs validation process (loads timestamp words, executes
  timestamp comparison, loads metadata and identifier) and TXT buffer 1 becomes
  Validated.
- TX arbitrator signals to CAN core that there is validated TXT buffer for
- transmission.
+ TX arbitrator signals to Medium Access Control that there is validated
+ TXT buffer for transmission.
 \end_layout
 
 \end_inset
@@ -30383,8 +30378,8 @@ TXT buffers 1 and 2 become Available, and TXT buffer 2 becomes Selected
 TX arbitrator performs TXT buffer 2 validation process (loads timestamp
  words, executes timestamp comparison, loads metadata and identifier) and
  TXT buffer 2 becomes Validated.
- TX arbitrator signals to CAN core that there is Validated TXT buffer for
- transmission.
+ TX arbitrator signals to Medium Access Control that there is Validated
+ TXT buffer for transmission.
 \end_layout
 
 \end_inset
@@ -30414,8 +30409,8 @@ SW Issues Set abort command to TXT buffer 2.
 
 \begin_layout Plain Layout
 TXT buffer 2 which is now Validated becomes Unavailable.
- TX arbitrator immediately (in the same clock cycle) signals to CAN core
- that no TXT buffer is available for transmission (
+ TX arbitrator immediately (in the same clock cycle) signals to Medium Access
+ Control that no TXT buffer is available for transmission (
 \series bold
 \shape italic
 tran_frame_valid
@@ -30730,7 +30725,7 @@ name "subsec:Priority-decoder"
 \end_layout
 
 \begin_layout Description
-File: priority_decoder.vhd
+File: txarb_priority_decoder.vhd
 \end_layout
 
 \begin_layout Standard
@@ -30814,7 +30809,7 @@ Priority decoder supports up to 8 input TXT buffers.
  If less than 8 TXT buffers are configured (see 
 \series bold
 \shape italic
-txt_buffer_count
+G_TXT_BUF_COUNT
 \series default
 \shape default
 ), unused inputs are tied to zeroes.
@@ -31036,7 +31031,7 @@ TXT buffer 1 FSM moves to Ready state.
 
 \begin_layout Plain Layout
 TX arbitrator performs validatation and TXT buffer 1 becomes Validated,
- TX arbitrator signals this to CAN core.
+ TX arbitrator signals this to Medium Access Control.
 \end_layout
 
 \end_inset
@@ -31065,7 +31060,8 @@ TX arbitrator performs validatation and TXT buffer 1 becomes Validated,
 \begin_inset Text
 
 \begin_layout Plain Layout
-CAN core issues Lock command and starts transmitting from TXT buffer 1.
+Medium Access Control issues Lock command and starts transmitting from TXT
+ buffer 1.
  TXT buffer 1 becomes Used and TXT buffer 1 FSM goes to TX in progress state
 \end_layout
 
@@ -31206,7 +31202,7 @@ Now there are two Available TXT buffers (1 and 2).
 
 \begin_layout Plain Layout
 TX arbitrator performs validation and TXT buffer 2 becomes Validated, TX
- arbitrator signals this to CAN core.
+ arbitrator signals this to Medium Access Control.
  
 \end_layout
 
@@ -31236,8 +31232,8 @@ TX arbitrator performs validation and TXT buffer 2 becomes Validated, TX
 \begin_inset Text
 
 \begin_layout Plain Layout
-CAN core issues Lock command, TXT buffer 2 becomes Used (transmission starts
- by CAN core).
+Medium Access Control issues Lock command, TXT buffer 2 becomes Used (transmissi
+on starts by Medium Access Control).
  At this moment Retransmitt counter is cleared because TXT buffer used for
  current transmission (TXT buffer 2) is different from the one for previous
  transmission (TXT buffer 1).
@@ -31608,7 +31604,7 @@ TXT buffer RAM access
 TXT buffer RAM has clock gating implemented if 
 \series bold
 \shape italic
-target_technology 
+G_TECHNOLOGY 
 \series default
 \shape default
 = 0 (ASIC).
@@ -31681,9 +31677,9 @@ timestamp
 \shape default
 \color inherit
  input passes (desired moment of transmission passes), TXT buffer is admited
- for transmission to CAN core.
- This does not mean that CAN core will transmit the frame immediately! CAN
- core will transmitt such frame in nearest 
+ for transmission to Medium Access Control.
+ This does not mean that Medium Access Control will transmit the frame immediate
+ly! Medium Access Control will transmitt such frame in nearest 
 \color red
 bus idle
 \color inherit
@@ -31874,19 +31870,20 @@ name "subsec:Metadata-double-buffering"
 \begin_layout Standard
 During TXT buffer validation process, TX arbitrator first reads Frame format
  word from TXT buffer RAM and stores it in internal registers which are
- invisible to CAN core.
+ invisible to Medium Access Control.
  In the next step TX arbitrator reads Identifier word from TXT buffer RAM
- and stores it to capture register which is available to CAN core.
+ and stores it to capture register which is available to Medium Access Control.
  At the same time internal registers with metadata are moved to capture
  registers for metadata.
  Therefore, reading of metadata from TXT buffer RAM is double-buffered.
- Both identifier and metadata available for CAN core are changed at once
- (atomically), therefore it will never happend that Identifier in capture
- registers corresponds to different CAN frame than metadata in capture registers.
+ Both identifier and metadata available for Medium Access Control are changed
+ at once (atomically), therefore it will never happend that Identifier in
+ capture registers corresponds to different CAN frame than metadata in capture
+ registers.
  This is necessary as when there is Validated TXT buffer, another TXT buffer
  validation process can be in progress.
- In change was not atomic, CAN core could issue Lock command and transmitt
- e.g.
+ In change was not atomic, Medium Access Control could issue Lock command
+ and transmitt e.g.
  ID from TXT buffer 1 and metadata from TXT buffer 2.
 \end_layout
 
@@ -32017,7 +32014,7 @@ Interrupt Manager
 \end_layout
 
 \begin_layout Description
-File: int_manager.vhd
+File: im_top.vhd
 \end_layout
 
 \begin_layout Standard
@@ -32143,15 +32140,15 @@ name "fig:int-single-datapath"
 \end_layout
 
 \begin_layout Section
-Prescaler
+Bit Timing Logic
 \end_layout
 
 \begin_layout Description
-File: prescaler.vhd
+File: btl_top.vhd
 \end_layout
 
 \begin_layout Standard
-Prescaler implements following functionality:
+Bit Timing Logic implements following functionality:
 \end_layout
 
 \begin_layout Itemize
@@ -32247,7 +32244,7 @@ bit rates
 \end_layout
 
 \begin_layout Standard
-Prescaler block diagram is shown in Figure 
+Bit Timing Logic block diagram is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:prescaler-block-diagram"
@@ -32284,7 +32281,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Prescaler block diagram
+Bit Timing Logic block diagram
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:prescaler-block-diagram"
@@ -32616,7 +32613,7 @@ name "tab:ctu-can-fd-bit-rate-types"
 \end_layout
 
 \begin_layout Standard
-Prescaler contains separate logic for both 
+Bit Timing Logic contains separate logic for both 
 \color red
 bit
 \color inherit
@@ -32780,7 +32777,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit rate prescaler
+Bit rate Bit Timing Logic
 \end_layout
 
 \end_inset
@@ -32802,7 +32799,7 @@ BRP
 \color red
 Time quanta
 \color inherit
- = Bit rate prescaler * System clock period
+ = Bit rate Bit Timing Logic * System clock period
 \end_layout
 
 \end_inset
@@ -33011,7 +33008,7 @@ Bit time counters
 \end_layout
 
 \begin_layout Description
-File: bit_time_counters.vhd
+File: btl_counters.vhd
 \end_layout
 
 \begin_layout Standard
@@ -33059,9 +33056,10 @@ dbt
 \color red
 Time quanta
 \color inherit
- has elapsed when Time quanta counter is equal to Bit rate prescaler (therefore
- dividing the frequency of System clock by Bit rate prescaler).
- When Bit rate prescaler is 1,
+ has elapsed when Time quanta counter is equal to Bit rate Bit Timing Logic
+ (therefore dividing the frequency of System clock by Bit rate Bit Timing
+ Logic).
+ When Bit rate Bit Timing Logic is 1,
 \series bold
 \shape italic
  tq_edge
@@ -33084,7 +33082,7 @@ dbt
 time quanta
 \color inherit
 .
- When Bit rate prescaler is 1, 
+ When Bit rate Bit Timing Logic is 1, 
 \color red
 time quanta
 \color inherit
@@ -33114,7 +33112,7 @@ dbt
 \shape default
 \color inherit
 =1).
- Prescaler distuiguishes two bit segments: TSEG1 (
+ Bit Timing Logic distuiguishes two bit segments: TSEG1 (
 \color red
 Sync_Seg
 \color inherit
@@ -33232,7 +33230,7 @@ Bit segment meter
 \end_layout
 
 \begin_layout Description
-File: bit_segment_meter.vhd
+File: btl_segment_meter.vhd
 \end_layout
 
 \begin_layout Standard
@@ -33939,7 +33937,7 @@ Segment end detector
 \end_layout
 
 \begin_layout Description
-File: segment_end_detector.vhd
+File: btl_segment_end_detector.vhd
 \end_layout
 
 \begin_layout Standard
@@ -34375,15 +34373,15 @@ name "fig:bit-rate-switch"
 \end_layout
 
 \begin_layout Subsection
-Prescaler FSM
+Bit Timing Logic FSM
 \end_layout
 
 \begin_layout Description
-File: bit_time_fsm.vhd
+File: btl_fsm.vhd
 \end_layout
 
 \begin_layout Standard
-Prescaler FSM determines actual bit time segment (TSEG1, TSEG2).
+Bit Timing Logic FSM determines actual bit time segment (TSEG1, TSEG2).
  Its state transition diagram is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -34395,8 +34393,8 @@ noprefix "false"
 \end_inset
 
 .
- Prescaler FSM issues requests to generate TX trigger and RX triggers to
- Trigger generator.
+ Bit Timing Logic FSM issues requests to generate TX trigger and RX triggers
+ to Trigger generator.
  TX trigger is requested upon the end of TSEG2 segment (start of new bit,
  bit value is transmitted).
  RX trigger is requested upon the end of TSEG1 segment (
@@ -34428,7 +34426,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Prescaler FSM
+Bit Timing Logic FSM
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:fsm-prescaler"
@@ -34460,7 +34458,7 @@ name "subsec:Trigger-generator"
 \end_layout
 
 \begin_layout Description
-File: trigger_generator.vhd
+File: btl_trigger_generator.vhd
 \end_layout
 
 \begin_layout Standard
@@ -34968,7 +34966,7 @@ Synchronisation checker
 \end_layout
 
 \begin_layout Description
-File: synchronisation_checker.vhd
+File: btl_synchronisation_checker.vhd
 \end_layout
 
 \begin_layout Standard
@@ -34976,7 +34974,7 @@ Synchronisation checker determines if
 \color red
 synchronisation
 \color inherit
- edge (detected by Bus sampling, see 
+ edge (detected by Bus Management, see 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Bus-sampling"
@@ -35117,7 +35115,7 @@ name "fig:prescaler-sync-edge-validation."
 \end_layout
 
 \begin_layout Section
-Bus sampling
+Bus Management
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:Bus-sampling"
@@ -35128,11 +35126,11 @@ name "sec:Bus-sampling"
 \end_layout
 
 \begin_layout Description
-File: bus_sampling.vhd
+File: bm_top.vhd
 \end_layout
 
 \begin_layout Standard
-Bus sampling module implements following functionality:
+Bus Management module implements following functionality:
 \end_layout
 
 \begin_layout Itemize
@@ -35197,7 +35195,7 @@ bit error
 \end_layout
 
 \begin_layout Standard
-Block diagram of Bus sampling is shown in Figure 
+Block diagram of Bus Management is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:bus-sampling"
@@ -35234,7 +35232,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Bus sampling block diagram
+Bus Management block diagram
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:bus-sampling"
@@ -35255,7 +35253,8 @@ name "fig:bus-sampling"
 \end_layout
 
 \begin_layout Standard
-Bus sampling implements 2 DFF synchronizer to synchronize asynchronous 
+Bus Management implements 2 DFF synchronizer to synchronize asynchronous
+ 
 \series bold
 can_rx
 \series default
@@ -35273,7 +35272,7 @@ sample point
 \end_layout
 
 \begin_layout Standard
-Bus sampling detects edges on 
+Bus Management detects edges on 
 \series bold
 can_rx
 \series default
@@ -35297,7 +35296,7 @@ can_rx
 \color red
 time quanta 
 \color black
-(Edges are gated by Time quanta edge provided by Prescaler).
+(Edges are gated by Time quanta edge provided by Bit Timing Logic).
  
 \color inherit
 Only 
@@ -35335,7 +35334,7 @@ can_rx
 \color red
 synchronization
 \color inherit
- edge to Prescaler.
+ edge to Bit Timing Logic.
  Edge on 
 \series bold
 can_tx
@@ -35415,7 +35414,7 @@ Transmitter delay measurement
 \end_layout
 
 \begin_layout Description
-File: trv_delay_meas.vhd
+File: bm_trv_delay_meas.vhd
 \end_layout
 
 \begin_layout Standard
@@ -35656,7 +35655,7 @@ An edge on
 \series bold
 can_tx
 \series default
- is detected by Bus sampling.
+ is detected by Bus Management.
  Transmitter delay counter is erased.
 \end_layout
 
@@ -35755,7 +35754,7 @@ transmitter delay
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bus sampling detects edge on 
+Bus Management detects edge on 
 \series bold
 can_rx
 \series default
@@ -36048,7 +36047,7 @@ No SSP
 \color red
 Bit rate
 \color inherit
- within Prescaler is never changed to 
+ within Bit Timing Logic is never changed to 
 \begin_inset Quotes eld
 \end_inset
 
@@ -36116,7 +36115,7 @@ Secondary sampling point generator
 \end_layout
 
 \begin_layout Description
-File: ssp_generator.vhd
+File: bm_ssp_generator.vhd
 \end_layout
 
 \begin_layout Standard
@@ -36556,7 +36555,7 @@ Bit error detection
 \end_layout
 
 \begin_layout Description
-File: bit_err_detector.vhd
+File: bm_bit_err_detector.vhd
 \end_layout
 
 \begin_layout Standard
@@ -36595,7 +36594,7 @@ noprefix "false"
 \color red
 bit error
 \color inherit
- is detected by Bus sampling always when CTU CAN FD is enabled (SETTINGS[ENA]
+ is detected by Bus Management always when CTU CAN FD is enabled (SETTINGS[ENA]
  = 1).
  
 \color red
@@ -36925,7 +36924,7 @@ TX data cache
 \end_layout
 
 \begin_layout Description
-File: tx_data_cache.vhd
+File: bm_tx_data_cache.vhd
 \end_layout
 
 \begin_layout Standard
@@ -37036,7 +37035,7 @@ Memory registers
 \end_layout
 
 \begin_layout Description
-File: memory_registers.vhd
+File: mr_top.vhd
 \end_layout
 
 \begin_layout Standard

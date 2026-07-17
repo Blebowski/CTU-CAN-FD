@@ -92,7 +92,7 @@ entity memory_reg_os is
         -- Clock and reset
         ------------------------------------------------------------------------
         signal clk_sys                :in   std_logic;
-        signal res_n                  :in   std_logic;
+        signal rst_n                  :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Address bus
@@ -142,13 +142,13 @@ begin
     ----------------------------------------------------------------------------
     -- Register instance
     ----------------------------------------------------------------------------
-    bit_gen : for i in 0 to data_width - 1 generate
+    g_bit : for i in 0 to data_width - 1 generate
 
         reg_value_r(i) <= data_in(i) when (wr_en = '1')
                                         else
                             reset_value_i(i);
 
-    end generate bit_gen;
+    end generate g_bit;
 
     ----------------------------------------------------------------------------
     -- Register to output propagation

@@ -92,8 +92,8 @@ entity ctu_can_fd_vip is
         func_cov_en             : boolean;
 
         -- DUT configuration
-        rx_buffer_size          : natural;
-        txt_buffer_count        : natural range 2 to 8 := 8;
+        G_RX_BUF_SIZE          : natural;
+        G_TXT_BUF_COUNT        : natural range 2 to 8 := 8;
 
         -- DUT Clock period
         cfg_sys_clk_period      : string;
@@ -208,7 +208,7 @@ begin
     ---------------------------------------------------------------------------
     -- Reset agent - Asserts reset
     ---------------------------------------------------------------------------
-    reset_agent_inst : reset_agent
+    i_reset_agent : reset_agent
     port map (
         reset   => res_n_i
     );
@@ -216,7 +216,7 @@ begin
     ---------------------------------------------------------------------------
     -- Clock agent - Generates clock
     ---------------------------------------------------------------------------
-    clk_gen_agent_inst : clk_gen_agent
+    i_clk_gen_agent : clk_gen_agent
     port map(
         clock_out  => clk_sys_clock_agent,
         clock_in   => clk_sys_i
@@ -225,7 +225,7 @@ begin
     ---------------------------------------------------------------------------
     -- Memory bus agent - Executes memory accesses
     ---------------------------------------------------------------------------
-    mem_bus_agent_inst : mem_bus_agent
+    i_mem_bus_agent : mem_bus_agent
     generic map(
         G_ACCESS_FIFO_DEPTH => 32,
         G_NUM_SLAVES => 2
@@ -244,7 +244,7 @@ begin
     ---------------------------------------------------------------------------
     -- Interrupt agent - Checks interrupt pin
     ---------------------------------------------------------------------------
-    interrupt_agent_inst : interrupt_agent
+    i_interrupt_agent : interrupt_agent
     port map(
         int   => int
     );
@@ -252,7 +252,7 @@ begin
     ---------------------------------------------------------------------------
     -- Timestamp agent - generates timestamp for DUT
     ---------------------------------------------------------------------------
-    timestamp_agent_inst : timestamp_agent
+    i_timestamp_agent : timestamp_agent
     port map(
         clk_sys         => clk_sys_i,
         timestamp       => timestamp
@@ -261,7 +261,7 @@ begin
     ---------------------------------------------------------------------------
     -- Test probe agent - allows peeking signals brought to test-probe.
     ---------------------------------------------------------------------------
-    test_probe_agent_inst : test_probe_agent
+    i_test_probe_agent : test_probe_agent
     port map(
         dut_test_probe       => test_probe,
         test_node_test_probe => test_node_test_probe,
@@ -273,7 +273,7 @@ begin
     ---------------------------------------------------------------------------
     -- Test controller agent - controls simulation
     ---------------------------------------------------------------------------
-    test_controller_agent_inst : test_controller_agent
+    i_test_controller_agent : test_controller_agent
     generic map(
         test_name               => test_name,
         test_type               => test_type,
@@ -326,8 +326,8 @@ begin
     --
     -- Used by compliance tests and reference tests.
     ---------------------------------------------------------------------------
-    can_agent_gen : if (test_type = "compliance" or test_type = "reference") generate
-        compliance_agent_inst : can_agent
+    g_can_agent : if (test_type = "compliance" or test_type = "reference") generate
+        i_compliance_agent : can_agent
         generic map(
             G_DRIVER_FIFO_DEPTH     => 2048,
             G_MONITOR_FIFO_DEPTH    => 2048
@@ -341,8 +341,8 @@ begin
     ---------------------------------------------------------------------------
     -- Feature test agent. Used only by feature tests.
     ---------------------------------------------------------------------------
-    feature_test_agent_gen : if (test_type = "feature") generate
-        feature_test_agent_inst : feature_test_agent
+    g_feature_test_agent : if (test_type = "feature") generate
+        i_feature_test_agent : feature_test_agent
         generic map(
             -- Test details
             test_name           => test_name,
@@ -389,7 +389,7 @@ begin
     ---------------------------------------------------------------------------
     -- Reference test agent
     ---------------------------------------------------------------------------
-    reference_test_agent_inst : reference_test_agent
+    i_reference_test_agent : reference_test_agent
     generic map(
         test_name            => test_name,
         test_type            => test_type,
@@ -401,10 +401,10 @@ begin
     ---------------------------------------------------------------------------
     g_func_cov : if (func_cov_en) generate
 
-        func_cov_agent_inst : func_cov_agent
+        i_func_cov_agent : func_cov_agent
         generic map (
-            G_RX_BUFF_SIZE      => rx_buffer_size,
-            G_TXT_BUFFER_COUNT  => txt_buffer_count
+            G_RX_BUFF_SIZE      => G_RX_BUF_SIZE,
+            G_TXT_BUFFER_COUNT  => G_TXT_BUF_COUNT
         )
         port map (
             clk                 => clk_sys_i
@@ -435,7 +435,7 @@ begin
     ---------------------------------------------------------------------------
     scs <= scs_i(0);
 
-    scs_reg_proc : process(ALL)
+    p_scs_reg : process(ALL)
     begin
         if (rising_edge(clk_sys_i)) then
             scs_i_reg <= scs_i;
@@ -449,7 +449,7 @@ begin
     ---------------------------------------------------------------------------
     -- Write test name from generic to PLI interface signal
     ---------------------------------------------------------------------------
-    test_proc : process
+    p_test : process
     begin
         pli_str_to_logic_vector(test_name, pli_test_name_array);
         wait;
@@ -465,19 +465,19 @@ begin
         if (tb_force.something_to_force) then
 
             if (tb_force.is_forced_tx_counter) then
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.tx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= force tb_force.get_tx_counter_force_val;
+                <<signal .tb_top_ctu_can_fd.i_dut.i_mac_top.g_bus_traffic_ctrs.i_mac_bus_traffic_counters.tx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= force tb_force.get_tx_counter_force_val;
             end if;
 
             if (tb_force.is_forced_rx_counter) then
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.rx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= force tb_force.get_rx_counter_force_val;
+                <<signal .tb_top_ctu_can_fd.i_dut.i_mac_top.g_bus_traffic_ctrs.i_mac_bus_traffic_counters.rx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= force tb_force.get_rx_counter_force_val;
             end if;
 
             if (tb_force.is_forced_err_norm) then
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.nom_err_ctr_q   : unsigned(15 downto 0) >> <= force unsigned(tb_force.get_err_norm_force_val);
+                <<signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_err_counters.nom_err_ctr_q   : unsigned(15 downto 0) >> <= force unsigned(tb_force.get_err_norm_force_val);
             end if;
 
             if (tb_force.is_forced_err_fd) then
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.data_err_ctr_q  : unsigned(15 downto 0) >> <= force unsigned(tb_force.get_err_fd_force_val);
+                <<signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_err_counters.data_err_ctr_q  : unsigned(15 downto 0) >> <= force unsigned(tb_force.get_err_fd_force_val);
             end if;
 
         end if;
@@ -485,19 +485,19 @@ begin
         if (tb_force.something_to_release) then
 
             if (tb_force.is_released_tx_counter) then
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.tx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= release;
+                <<signal .tb_top_ctu_can_fd.i_dut.i_mac_top.g_bus_traffic_ctrs.i_mac_bus_traffic_counters.tx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= release;
             end if;
 
             if (tb_force.is_released_rx_counter) then
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.BUS_TRAFFIC_CTRS_GEN.BUS_TRAFFIC_COUNTERS_INST.rx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= release;
+                <<signal .tb_top_ctu_can_fd.i_dut.i_mac_top.g_bus_traffic_ctrs.i_mac_bus_traffic_counters.rx_frame_ctr_i  : std_logic_vector(31 downto 0) >> <= release;
             end if;
 
             if (tb_force.is_released_err_norm) then
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.nom_err_ctr_q   : unsigned(15 downto 0) >> <= release;
+                <<signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_err_counters.nom_err_ctr_q   : unsigned(15 downto 0) >> <= release;
             end if;
 
             if (tb_force.is_released_err_fd) then
-                <<signal .TB_TOP_CTU_CAN_FD.DUT.CAN_CORE_INST.FAULT_CONFINEMENT_INST.ERR_COUNTERS_INST.data_err_ctr_q  : unsigned(15 downto 0) >> <= release;
+                <<signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_err_counters.data_err_ctr_q  : unsigned(15 downto 0) >> <= release;
             end if;
 
         end if;
@@ -506,7 +506,7 @@ begin
     ---------------------------------------------------------------------------
     -- Propagate finish config
     ---------------------------------------------------------------------------
-    finish_on_error_proc : process
+    p_finish_on_error : process
     begin
         if (finish_on_error > 0) then
             finish_on_error_i.set(true);

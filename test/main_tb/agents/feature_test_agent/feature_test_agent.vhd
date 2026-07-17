@@ -178,25 +178,27 @@ begin
     ---------------------------------------------------------------------------
     -- Test node
     ---------------------------------------------------------------------------
-    test_node_inst : entity ctu_can_fd_rtl.can_top_level
+    i_test_node : entity ctu_can_fd_rtl.ctu_can_fd_top
     generic map(
         -- Keep config hard-coded, it is enough that DUT is configurable!
-        rx_buffer_size      => 256, -- Size to receive 8 frames is needed
-        txt_buffer_count    => 4,
-        sup_filtA           => false,
-        sup_filtB           => false,
-        sup_filtC           => false,
-        sup_range           => false,
-        sup_traffic_ctrs    => true,
-        target_technology   => C_TECH_ASIC
+        -- Everything is tested at the "DUT" instance!
+        G_RX_BUF_SIZE        => 256,
+        G_TXT_BUF_COUNT      => 4,
+        G_FILT_A_EN          => false,
+        G_FILT_B_EN          => false,
+        G_FILT_C_EN          => false,
+        G_FILT_RANGE_EN      => false,
+        G_TRAFFIC_CTRS_EN    => true,
+        G_PARITY_EN          => false,
+        G_TECHNOLOGY         => C_TECH_ASIC
     )
     port map(
         -- Clock and Asynchronous reset
         clk_sys     => clk_sys,
-        res_n       => res_n,
+        rst_n       => res_n,
 
         -- DFT support
-        scan_enable => test_node_scan_enable,
+        scan_mode   => test_node_scan_enable,
 
         -- Memory interface
         data_in     => write_data,
@@ -222,7 +224,7 @@ begin
     ---------------------------------------------------------------------------
     -- Comunication receiver process
     ---------------------------------------------------------------------------
-    receiver_proc : process
+    p_receiver : process
         variable cmd : integer;
         variable reply_code : integer;
         variable tmp : integer;
@@ -364,7 +366,7 @@ begin
     -- Waits on start request from Test controller agent and runs a test.
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    test_process : process
+    p_test : process
         variable bus_timing     :    t_ctu_bit_time_cfg :=(
             tq_nbt      => cfg_brp,
             tq_dbt      => cfg_brp_fd,

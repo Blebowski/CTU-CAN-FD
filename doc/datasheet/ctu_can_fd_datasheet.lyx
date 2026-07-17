@@ -486,7 +486,7 @@ filename "version.tex"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="40" columns="3">
+<lyxtabular version="3" rows="41" columns="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -1382,13 +1382,13 @@ backup
  Add 
 \series bold
 \shape italic
-reset_buffer_rams
+G_RESET_BUF_RAMS
 \series default
 \shape default
  and 
 \series bold
 \shape italic
-active_timestamp_bits
+G_ACTIVE_TS_BITS
 \series default
 \shape default
  configuration parameters.
@@ -1668,7 +1668,7 @@ Move to new relase of CTU CAN FD.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1677,7 +1677,7 @@ Move to new relase of CTU CAN FD.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1686,11 +1686,43 @@ Move to new relase of CTU CAN FD.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Update link to point to GIhtub
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+15-7-2026
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Name of top-level generics changed.
+ Register map fields that are conditionally present therefore changed.
+ Visual style of figures unified.
+ Fix Operating modes figure to only require TEC > 255 to transition to bus-off.
 \end_layout
 
 \end_inset
@@ -1966,7 +1998,7 @@ status open
 \begin_inset Graphics
 	filename img/BD_datasheet.pdf
 	lyxscale 20
-	scale 65
+	scale 70
 
 \end_inset
 
@@ -2396,9 +2428,9 @@ status open
 \begin_inset Tabular
 <lyxtabular version="3" rows="12" columns="3">
 <features tabularvalignment="middle">
-<column alignment="left" valignment="top" width="3.1cm">
-<column alignment="left" valignment="top" width="2.4cm">
-<column alignment="left" valignment="top" width="10.5cm">
+<column alignment="left" valignment="top" width="4.2cm">
+<column alignment="left" valignment="top" width="1.8cm">
+<column alignment="left" valignment="top" width="10cm">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -2475,7 +2507,7 @@ cellcolor{gray}
 
 \series bold
 \shape italic
-rx_buffer_size
+G_RX_BUF_SIZE
 \end_layout
 
 \end_inset
@@ -2508,7 +2540,7 @@ Size of RX buffer (number of 32bit words it can store).
 
 \series bold
 \shape italic
-sup_filt_A
+G_FILT_A_EN
 \end_layout
 
 \end_inset
@@ -2541,7 +2573,7 @@ Filter A is / is not present.
 
 \series bold
 \shape italic
-sup_filt_B
+G_FILT_B_EN
 \end_layout
 
 \end_inset
@@ -2574,7 +2606,7 @@ Filter B is / is not present.
 
 \series bold
 \shape italic
-sup_filt_C
+G_FILT_C_EN
 \end_layout
 
 \end_inset
@@ -2607,7 +2639,7 @@ Filter C is / is not present.
 
 \series bold
 \shape italic
-sup_range
+G_FILT_RANGE_EN
 \end_layout
 
 \end_inset
@@ -2640,7 +2672,7 @@ Range fitler is / is not present.
 
 \series bold
 \shape italic
-sup_traffic_ctrs
+G_TRAFFIC_CTRS_EN
 \end_layout
 
 \end_inset
@@ -2673,7 +2705,7 @@ Traffic counters are / are not present.
 
 \series bold
 \shape italic
-txt_buffer_count
+G_TXT_BUF_COUNT
 \end_layout
 
 \end_inset
@@ -2687,7 +2719,7 @@ txt_buffer_count
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2706,7 +2738,7 @@ Number of TXT buffers available.
 
 \series bold
 \shape italic
-sup_test_registers
+G_TEST_REGS_EN
 \end_layout
 
 \end_inset
@@ -2720,7 +2752,7 @@ true/false
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2740,7 +2772,7 @@ Test registers for memory testability (Test Registers memory region) are
 
 \series bold
 \shape italic
-sup_parity
+G_PARITY_EN
 \end_layout
 
 \end_inset
@@ -2754,7 +2786,7 @@ true/false
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2766,19 +2798,19 @@ Add parity bits to each word of TXT Buffer and RX buffer RAMs.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \series bold
 \shape italic
-reset_buffer_rams
+G_RESET_BUF_RAMS
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2787,7 +2819,7 @@ true/false
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2799,19 +2831,19 @@ When true, TXT Buffer and RX buffer RAMs are resettable by HW reset.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
 \series bold
 \shape italic
-active_timestamp_bits
+G_ACTIVE_TS_BITS
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2820,7 +2852,7 @@ integer
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3386,7 +3418,7 @@ status open
 \begin_inset Graphics
 	filename img/Bit_time.pdf
 	lyxscale 20
-	scale 75
+	scale 85
 
 \end_inset
 
@@ -3532,7 +3564,8 @@ noprefix "false"
  of CTU CAN FD.
  CTU CAN FD measures its own transmitter delay when it transmitts CAN FD
  frame (regardles of the fact if bit rate is switched in the frame) on recessive
- to dominant edge between FDF (EDL), and r0 bits as is shown in Figure 
+ to dominant edge between FDF (EDL), and res bits as is shown in Figure
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:transmitter-delay-measurement"
@@ -4565,6 +4598,7 @@ Ready
  SW configures priority of TXT buffers in TX_PRIORITY register.
  If two TXT buffers have equal priority, TXT buffer with lower index has
  precedence.
+ The priority of TXT Buffers can be changed when SETTINGS[ENA]=1.
  The overall flow of transmission is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -5551,7 +5585,7 @@ status open
 \begin_inset Graphics
 	filename img/RX_Buffer_layout.pdf
 	lyxscale 20
-	scale 60
+	scale 70
 
 \end_inset
 
@@ -5891,7 +5925,7 @@ status open
 \begin_inset Graphics
 	filename img/Frame_filters_flow.pdf
 	lyxscale 20
-	scale 70
+	scale 75
 
 \end_inset
 
@@ -7338,7 +7372,7 @@ status open
 \begin_inset Graphics
 	filename img/TXT_Buffer_Backup_mode.pdf
 	lyxscale 20
-	scale 70
+	scale 75
 
 \end_inset
 
@@ -7663,6 +7697,11 @@ noprefix "false"
 
 \begin_layout Description
 Note The frame filtering applies also on loopback frames.
+\end_layout
+
+\begin_layout Description
+Note When loopback frame is received, the INT_STAT[RXI] interrupt is not
+ set.
 \end_layout
 
 \begin_layout Standard

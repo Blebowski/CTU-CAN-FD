@@ -600,7 +600,7 @@ begin
     ----------------------------------------------------------------------------
     -- Buffer component
     ----------------------------------------------------------------------------
-    rx_buffer_inst : entity ctu_can_fd_rtl.rx_buffer
+    i_rxb_top : entity ctu_can_fd_rtl.rxb_top
     generic map(
         G_RX_BUFF_SIZE              => C_RX_BUFF_SIZE,
         G_RX_BUFF_PTR_WIDTH         => C_RX_BUFF_PTR_WIDTH,
@@ -672,7 +672,7 @@ begin
     ----------------------------------------------------------------------------
     -- Clock and timestamp generation
     ----------------------------------------------------------------------------
-    clock_gen_proc : process
+    p_clock_gen : process
     begin
         clk_sys       <= '1';
         wait for 5 ns;
@@ -680,7 +680,7 @@ begin
         wait for 5 ns;
     end process;
 
-    timestamp_gen_proc : process
+    p_timestamp_gen : process
         variable ts_lo    : natural := 0;
         variable tmp      : natural := 0;
         variable ts_hi    : natural := 0;
@@ -713,7 +713,7 @@ begin
     ----------------------------------------------------------------------------
     -- Stimuli generator - Main test process
     ----------------------------------------------------------------------------
-    stim_gen : process
+    p_stim_gen : process
         -- Size of generated frame in 32 bit words
         variable gen_size     : natural := 0;
         variable enough_space : boolean := true;
@@ -783,7 +783,7 @@ begin
     ----------------------------------------------------------------------------
     -- Data reader
     ----------------------------------------------------------------------------
-    data_reader : process
+    p_data_reader : process
         variable sanity_check   : boolean  :=  true;
         variable sanity_counter : natural  :=  0;
     begin
@@ -823,7 +823,7 @@ begin
     ----------------------------------------------------------------------------
     -- Data consistency checker
     ----------------------------------------------------------------------------
-    cons_check : process
+    p_cons_check : process
         variable cons_res : boolean  := false;
         variable clk_time : time     := 10 ns;
     begin

@@ -93,57 +93,57 @@ end entity;
 architecture tb of func_cov_bus_sampling is
 
     -----------------------------------------------------------------------------------------------
-    -- Aliases to "bus_sampling" top
+    -- Aliases to "bm_top" top
     -----------------------------------------------------------------------------------------------
 
     alias bit_err_ssp_valid is
-        << signal .tb_top_ctu_can_fd.dut.bus_sampling_inst.bit_err_detector_inst.bit_err_ssp_valid : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_bm_top.i_bm_bit_err_detector.bit_err_ssp_valid : std_logic >>;
 
     alias bit_err_norm_valid is
-        << signal .tb_top_ctu_can_fd.dut.bus_sampling_inst.bit_err_detector_inst.bit_err_norm_valid : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_bm_top.i_bm_bit_err_detector.bit_err_norm_valid : std_logic >>;
 
     alias bit_err_ssp_capt_q is
-        << signal .tb_top_ctu_can_fd.dut.bus_sampling_inst.bit_err_detector_inst.bit_err_ssp_capt_q : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_bm_top.i_bm_bit_err_detector.bit_err_ssp_capt_q : std_logic >>;
 
     alias bit_err_ssp_condition is
-        << signal .tb_top_ctu_can_fd.dut.bus_sampling_inst.bit_err_detector_inst.bit_err_ssp_condition : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_bm_top.i_bm_bit_err_detector.bit_err_ssp_condition : std_logic >>;
 
     alias tq_edge is
-        << signal .tb_top_ctu_can_fd.dut.bus_sampling_inst.tq_edge : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_bm_top.tq_edge : std_logic >>;
 
     -----------------------------------------------------------------------------------------------
-    -- Aliases to "data_edge_detector" top
+    -- Aliases to "bm_data_edge_detector" top
     -----------------------------------------------------------------------------------------------
 
     alias rx_data_sync_prev is
-        << signal .tb_top_ctu_can_fd.dut.bus_sampling_inst.data_edge_detector_inst.rx_data_sync_prev : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_bm_top.i_bm_data_edge_detector.rx_data_sync_prev : std_logic >>;
 
     alias rx_data is
-        << signal .tb_top_ctu_can_fd.dut.bus_sampling_inst.data_edge_detector_inst.rx_data : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_bm_top.i_bm_data_edge_detector.rx_data : std_logic >>;
 
     alias prev_rx_sample is
-        << signal .tb_top_ctu_can_fd.dut.bus_sampling_inst.data_edge_detector_inst.prev_rx_sample : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_bm_top.i_bm_data_edge_detector.prev_rx_sample : std_logic >>;
 
     -----------------------------------------------------------------------------------------------
-    -- Aliases to "trv_delay_meas" top
+    -- Aliases to "bm_trv_delay_meas" top
     -----------------------------------------------------------------------------------------------
     alias mr_ssp_cfg_ssp_src is
-        << signal .tb_top_ctu_can_fd.dut.bus_sampling_inst.trv_delay_measurement_inst.mr_ssp_cfg_ssp_src : std_logic_vector(1 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_bm_top.i_bm_trv_delay_meas.mr_ssp_cfg_ssp_src : std_logic_vector(1 downto 0) >>;
 
     alias tran_delay_meas is
-        << signal .tb_top_ctu_can_fd.dut.bus_sampling_inst.trv_delay_measurement_inst.tran_delay_meas : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_bm_top.i_bm_trv_delay_meas.tran_delay_meas : std_logic >>;
 
     alias ssp_delay is
-        << signal .tb_top_ctu_can_fd.dut.bus_sampling_inst.trv_delay_measurement_inst.ssp_delay : std_logic_vector(C_SSP_POS_WIDTH-1 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_bm_top.i_bm_trv_delay_meas.ssp_delay : std_logic_vector(C_SSP_POS_WIDTH-1 downto 0) >>;
 
     -----------------------------------------------------------------------------------------------
-    -- Aliases to "tx_data_cache" top
+    -- Aliases to "bm_tx_data_cache" top
     -----------------------------------------------------------------------------------------------
     alias write_pointer_q is
-        << signal .tb_top_ctu_can_fd.dut.bus_sampling_inst.tx_data_cache_inst.write_pointer_q : unsigned(3 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_bm_top.i_bm_tx_data_cache.write_pointer_q : unsigned(3 downto 0) >>;
 
     alias read_pointer_q is
-        << signal .tb_top_ctu_can_fd.dut.bus_sampling_inst.tx_data_cache_inst.read_pointer_q : unsigned(3 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_bm_top.i_bm_tx_data_cache.read_pointer_q : unsigned(3 downto 0) >>;
 
 begin
 
@@ -195,25 +195,25 @@ begin
     -- TX Data cache
     -----------------------------------------------------------------------------------------------
 
-    -- psl tx_data_cache_one_bit_on_fly_cov : cover
+    -- psl bm_tx_data_cache_one_bit_on_fly_cov : cover
     --  {write_pointer_q = read_pointer_q + 1};
 
-    -- psl tx_data_cache_two_bits_on_fly_cov : cover
+    -- psl bm_tx_data_cache_two_bits_on_fly_cov : cover
     --  {write_pointer_q = read_pointer_q + 2};
 
-    -- psl tx_data_cache_three_bits_on_fly_cov : cover
+    -- psl bm_tx_data_cache_three_bits_on_fly_cov : cover
     --  {write_pointer_q = read_pointer_q + 3};
 
-    -- psl tx_data_cache_four_bits_on_fly_cov : cover
+    -- psl bm_tx_data_cache_four_bits_on_fly_cov : cover
     --  {write_pointer_q = read_pointer_q + 4};
 
-    -- psl tx_data_cache_five_bits_on_fly_cov : cover
+    -- psl bm_tx_data_cache_five_bits_on_fly_cov : cover
     --  {write_pointer_q = read_pointer_q + 5};
 
-    -- psl tx_data_cache_six_bits_on_fly_cov : cover
+    -- psl bm_tx_data_cache_six_bits_on_fly_cov : cover
     --  {write_pointer_q = read_pointer_q + 6};
 
-    -- psl tx_data_cache_seven_bits_on_fly_cov : cover
+    -- psl bm_tx_data_cache_seven_bits_on_fly_cov : cover
     --  {write_pointer_q = read_pointer_q + 7};
 
 end architecture;

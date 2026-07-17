@@ -23,57 +23,57 @@ source_list:
     - file: common_blocks/rst_sync.vhd
     - file: common_blocks/shift_reg.vhd
 
-    - file: interrupt_manager/int_module.vhd
-    - file: interrupt_manager/int_manager.vhd
+    - file: interrupt_manager/im_channel.vhd
+    - file: interrupt_manager/im_top.vhd
 
     - file: interface/ahb_ifc.vhd
     - file: interface/apb_ifc.vhd
 
-    - file: frame_filters/bit_filter.vhd
-    - file: frame_filters/range_filter.vhd
-    - file: frame_filters/frame_filters.vhd
+    - file: frame_filters/ff_bit_filter.vhd
+    - file: frame_filters/ff_range_filter.vhd
+    - file: frame_filters/ff_top.vhd
 
-    - file: bus_sampling/data_edge_detector.vhd
-    - file: bus_sampling/ssp_generator.vhd
-    - file: bus_sampling/trv_delay_meas.vhd
-    - file: bus_sampling/bit_err_detector.vhd
-    - file: bus_sampling/tx_data_cache.vhd
-    - file: bus_sampling/sample_mux.vhd
-    - file: bus_sampling/bus_sampling.vhd
+    - file: bus_management/bm_data_edge_detector.vhd
+    - file: bus_management/bm_ssp_generator.vhd
+    - file: bus_management/bm_trv_delay_meas.vhd
+    - file: bus_management/bm_bit_err_detector.vhd
+    - file: bus_management/bm_tx_data_cache.vhd
+    - file: bus_management/bm_sample_mux.vhd
+    - file: bus_management/bm_top.vhd
 
-    - file: prescaler/bit_time_fsm.vhd
-    - file: prescaler/segment_end_detector.vhd
-    - file: prescaler/trigger_generator.vhd
-    - file: prescaler/bit_segment_meter.vhd
-    - file: prescaler/synchronisation_checker.vhd
-    - file: prescaler/bit_time_cfg_capture.vhd
-    - file: prescaler/bit_time_counters.vhd
-    - file: prescaler/prescaler.vhd
+    - file: bit_timing_logic/btl_fsm.vhd
+    - file: bit_timing_logic/btl_segment_end_detector.vhd
+    - file: bit_timing_logic/btl_trigger_generator.vhd
+    - file: bit_timing_logic/btl_segment_meter.vhd
+    - file: bit_timing_logic/btl_synchronisation_checker.vhd
+    - file: bit_timing_logic/btl_cfg_capture.vhd
+    - file: bit_timing_logic/btl_counters.vhd
+    - file: bit_timing_logic/btl_top.vhd
 
-    - file: can_core/bus_traffic_counters.vhd
-    - file: can_core/crc_calc.vhd
-    - file: can_core/can_crc.vhd
-    - file: can_core/err_counters.vhd
-    - file: can_core/fault_confinement_rules.vhd
-    - file: can_core/fault_confinement_fsm.vhd
-    - file: can_core/fault_confinement.vhd
-    - file: can_core/operation_control.vhd
-    - file: can_core/bit_destuffing.vhd
-    - file: can_core/bit_stuffing.vhd
-    - file: can_core/rx_shift_reg.vhd
-    - file: can_core/err_detector.vhd
-    - file: can_core/reintegration_counter.vhd
-    - file: can_core/tx_shift_reg.vhd
-    - file: can_core/retransmitt_counter.vhd
-    - file: can_core/control_counter.vhd
-    - file: can_core/trigger_mux.vhd
-    - file: can_core/protocol_control_fsm.vhd
-    - file: can_core/protocol_control.vhd
-    - file: can_core/can_core.vhd
+    - file: medium_access_control/mac_bus_traffic_counters.vhd
+    - file: medium_access_control/mac_crc_calc.vhd
+    - file: medium_access_control/mac_crc_top.vhd
+    - file: medium_access_control/mac_fc_err_counters.vhd
+    - file: medium_access_control/mac_fc_rules.vhd
+    - file: medium_access_control/mac_fc_fsm.vhd
+    - file: medium_access_control/mac_fc_top.vhd
+    - file: medium_access_control/mac_operation_control.vhd
+    - file: medium_access_control/mac_bit_destuffing.vhd
+    - file: medium_access_control/mac_bit_stuffing.vhd
+    - file: medium_access_control/mac_pc_rx_shift_reg.vhd
+    - file: medium_access_control/mac_pc_err_detector.vhd
+    - file: medium_access_control/mac_pc_reintegration_counter.vhd
+    - file: medium_access_control/mac_pc_tx_shift_reg.vhd
+    - file: medium_access_control/mac_pc_retransmitt_counter.vhd
+    - file: medium_access_control/mac_pc_control_counter.vhd
+    - file: medium_access_control/mac_trigger_mux.vhd
+    - file: medium_access_control/mac_pc_fsm.vhd
+    - file: medium_access_control/mac_pc_top.vhd
+    - file: medium_access_control/mac_top.vhd
 
-    - file: tx_arbitrator/tx_arbitrator_fsm.vhd
-    - file: tx_arbitrator/priority_decoder.vhd
-    - file: tx_arbitrator/tx_arbitrator.vhd
+    - file: tx_arbitrator/txarb_fsm.vhd
+    - file: tx_arbitrator/txarb_priority_decoder.vhd
+    - file: tx_arbitrator/txarb_top.vhd
 
     - file: memory_registers/generated/memory_bus.vhd
     - file: memory_registers/generated/address_decoder.vhd
@@ -86,21 +86,19 @@ source_list:
     - file: memory_registers/generated/cmn_reg_map_pkg.vhd
     - file: memory_registers/generated/control_registers_reg_map.vhd
     - file: memory_registers/generated/test_registers_reg_map.vhd
-    - file: memory_registers/memory_registers.vhd
+    - file: memory_registers/mr_top.vhd
 
-    - file: rx_buffer/rx_buffer_pointers.vhd
-    - file: rx_buffer/rx_buffer_fsm.vhd
-    - file: rx_buffer/rx_buffer_ram.vhd
-    - file: rx_buffer/rx_buffer.vhd
+    - file: rx_buffer/rxb_pointers.vhd
+    - file: rx_buffer/rxb_fsm.vhd
+    - file: rx_buffer/rxb_ram.vhd
+    - file: rx_buffer/rxb_top.vhd
 
-    - file: txt_buffer/txt_buffer_fsm.vhd
-    - file: txt_buffer/txt_buffer_ram.vhd
-    - file: txt_buffer/txt_buffer_even.vhd
-    - file: txt_buffer/txt_buffer_odd.vhd
+    - file: txt_buffer/txtb_fsm.vhd
+    - file: txt_buffer/txtb_ram.vhd
+    - file: txt_buffer/txtb_even_top.vhd
+    - file: txt_buffer/txtb_odd_top.vhd
 
-    - file: can_top_level.vhd
-    - file: can_top_ahb.vhd
-    - file: can_top_apb.vhd
-
-
-
+    - file: ctu_can_fd_top.vhd
+    - file: ctu_can_fd_top_avalon.vhd
+    - file: ctu_can_fd_top_ahb.vhd
+    - file: ctu_can_fd_top_apb.vhd

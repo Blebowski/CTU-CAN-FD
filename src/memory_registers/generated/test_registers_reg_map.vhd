@@ -87,7 +87,7 @@ generic (
 );
 port (
     signal clk_sys               :in std_logic;
-    signal res_n                 :in std_logic;
+    signal rst_n                 :in std_logic;
     signal address               :in std_logic_vector(address_width - 1 downto 0);
     signal w_data                :in std_logic_vector(data_width - 1 downto 0);
     signal r_data                :out std_logic_vector(data_width - 1 downto 0);
@@ -119,7 +119,7 @@ begin
     -- Write address to One-hot decoder
     ----------------------------------------------------------------------------
 
-    address_decoder_test_registers_comp : address_decoder
+    i_address_decoder_test_registers : address_decoder
     generic map(
         address_width                   => 6 ,
         address_entries                 => 4 ,
@@ -128,7 +128,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         address                         => address(7 downto 2) ,-- in
         enable                          => cs ,-- in
         addr_dec                        => reg_sel -- out
@@ -138,14 +138,14 @@ begin
     -- TST_CONTROL[TMAENA]
     ----------------------------------------------------------------------------
 
-    tst_control_tmaena_reg_comp : memory_reg_rw_lock
+    i_tst_control_tmaena_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(0 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(0) ,-- in
@@ -157,14 +157,14 @@ begin
     -- TST_CONTROL[TWRSTB]
     ----------------------------------------------------------------------------
 
-    tst_control_twrstb_reg_comp : memory_reg_os_lock
+    i_tst_control_twrstb_reg : memory_reg_os_lock
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(1 downto 1) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(0) ,-- in
@@ -176,14 +176,14 @@ begin
     -- TST_DEST[TST_ADDR_SLICE_1]
     ----------------------------------------------------------------------------
 
-    tst_dest_tst_addr_slice_1_reg_comp : memory_reg_rw_lock
+    i_tst_dest_tst_addr_slice_1_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -195,14 +195,14 @@ begin
     -- TST_DEST[TST_ADDR_SLICE_2]
     ----------------------------------------------------------------------------
 
-    tst_dest_tst_addr_slice_2_reg_comp : memory_reg_rw_lock
+    i_tst_dest_tst_addr_slice_2_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -214,14 +214,14 @@ begin
     -- TST_DEST[TST_MTGT]
     ----------------------------------------------------------------------------
 
-    tst_dest_tst_mtgt_reg_comp : memory_reg_rw_lock
+    i_tst_dest_tst_mtgt_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 4 ,
         reset_value                     => "0000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(19 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -233,14 +233,14 @@ begin
     -- TST_WDATA[TST_WDATA_SLICE_1]
     ----------------------------------------------------------------------------
 
-    tst_wdata_tst_wdata_slice_1_reg_comp : memory_reg_rw_lock
+    i_tst_wdata_tst_wdata_slice_1_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(2) ,-- in
@@ -252,14 +252,14 @@ begin
     -- TST_WDATA[TST_WDATA_SLICE_2]
     ----------------------------------------------------------------------------
 
-    tst_wdata_tst_wdata_slice_2_reg_comp : memory_reg_rw_lock
+    i_tst_wdata_tst_wdata_slice_2_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(2) ,-- in
@@ -271,14 +271,14 @@ begin
     -- TST_WDATA[TST_WDATA_SLICE_3]
     ----------------------------------------------------------------------------
 
-    tst_wdata_tst_wdata_slice_3_reg_comp : memory_reg_rw_lock
+    i_tst_wdata_tst_wdata_slice_3_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(2) ,-- in
@@ -290,14 +290,14 @@ begin
     -- TST_WDATA[TST_WDATA_SLICE_4]
     ----------------------------------------------------------------------------
 
-    tst_wdata_tst_wdata_slice_4_reg_comp : memory_reg_rw_lock
+    i_tst_wdata_tst_wdata_slice_4_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(31 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(2) ,-- in
@@ -322,9 +322,9 @@ begin
     ----------------------------------------------------------------------------
     -- Output register
     ----------------------------------------------------------------------------
-    read_data_reg_proc : process(res_n, clk_sys)
+    p_read_data_reg : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             r_data <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             if (cs = '1' and read = '1') then

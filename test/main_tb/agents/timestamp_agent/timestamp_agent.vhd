@@ -120,7 +120,7 @@ begin
     ---------------------------------------------------------------------------
     -- Comunication receiver process
     ---------------------------------------------------------------------------
-    receiver_proc : process
+    p_receiver : process
         variable cmd : integer;
         variable reply_code : integer;
         variable tmp : std_logic_vector(127 downto 0);
@@ -169,7 +169,7 @@ begin
     ---------------------------------------------------------------------------
     -- Timestamp generation
     ---------------------------------------------------------------------------
-    timestamp_gen_proc : process
+    p_timestamp_gen : process
     begin
         if (running = false) then
             wait until running = true;

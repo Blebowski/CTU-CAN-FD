@@ -93,259 +93,259 @@ end entity;
 architecture tb of func_cov_can_core is
 
     -----------------------------------------------------------------------------------------------
-    -- Aliases to "can_core" top
+    -- Aliases to "mac_top" top
     -----------------------------------------------------------------------------------------------
 
     alias tran_ident_type is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.tran_ident_type : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.tran_ident_type : std_logic >>;
 
     alias tran_frame_type is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.tran_frame_type : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.tran_frame_type : std_logic >>;
 
     alias tran_is_rtr is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.tran_is_rtr : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.tran_is_rtr : std_logic >>;
 
     alias tran_frame_valid is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.tran_frame_valid : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.tran_frame_valid : std_logic >>;
 
     alias rec_ident_type is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.rec_ident_type : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.rec_ident_type : std_logic >>;
 
     alias rec_frame_type is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.rec_frame_type : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.rec_frame_type : std_logic >>;
 
     alias rec_is_rtr is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.rec_is_rtr : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.rec_is_rtr : std_logic >>;
 
     alias store_metadata is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.store_metadata : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.store_metadata : std_logic >>;
 
     alias tran_valid is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.tran_valid : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.tran_valid : std_logic >>;
 
     alias rec_valid is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.rec_valid : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.rec_valid : std_logic >>;
 
     -----------------------------------------------------------------------------------------------
-    -- Aliases to "bit_stuffing" and "bit_destuffing"
+    -- Aliases to "mac_bit_stuffing" and "mac_bit_destuffing"
     -----------------------------------------------------------------------------------------------
     alias bds_trigger is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.bit_destuffing_inst.bds_trigger : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_bit_destuffing.bds_trigger : std_logic >>;
 
     alias non_fix_to_fix_chng is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.bit_destuffing_inst.non_fix_to_fix_chng : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_bit_destuffing.non_fix_to_fix_chng : std_logic >>;
 
     alias stuff_err_q is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.bit_destuffing_inst.stuff_err_q : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_bit_destuffing.stuff_err_q : std_logic >>;
 
     alias stuff_lvl_reached is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.bit_destuffing_inst.stuff_lvl_reached : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_bit_destuffing.stuff_lvl_reached : std_logic >>;
 
     alias fixed_stuff is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.bit_destuffing_inst.fixed_stuff : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_bit_destuffing.fixed_stuff : std_logic >>;
 
 
     -----------------------------------------------------------------------------------------------
-    -- Aliases to "err_counters"
+    -- Aliases to "mac_fc_err_counters"
     -----------------------------------------------------------------------------------------------
 
     alias inc_one is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.fault_confinement_inst.err_counters_inst.inc_one : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_err_counters.inc_one : std_logic >>;
 
     alias inc_eight is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.fault_confinement_inst.err_counters_inst.inc_eight : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_err_counters.inc_eight : std_logic >>;
 
     alias dec_one is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.fault_confinement_inst.err_counters_inst.dec_one : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_err_counters.dec_one : std_logic >>;
 
     alias rx_err_ctr_inc is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_inc : unsigned(8 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_err_counters.rx_err_ctr_inc : unsigned(8 downto 0) >>;
 
     alias rx_err_ctr_q is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_q : unsigned(8 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_err_counters.rx_err_ctr_q : unsigned(8 downto 0) >>;
 
     alias rx_err_ctr_ce is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.fault_confinement_inst.err_counters_inst.rx_err_ctr_ce : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_err_counters.rx_err_ctr_ce : std_logic >>;
 
     -----------------------------------------------------------------------------------------------
-    -- Aliases to "err_detector"
+    -- Aliases to "mac_pc_err_detector"
     -----------------------------------------------------------------------------------------------
 
     alias bit_err is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.err_detector_inst.bit_err : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_err_detector.bit_err : std_logic >>;
 
     alias bit_err_arb is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.err_detector_inst.bit_err_arb : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_err_detector.bit_err_arb : std_logic >>;
 
     alias stuff_err is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.err_detector_inst.stuff_err : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_err_detector.stuff_err : std_logic >>;
 
     alias form_err is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.err_detector_inst.form_err : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_err_detector.form_err : std_logic >>;
 
     alias ack_err is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.err_detector_inst.ack_err : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_err_detector.ack_err : std_logic >>;
 
     alias crc_err is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.err_detector_inst.crc_err : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_err_detector.crc_err : std_logic >>;
 
     alias tran_frame_parity_error is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.err_detector_inst.tran_frame_parity_error : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_err_detector.tran_frame_parity_error : std_logic >>;
 
     alias err_capt_err_type_q is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.err_detector_inst.err_capt_err_type_q : std_logic_vector(2 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_err_detector.err_capt_err_type_q : std_logic_vector(2 downto 0) >>;
 
     -----------------------------------------------------------------------------------------------
-    -- Aliases to "fault_confinement_rules"
+    -- Aliases to "mac_fc_rules"
     -----------------------------------------------------------------------------------------------
 
     alias primary_err is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.fault_confinement_inst.fault_confinement_rules_inst.primary_err : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_rules.primary_err : std_logic >>;
 
     alias err_ctrs_unchanged is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.fault_confinement_inst.fault_confinement_rules_inst.err_ctrs_unchanged : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_rules.err_ctrs_unchanged : std_logic >>;
 
     alias is_receiver is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.fault_confinement_inst.fault_confinement_rules_inst.is_receiver : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_rules.is_receiver : std_logic >>;
 
     alias is_transmitter is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.fault_confinement_inst.fault_confinement_rules_inst.is_transmitter : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_rules.is_transmitter : std_logic >>;
 
     alias act_err_ovr_flag is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.fault_confinement_inst.fault_confinement_rules_inst.act_err_ovr_flag : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_rules.act_err_ovr_flag : std_logic >>;
 
     alias err_detected is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.fault_confinement_inst.fault_confinement_rules_inst.err_detected : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_rules.err_detected : std_logic >>;
 
     alias err_delim_late is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.fault_confinement_inst.fault_confinement_rules_inst.err_delim_late : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_rules.err_delim_late : std_logic >>;
 
     alias bit_err_after_ack_err is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.fault_confinement_inst.fault_confinement_rules_inst.bit_err_after_ack_err : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_rules.bit_err_after_ack_err : std_logic >>;
 
     alias decrement_rec is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.fault_confinement_inst.fault_confinement_rules_inst.decrement_rec : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_rules.decrement_rec : std_logic >>;
 
 
     -----------------------------------------------------------------------------------------------
-    -- Aliases to "protocol_control_fsm"
+    -- Aliases to "mac_pc_fsm"
     -----------------------------------------------------------------------------------------------
 
     alias curr_state is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.protocol_control_fsm_inst.curr_state : t_protocol_control_state >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_fsm.curr_state : t_protocol_control_state >>;
 
     alias next_state is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.protocol_control_fsm_inst.next_state : t_protocol_control_state >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_fsm.next_state : t_protocol_control_state >>;
 
     alias err_frm_req is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.protocol_control_fsm_inst.err_frm_req : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_fsm.err_frm_req : std_logic >>;
 
     alias pex_on_fdf_enable is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.protocol_control_fsm_inst.pex_on_fdf_enable : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_fsm.pex_on_fdf_enable : std_logic >>;
 
     alias pex_on_res_enable is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.protocol_control_fsm_inst.pex_on_res_enable : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_fsm.pex_on_res_enable : std_logic >>;
 
     alias mr_status_pexs is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.protocol_control_fsm_inst.mr_status_pexs : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_fsm.mr_status_pexs : std_logic >>;
 
     alias pexs_set is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.protocol_control_fsm_inst.pexs_set : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_fsm.pexs_set : std_logic >>;
 
     alias arbitration_lost_i is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.protocol_control_fsm_inst.arbitration_lost_i : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_fsm.arbitration_lost_i : std_logic >>;
 
     alias mr_settings_pex is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.protocol_control_fsm_inst.mr_settings_pex : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_fsm.mr_settings_pex : std_logic >>;
 
     alias mr_mode_fde is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.protocol_control_fsm_inst.mr_mode_fde : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_fsm.mr_mode_fde : std_logic >>;
 
     alias mr_settings_nisofd is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.protocol_control_fsm_inst.mr_settings_nisofd : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_fsm.mr_settings_nisofd : std_logic >>;
 
     -----------------------------------------------------------------------------------------------
-    -- Aliases to "reintegration_counter"
+    -- Aliases to "mac_pc_reintegration_counter"
     -----------------------------------------------------------------------------------------------
     alias reinteg_ctr_clr is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.reintegration_counter_inst.reinteg_ctr_clr : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_reintegration_counter.reinteg_ctr_clr : std_logic >>;
 
     alias reinteg_ctr_expired is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.reintegration_counter_inst.reinteg_ctr_expired : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_reintegration_counter.reinteg_ctr_expired : std_logic >>;
 
     alias reinteg_ctr_enable is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.reintegration_counter_inst.reinteg_ctr_enable : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_reintegration_counter.reinteg_ctr_enable : std_logic >>;
 
     alias rx_trigger is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.reintegration_counter_inst.rx_trigger : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_reintegration_counter.rx_trigger : std_logic >>;
 
     -----------------------------------------------------------------------------------------------
-    -- Aliases to "rx_shift_reg"
+    -- Aliases to "mac_pc_rx_shift_reg"
     -----------------------------------------------------------------------------------------------
 
     alias rx_clear is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.rx_shift_reg_inst.rx_clear : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_rx_shift_reg.rx_clear : std_logic >>;
 
     alias rx_shift_in_sel is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.rx_shift_reg_inst.rx_shift_in_sel : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_rx_shift_reg.rx_shift_in_sel : std_logic >>;
 
     alias rx_shift_ena is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.rx_shift_reg_inst.rx_shift_ena : std_logic_vector(3 downto 0) >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_rx_shift_reg.rx_shift_ena : std_logic_vector(3 downto 0) >>;
 
     alias rx_store_base_id is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.rx_shift_reg_inst.rx_store_base_id : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_rx_shift_reg.rx_store_base_id : std_logic >>;
 
     alias rx_store_ext_id is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.rx_shift_reg_inst.rx_store_ext_id : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_rx_shift_reg.rx_store_ext_id : std_logic >>;
 
     alias rx_store_ide is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.rx_shift_reg_inst.rx_store_ide : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_rx_shift_reg.rx_store_ide : std_logic >>;
 
     alias rx_store_rtr is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.rx_shift_reg_inst.rx_store_rtr : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_rx_shift_reg.rx_store_rtr : std_logic >>;
 
     alias rx_store_edl is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.rx_shift_reg_inst.rx_store_edl : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_rx_shift_reg.rx_store_edl : std_logic >>;
 
     alias rx_store_dlc is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.rx_shift_reg_inst.rx_store_dlc : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_rx_shift_reg.rx_store_dlc : std_logic >>;
 
     alias rx_store_esi is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.rx_shift_reg_inst.rx_store_esi : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_rx_shift_reg.rx_store_esi : std_logic >>;
 
     alias rx_store_brs is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.rx_shift_reg_inst.rx_store_brs : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_rx_shift_reg.rx_store_brs : std_logic >>;
 
     alias rx_store_stuff_count is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.rx_shift_reg_inst.rx_store_stuff_count : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_rx_shift_reg.rx_store_stuff_count : std_logic >>;
 
     -----------------------------------------------------------------------------------------------
-    -- Aliases to "tx_shift_reg"
+    -- Aliases to "mac_pc_tx_shift_reg"
     -----------------------------------------------------------------------------------------------
 
     alias tx_load_base_id is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.tx_shift_reg_inst.tx_load_base_id : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_tx_shift_reg.tx_load_base_id : std_logic >>;
 
     alias tx_load_ext_id is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.tx_shift_reg_inst.tx_load_ext_id : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_tx_shift_reg.tx_load_ext_id : std_logic >>;
 
     alias tx_load_dlc is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.tx_shift_reg_inst.tx_load_dlc : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_tx_shift_reg.tx_load_dlc : std_logic >>;
 
     alias tx_load_data_word is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.tx_shift_reg_inst.tx_load_data_word : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_tx_shift_reg.tx_load_data_word : std_logic >>;
 
     alias tx_load_stuff_count is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.tx_shift_reg_inst.tx_load_stuff_count : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_tx_shift_reg.tx_load_stuff_count : std_logic >>;
 
     alias tx_load_crc is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.tx_shift_reg_inst.tx_load_crc : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_tx_shift_reg.tx_load_crc : std_logic >>;
 
     alias tran_frame_test is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.tx_shift_reg_inst.tran_frame_test : t_frame_test_w >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_tx_shift_reg.tran_frame_test : t_frame_test_w >>;
 
     alias mr_mode_tstm is
-        << signal .tb_top_ctu_can_fd.dut.can_core_inst.protocol_control_inst.tx_shift_reg_inst.mr_mode_tstm : std_logic >>;
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_tx_shift_reg.mr_mode_tstm : std_logic >>;
 
 begin
 

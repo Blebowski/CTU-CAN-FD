@@ -84,15 +84,16 @@ generic (
     constant ADDRESS_WIDTH       : natural := 8;
     constant REGISTERED_READ     : boolean := true;
     constant CLEAR_READ_DATA     : boolean := true;
-    constant SUP_FILT_A          : boolean := true;
-    constant SUP_TRAFFIC_CTRS    : boolean := true;
-    constant SUP_RANGE           : boolean := true;
-    constant SUP_FILT_C          : boolean := true;
-    constant SUP_FILT_B          : boolean := true
+    constant G_FILT_A_EN         : boolean := true;
+    constant G_FILT_RANGE_EN     : boolean := true;
+    constant G_FILT_C_EN         : boolean := true;
+    constant G_FILT_B_EN         : boolean := true;
+    constant G_TRAFFIC_CTRS_EN   : boolean := true;
+    constant G_TXT_BUF_COUNT     : integer := 0
 );
 port (
     signal clk_sys               :in std_logic;
-    signal res_n                 :in std_logic;
+    signal rst_n                 :in std_logic;
     signal address               :in std_logic_vector(address_width - 1 downto 0);
     signal w_data                :in std_logic_vector(data_width - 1 downto 0);
     signal r_data                :out std_logic_vector(data_width - 1 downto 0);
@@ -124,7 +125,7 @@ begin
     -- Write address to One-hot decoder
     ----------------------------------------------------------------------------
 
-    address_decoder_control_registers_comp : address_decoder
+    i_address_decoder_control_registers : address_decoder
     generic map(
         address_width                   => 6 ,
         address_entries                 => 39 ,
@@ -133,7 +134,7 @@ begin
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         address                         => address(7 downto 2) ,-- in
         enable                          => cs ,-- in
         addr_dec                        => reg_sel -- out
@@ -143,14 +144,14 @@ begin
     -- MODE[RST]
     ----------------------------------------------------------------------------
 
-    mode_rst_reg_comp : memory_reg_os
+    i_mode_rst_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(0 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -161,14 +162,14 @@ begin
     -- MODE[BMM]
     ----------------------------------------------------------------------------
 
-    mode_bmm_reg_comp : memory_reg_rw
+    i_mode_bmm_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(1 downto 1) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -179,14 +180,14 @@ begin
     -- MODE[STM]
     ----------------------------------------------------------------------------
 
-    mode_stm_reg_comp : memory_reg_rw
+    i_mode_stm_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(2 downto 2) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -197,14 +198,14 @@ begin
     -- MODE[AFM]
     ----------------------------------------------------------------------------
 
-    mode_afm_reg_comp : memory_reg_rw
+    i_mode_afm_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(3 downto 3) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -215,14 +216,14 @@ begin
     -- MODE[FDE]
     ----------------------------------------------------------------------------
 
-    mode_fde_reg_comp : memory_reg_rw
+    i_mode_fde_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "1" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(4 downto 4) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -233,14 +234,14 @@ begin
     -- MODE[TTTM]
     ----------------------------------------------------------------------------
 
-    mode_tttm_reg_comp : memory_reg_rw
+    i_mode_tttm_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(5 downto 5) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -251,14 +252,14 @@ begin
     -- MODE[ROM]
     ----------------------------------------------------------------------------
 
-    mode_rom_reg_comp : memory_reg_rw
+    i_mode_rom_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(6 downto 6) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -269,14 +270,14 @@ begin
     -- MODE[ACF]
     ----------------------------------------------------------------------------
 
-    mode_acf_reg_comp : memory_reg_rw
+    i_mode_acf_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 7) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -287,14 +288,14 @@ begin
     -- MODE[TSTM]
     ----------------------------------------------------------------------------
 
-    mode_tstm_reg_comp : memory_reg_rw
+    i_mode_tstm_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(8 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -305,14 +306,14 @@ begin
     -- MODE[RXBAM]
     ----------------------------------------------------------------------------
 
-    mode_rxbam_reg_comp : memory_reg_rw
+    i_mode_rxbam_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "1" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(9 downto 9) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -323,14 +324,14 @@ begin
     -- MODE[TXBBM]
     ----------------------------------------------------------------------------
 
-    mode_txbbm_reg_comp : memory_reg_rw
+    i_mode_txbbm_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(10 downto 10) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -341,14 +342,14 @@ begin
     -- MODE[SAM]
     ----------------------------------------------------------------------------
 
-    mode_sam_reg_comp : memory_reg_rw
+    i_mode_sam_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(11 downto 11) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -359,14 +360,14 @@ begin
     -- MODE[ERFM]
     ----------------------------------------------------------------------------
 
-    mode_erfm_reg_comp : memory_reg_rw
+    i_mode_erfm_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(12 downto 12) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -377,14 +378,14 @@ begin
     -- SETTINGS[RTRLE]
     ----------------------------------------------------------------------------
 
-    settings_rtrle_reg_comp : memory_reg_rw
+    i_settings_rtrle_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(16 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -395,14 +396,14 @@ begin
     -- SETTINGS[RTRTH]
     ----------------------------------------------------------------------------
 
-    settings_rtrth_reg_comp : memory_reg_rw
+    i_settings_rtrth_reg : memory_reg_rw
     generic map(
         data_width                      => 4 ,
         reset_value                     => "0000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(20 downto 17) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -413,14 +414,14 @@ begin
     -- SETTINGS[ILBP]
     ----------------------------------------------------------------------------
 
-    settings_ilbp_reg_comp : memory_reg_rw
+    i_settings_ilbp_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(21 downto 21) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -431,14 +432,14 @@ begin
     -- SETTINGS[ENA]
     ----------------------------------------------------------------------------
 
-    settings_ena_reg_comp : memory_reg_rw
+    i_settings_ena_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(22 downto 22) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -449,14 +450,14 @@ begin
     -- SETTINGS[NISOFD]
     ----------------------------------------------------------------------------
 
-    settings_nisofd_reg_comp : memory_reg_rw
+    i_settings_nisofd_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 23) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -467,14 +468,14 @@ begin
     -- SETTINGS[PEX]
     ----------------------------------------------------------------------------
 
-    settings_pex_reg_comp : memory_reg_rw
+    i_settings_pex_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(24 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -485,14 +486,14 @@ begin
     -- SETTINGS[TBFBO]
     ----------------------------------------------------------------------------
 
-    settings_tbfbo_reg_comp : memory_reg_rw
+    i_settings_tbfbo_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "1" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(25 downto 25) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -503,14 +504,14 @@ begin
     -- SETTINGS[FDRF]
     ----------------------------------------------------------------------------
 
-    settings_fdrf_reg_comp : memory_reg_rw
+    i_settings_fdrf_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(26 downto 26) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -521,14 +522,14 @@ begin
     -- SETTINGS[PCHKE]
     ----------------------------------------------------------------------------
 
-    settings_pchke_reg_comp : memory_reg_rw
+    i_settings_pchke_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(27 downto 27) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(1) ,-- in
@@ -539,14 +540,14 @@ begin
     -- COMMAND[RXRPMV]
     ----------------------------------------------------------------------------
 
-    command_rxrpmv_reg_comp : memory_reg_os
+    i_command_rxrpmv_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(1 downto 1) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(3) ,-- in
@@ -557,14 +558,14 @@ begin
     -- COMMAND[RRB]
     ----------------------------------------------------------------------------
 
-    command_rrb_reg_comp : memory_reg_os
+    i_command_rrb_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(2 downto 2) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(3) ,-- in
@@ -575,14 +576,14 @@ begin
     -- COMMAND[CDO]
     ----------------------------------------------------------------------------
 
-    command_cdo_reg_comp : memory_reg_os
+    i_command_cdo_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(3 downto 3) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(3) ,-- in
@@ -593,14 +594,14 @@ begin
     -- COMMAND[ERCRST]
     ----------------------------------------------------------------------------
 
-    command_ercrst_reg_comp : memory_reg_os
+    i_command_ercrst_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(4 downto 4) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(3) ,-- in
@@ -611,14 +612,14 @@ begin
     -- COMMAND[RXFCRST]
     ----------------------------------------------------------------------------
 
-    command_rxfcrst_reg_comp : memory_reg_os
+    i_command_rxfcrst_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(5 downto 5) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(3) ,-- in
@@ -629,14 +630,14 @@ begin
     -- COMMAND[TXFCRST]
     ----------------------------------------------------------------------------
 
-    command_txfcrst_reg_comp : memory_reg_os
+    i_command_txfcrst_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(6 downto 6) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(3) ,-- in
@@ -647,14 +648,14 @@ begin
     -- COMMAND[CPEXS]
     ----------------------------------------------------------------------------
 
-    command_cpexs_reg_comp : memory_reg_os
+    i_command_cpexs_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 7) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(3) ,-- in
@@ -665,14 +666,14 @@ begin
     -- COMMAND[CRXPE]
     ----------------------------------------------------------------------------
 
-    command_crxpe_reg_comp : memory_reg_os
+    i_command_crxpe_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(8 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(3) ,-- in
@@ -683,14 +684,14 @@ begin
     -- COMMAND[CTXPE]
     ----------------------------------------------------------------------------
 
-    command_ctxpe_reg_comp : memory_reg_os
+    i_command_ctxpe_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(9 downto 9) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(3) ,-- in
@@ -701,14 +702,14 @@ begin
     -- COMMAND[CTXDPE]
     ----------------------------------------------------------------------------
 
-    command_ctxdpe_reg_comp : memory_reg_os
+    i_command_ctxdpe_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(10 downto 10) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(3) ,-- in
@@ -719,14 +720,14 @@ begin
     -- INT_STAT[RXI]
     ----------------------------------------------------------------------------
 
-    int_stat_rxi_reg_comp : memory_reg_os
+    i_int_stat_rxi_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(0 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -737,14 +738,14 @@ begin
     -- INT_STAT[TXI]
     ----------------------------------------------------------------------------
 
-    int_stat_txi_reg_comp : memory_reg_os
+    i_int_stat_txi_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(1 downto 1) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -755,14 +756,14 @@ begin
     -- INT_STAT[EWLI]
     ----------------------------------------------------------------------------
 
-    int_stat_ewli_reg_comp : memory_reg_os
+    i_int_stat_ewli_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(2 downto 2) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -773,14 +774,14 @@ begin
     -- INT_STAT[DOI]
     ----------------------------------------------------------------------------
 
-    int_stat_doi_reg_comp : memory_reg_os
+    i_int_stat_doi_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(3 downto 3) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -791,14 +792,14 @@ begin
     -- INT_STAT[FCSI]
     ----------------------------------------------------------------------------
 
-    int_stat_fcsi_reg_comp : memory_reg_os
+    i_int_stat_fcsi_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(4 downto 4) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -809,14 +810,14 @@ begin
     -- INT_STAT[ALI]
     ----------------------------------------------------------------------------
 
-    int_stat_ali_reg_comp : memory_reg_os
+    i_int_stat_ali_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(5 downto 5) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -827,14 +828,14 @@ begin
     -- INT_STAT[BEI]
     ----------------------------------------------------------------------------
 
-    int_stat_bei_reg_comp : memory_reg_os
+    i_int_stat_bei_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(6 downto 6) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -845,14 +846,14 @@ begin
     -- INT_STAT[OFI]
     ----------------------------------------------------------------------------
 
-    int_stat_ofi_reg_comp : memory_reg_os
+    i_int_stat_ofi_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 7) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -863,14 +864,14 @@ begin
     -- INT_STAT[RXFI]
     ----------------------------------------------------------------------------
 
-    int_stat_rxfi_reg_comp : memory_reg_os
+    i_int_stat_rxfi_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(8 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -881,14 +882,14 @@ begin
     -- INT_STAT[BSI]
     ----------------------------------------------------------------------------
 
-    int_stat_bsi_reg_comp : memory_reg_os
+    i_int_stat_bsi_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(9 downto 9) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -899,14 +900,14 @@ begin
     -- INT_STAT[RBNEI]
     ----------------------------------------------------------------------------
 
-    int_stat_rbnei_reg_comp : memory_reg_os
+    i_int_stat_rbnei_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(10 downto 10) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -917,14 +918,14 @@ begin
     -- INT_STAT[TXBHCI]
     ----------------------------------------------------------------------------
 
-    int_stat_txbhci_reg_comp : memory_reg_os
+    i_int_stat_txbhci_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(11 downto 11) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(4) ,-- in
@@ -935,14 +936,14 @@ begin
     -- INT_ENA_SET[INT_ENA_SET_SLICE_1]
     ----------------------------------------------------------------------------
 
-    int_ena_set_int_ena_set_slice_1_reg_comp : memory_reg_os
+    i_int_ena_set_int_ena_set_slice_1_reg : memory_reg_os
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(5) ,-- in
@@ -953,14 +954,14 @@ begin
     -- INT_ENA_SET[INT_ENA_SET_SLICE_2]
     ----------------------------------------------------------------------------
 
-    int_ena_set_int_ena_set_slice_2_reg_comp : memory_reg_os
+    i_int_ena_set_int_ena_set_slice_2_reg : memory_reg_os
     generic map(
         data_width                      => 4 ,
         reset_value                     => "0000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(11 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(5) ,-- in
@@ -971,14 +972,14 @@ begin
     -- INT_ENA_CLR[INT_ENA_CLR_SLICE_1]
     ----------------------------------------------------------------------------
 
-    int_ena_clr_int_ena_clr_slice_1_reg_comp : memory_reg_os
+    i_int_ena_clr_int_ena_clr_slice_1_reg : memory_reg_os
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(6) ,-- in
@@ -989,14 +990,14 @@ begin
     -- INT_ENA_CLR[INT_ENA_CLR_SLICE_2]
     ----------------------------------------------------------------------------
 
-    int_ena_clr_int_ena_clr_slice_2_reg_comp : memory_reg_os
+    i_int_ena_clr_int_ena_clr_slice_2_reg : memory_reg_os
     generic map(
         data_width                      => 4 ,
         reset_value                     => "0000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(11 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(6) ,-- in
@@ -1007,14 +1008,14 @@ begin
     -- INT_MASK_SET[INT_MASK_SET_SLICE_1]
     ----------------------------------------------------------------------------
 
-    int_mask_set_int_mask_set_slice_1_reg_comp : memory_reg_os
+    i_int_mask_set_int_mask_set_slice_1_reg : memory_reg_os
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(7) ,-- in
@@ -1025,14 +1026,14 @@ begin
     -- INT_MASK_SET[INT_MASK_SET_SLICE_2]
     ----------------------------------------------------------------------------
 
-    int_mask_set_int_mask_set_slice_2_reg_comp : memory_reg_os
+    i_int_mask_set_int_mask_set_slice_2_reg : memory_reg_os
     generic map(
         data_width                      => 4 ,
         reset_value                     => "0000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(11 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(7) ,-- in
@@ -1043,14 +1044,14 @@ begin
     -- INT_MASK_CLR[INT_MASK_CLR_SLICE_1]
     ----------------------------------------------------------------------------
 
-    int_mask_clr_int_mask_clr_slice_1_reg_comp : memory_reg_os
+    i_int_mask_clr_int_mask_clr_slice_1_reg : memory_reg_os
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(8) ,-- in
@@ -1061,14 +1062,14 @@ begin
     -- INT_MASK_CLR[INT_MASK_CLR_SLICE_2]
     ----------------------------------------------------------------------------
 
-    int_mask_clr_int_mask_clr_slice_2_reg_comp : memory_reg_os
+    i_int_mask_clr_int_mask_clr_slice_2_reg : memory_reg_os
     generic map(
         data_width                      => 4 ,
         reset_value                     => "0000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(11 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(8) ,-- in
@@ -1079,14 +1080,14 @@ begin
     -- BTR[PROP]
     ----------------------------------------------------------------------------
 
-    btr_prop_reg_comp : memory_reg_rw_lock
+    i_btr_prop_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 7 ,
         reset_value                     => "0000101" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(6 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(9) ,-- in
@@ -1098,14 +1099,14 @@ begin
     -- BTR[PH1_SLICE_1]
     ----------------------------------------------------------------------------
 
-    btr_ph1_slice_1_reg_comp : memory_reg_rw_lock
+    i_btr_ph1_slice_1_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 1 ,
         reset_value                     => "1" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 7) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(9) ,-- in
@@ -1117,14 +1118,14 @@ begin
     -- BTR[PH1_SLICE_2]
     ----------------------------------------------------------------------------
 
-    btr_ph1_slice_2_reg_comp : memory_reg_rw_lock
+    i_btr_ph1_slice_2_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00001" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(12 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(9) ,-- in
@@ -1136,14 +1137,14 @@ begin
     -- BTR[PH2_SLICE_1]
     ----------------------------------------------------------------------------
 
-    btr_ph2_slice_1_reg_comp : memory_reg_rw_lock
+    i_btr_ph2_slice_1_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 3 ,
         reset_value                     => "101" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 13) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(9) ,-- in
@@ -1155,14 +1156,14 @@ begin
     -- BTR[PH2_SLICE_2]
     ----------------------------------------------------------------------------
 
-    btr_ph2_slice_2_reg_comp : memory_reg_rw_lock
+    i_btr_ph2_slice_2_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 3 ,
         reset_value                     => "000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(18 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(9) ,-- in
@@ -1174,14 +1175,14 @@ begin
     -- BTR[BRP_SLICE_1]
     ----------------------------------------------------------------------------
 
-    btr_brp_slice_1_reg_comp : memory_reg_rw_lock
+    i_btr_brp_slice_1_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 5 ,
         reset_value                     => "01010" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 19) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(9) ,-- in
@@ -1193,14 +1194,14 @@ begin
     -- BTR[BRP_SLICE_2]
     ----------------------------------------------------------------------------
 
-    btr_brp_slice_2_reg_comp : memory_reg_rw_lock
+    i_btr_brp_slice_2_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 3 ,
         reset_value                     => "000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(26 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(9) ,-- in
@@ -1212,14 +1213,14 @@ begin
     -- BTR[SJW]
     ----------------------------------------------------------------------------
 
-    btr_sjw_reg_comp : memory_reg_rw_lock
+    i_btr_sjw_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00010" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(31 downto 27) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(9) ,-- in
@@ -1231,14 +1232,14 @@ begin
     -- BTR_FD[PROP_FD]
     ----------------------------------------------------------------------------
 
-    btr_fd_prop_fd_reg_comp : memory_reg_rw_lock
+    i_btr_fd_prop_fd_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 6 ,
         reset_value                     => "000011" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(5 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(10) ,-- in
@@ -1250,14 +1251,14 @@ begin
     -- BTR_FD[PH1_FD_SLICE_1]
     ----------------------------------------------------------------------------
 
-    btr_fd_ph1_fd_slice_1_reg_comp : memory_reg_rw_lock
+    i_btr_fd_ph1_fd_slice_1_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 1 ,
         reset_value                     => "1" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 7) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(10) ,-- in
@@ -1269,14 +1270,14 @@ begin
     -- BTR_FD[PH1_FD_SLICE_2]
     ----------------------------------------------------------------------------
 
-    btr_fd_ph1_fd_slice_2_reg_comp : memory_reg_rw_lock
+    i_btr_fd_ph1_fd_slice_2_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 4 ,
         reset_value                     => "0001" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(11 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(10) ,-- in
@@ -1288,14 +1289,14 @@ begin
     -- BTR_FD[PH2_FD_SLICE_1]
     ----------------------------------------------------------------------------
 
-    btr_fd_ph2_fd_slice_1_reg_comp : memory_reg_rw_lock
+    i_btr_fd_ph2_fd_slice_1_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 3 ,
         reset_value                     => "011" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 13) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(10) ,-- in
@@ -1307,14 +1308,14 @@ begin
     -- BTR_FD[PH2_FD_SLICE_2]
     ----------------------------------------------------------------------------
 
-    btr_fd_ph2_fd_slice_2_reg_comp : memory_reg_rw_lock
+    i_btr_fd_ph2_fd_slice_2_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 2 ,
         reset_value                     => "00" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(17 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(10) ,-- in
@@ -1326,14 +1327,14 @@ begin
     -- BTR_FD[BRP_FD_SLICE_1]
     ----------------------------------------------------------------------------
 
-    btr_fd_brp_fd_slice_1_reg_comp : memory_reg_rw_lock
+    i_btr_fd_brp_fd_slice_1_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00100" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 19) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(10) ,-- in
@@ -1345,14 +1346,14 @@ begin
     -- BTR_FD[BRP_FD_SLICE_2]
     ----------------------------------------------------------------------------
 
-    btr_fd_brp_fd_slice_2_reg_comp : memory_reg_rw_lock
+    i_btr_fd_brp_fd_slice_2_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 3 ,
         reset_value                     => "000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(26 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(10) ,-- in
@@ -1364,14 +1365,14 @@ begin
     -- BTR_FD[SJW_FD]
     ----------------------------------------------------------------------------
 
-    btr_fd_sjw_fd_reg_comp : memory_reg_rw_lock
+    i_btr_fd_sjw_fd_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00010" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(31 downto 27) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(10) ,-- in
@@ -1383,14 +1384,14 @@ begin
     -- EWL[EW_LIMIT]
     ----------------------------------------------------------------------------
 
-    ewl_ew_limit_reg_comp : memory_reg_rw_lock
+    i_ewl_ew_limit_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
         reset_value                     => "01100000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(11) ,-- in
@@ -1402,14 +1403,14 @@ begin
     -- ERP[ERP_LIMIT]
     ----------------------------------------------------------------------------
 
-    erp_erp_limit_reg_comp : memory_reg_rw_lock
+    i_erp_erp_limit_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
         reset_value                     => "10000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(11) ,-- in
@@ -1421,14 +1422,14 @@ begin
     -- CTR_PRES[CTPV_SLICE_1]
     ----------------------------------------------------------------------------
 
-    ctr_pres_ctpv_slice_1_reg_comp : memory_reg_rw_lock
+    i_ctr_pres_ctpv_slice_1_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(14) ,-- in
@@ -1440,14 +1441,14 @@ begin
     -- CTR_PRES[CTPV_SLICE_2]
     ----------------------------------------------------------------------------
 
-    ctr_pres_ctpv_slice_2_reg_comp : memory_reg_rw_lock
+    i_ctr_pres_ctpv_slice_2_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(8 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(14) ,-- in
@@ -1459,14 +1460,14 @@ begin
     -- CTR_PRES[PTX]
     ----------------------------------------------------------------------------
 
-    ctr_pres_ptx_reg_comp : memory_reg_os_lock
+    i_ctr_pres_ptx_reg : memory_reg_os_lock
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(9 downto 9) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(14) ,-- in
@@ -1478,14 +1479,14 @@ begin
     -- CTR_PRES[PRX]
     ----------------------------------------------------------------------------
 
-    ctr_pres_prx_reg_comp : memory_reg_os_lock
+    i_ctr_pres_prx_reg : memory_reg_os_lock
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(10 downto 10) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(14) ,-- in
@@ -1497,14 +1498,14 @@ begin
     -- CTR_PRES[ENORM]
     ----------------------------------------------------------------------------
 
-    ctr_pres_enorm_reg_comp : memory_reg_os_lock
+    i_ctr_pres_enorm_reg : memory_reg_os_lock
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(11 downto 11) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(14) ,-- in
@@ -1516,14 +1517,14 @@ begin
     -- CTR_PRES[EFD]
     ----------------------------------------------------------------------------
 
-    ctr_pres_efd_reg_comp : memory_reg_os_lock
+    i_ctr_pres_efd_reg : memory_reg_os_lock
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(12 downto 12) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(14) ,-- in
@@ -1531,650 +1532,818 @@ begin
         reg_value(0)                    => control_registers_out_i.ctr_pres_efd -- out
     );
 
-    FILTER_A_MASK_present_gen_t : if (SUP_FILT_A = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_A_MASK[BIT_MASK_A_VAL_SLICE_1]
     ----------------------------------------------------------------------------
+    g_filter_a_mask_bit_mask_a_val_slice_1_t : if (G_FILT_A_EN) generate
 
-    filter_a_mask_bit_mask_a_val_slice_1_reg_comp : memory_reg_rw
+    i_filter_a_mask_bit_mask_a_val_slice_1_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(15) ,-- in
         reg_value                       => control_registers_out_i.filter_a_mask_bit_mask_a_val(7 downto 0) -- out
     );
 
+    end generate g_filter_a_mask_bit_mask_a_val_slice_1_t;
+
+    g_filter_a_mask_bit_mask_a_val_slice_1_f : if (not(G_FILT_A_EN)) generate
+        control_registers_out_i.filter_a_mask_bit_mask_a_val(7 downto 0) <= (others => '0');
+    end generate g_filter_a_mask_bit_mask_a_val_slice_1_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_A_MASK[BIT_MASK_A_VAL_SLICE_2]
     ----------------------------------------------------------------------------
+    g_filter_a_mask_bit_mask_a_val_slice_2_t : if (G_FILT_A_EN) generate
 
-    filter_a_mask_bit_mask_a_val_slice_2_reg_comp : memory_reg_rw
+    i_filter_a_mask_bit_mask_a_val_slice_2_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(15) ,-- in
         reg_value                       => control_registers_out_i.filter_a_mask_bit_mask_a_val(15 downto 8) -- out
     );
 
+    end generate g_filter_a_mask_bit_mask_a_val_slice_2_t;
+
+    g_filter_a_mask_bit_mask_a_val_slice_2_f : if (not(G_FILT_A_EN)) generate
+        control_registers_out_i.filter_a_mask_bit_mask_a_val(15 downto 8) <= (others => '0');
+    end generate g_filter_a_mask_bit_mask_a_val_slice_2_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_A_MASK[BIT_MASK_A_VAL_SLICE_3]
     ----------------------------------------------------------------------------
+    g_filter_a_mask_bit_mask_a_val_slice_3_t : if (G_FILT_A_EN) generate
 
-    filter_a_mask_bit_mask_a_val_slice_3_reg_comp : memory_reg_rw
+    i_filter_a_mask_bit_mask_a_val_slice_3_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(15) ,-- in
         reg_value                       => control_registers_out_i.filter_a_mask_bit_mask_a_val(23 downto 16) -- out
     );
 
+    end generate g_filter_a_mask_bit_mask_a_val_slice_3_t;
+
+    g_filter_a_mask_bit_mask_a_val_slice_3_f : if (not(G_FILT_A_EN)) generate
+        control_registers_out_i.filter_a_mask_bit_mask_a_val(23 downto 16) <= (others => '0');
+    end generate g_filter_a_mask_bit_mask_a_val_slice_3_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_A_MASK[BIT_MASK_A_VAL_SLICE_4]
     ----------------------------------------------------------------------------
+    g_filter_a_mask_bit_mask_a_val_slice_4_t : if (G_FILT_A_EN) generate
 
-    filter_a_mask_bit_mask_a_val_slice_4_reg_comp : memory_reg_rw
+    i_filter_a_mask_bit_mask_a_val_slice_4_reg : memory_reg_rw
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(15) ,-- in
         reg_value                       => control_registers_out_i.filter_a_mask_bit_mask_a_val(28 downto 24) -- out
     );
 
-    end generate FILTER_A_MASK_present_gen_t;
+    end generate g_filter_a_mask_bit_mask_a_val_slice_4_t;
 
-    FILTER_A_MASK_present_gen_f : if (SUP_FILT_A = false) generate
-        control_registers_out_i.filter_a_mask_bit_mask_a_val <= (others => '0');
-    end generate FILTER_A_MASK_present_gen_f;
+    g_filter_a_mask_bit_mask_a_val_slice_4_f : if (not(G_FILT_A_EN)) generate
+        control_registers_out_i.filter_a_mask_bit_mask_a_val(28 downto 24) <= (others => '0');
+    end generate g_filter_a_mask_bit_mask_a_val_slice_4_f;
 
-    FILTER_A_VAL_present_gen_t : if (SUP_FILT_A = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_A_VAL[BIT_VAL_A_VAL_SLICE_1]
     ----------------------------------------------------------------------------
+    g_filter_a_val_bit_val_a_val_slice_1_t : if (G_FILT_A_EN) generate
 
-    filter_a_val_bit_val_a_val_slice_1_reg_comp : memory_reg_rw
+    i_filter_a_val_bit_val_a_val_slice_1_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(16) ,-- in
         reg_value                       => control_registers_out_i.filter_a_val_bit_val_a_val(7 downto 0) -- out
     );
 
+    end generate g_filter_a_val_bit_val_a_val_slice_1_t;
+
+    g_filter_a_val_bit_val_a_val_slice_1_f : if (not(G_FILT_A_EN)) generate
+        control_registers_out_i.filter_a_val_bit_val_a_val(7 downto 0) <= (others => '0');
+    end generate g_filter_a_val_bit_val_a_val_slice_1_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_A_VAL[BIT_VAL_A_VAL_SLICE_2]
     ----------------------------------------------------------------------------
+    g_filter_a_val_bit_val_a_val_slice_2_t : if (G_FILT_A_EN) generate
 
-    filter_a_val_bit_val_a_val_slice_2_reg_comp : memory_reg_rw
+    i_filter_a_val_bit_val_a_val_slice_2_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(16) ,-- in
         reg_value                       => control_registers_out_i.filter_a_val_bit_val_a_val(15 downto 8) -- out
     );
 
+    end generate g_filter_a_val_bit_val_a_val_slice_2_t;
+
+    g_filter_a_val_bit_val_a_val_slice_2_f : if (not(G_FILT_A_EN)) generate
+        control_registers_out_i.filter_a_val_bit_val_a_val(15 downto 8) <= (others => '0');
+    end generate g_filter_a_val_bit_val_a_val_slice_2_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_A_VAL[BIT_VAL_A_VAL_SLICE_3]
     ----------------------------------------------------------------------------
+    g_filter_a_val_bit_val_a_val_slice_3_t : if (G_FILT_A_EN) generate
 
-    filter_a_val_bit_val_a_val_slice_3_reg_comp : memory_reg_rw
+    i_filter_a_val_bit_val_a_val_slice_3_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(16) ,-- in
         reg_value                       => control_registers_out_i.filter_a_val_bit_val_a_val(23 downto 16) -- out
     );
 
+    end generate g_filter_a_val_bit_val_a_val_slice_3_t;
+
+    g_filter_a_val_bit_val_a_val_slice_3_f : if (not(G_FILT_A_EN)) generate
+        control_registers_out_i.filter_a_val_bit_val_a_val(23 downto 16) <= (others => '0');
+    end generate g_filter_a_val_bit_val_a_val_slice_3_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_A_VAL[BIT_VAL_A_VAL_SLICE_4]
     ----------------------------------------------------------------------------
+    g_filter_a_val_bit_val_a_val_slice_4_t : if (G_FILT_A_EN) generate
 
-    filter_a_val_bit_val_a_val_slice_4_reg_comp : memory_reg_rw
+    i_filter_a_val_bit_val_a_val_slice_4_reg : memory_reg_rw
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(16) ,-- in
         reg_value                       => control_registers_out_i.filter_a_val_bit_val_a_val(28 downto 24) -- out
     );
 
-    end generate FILTER_A_VAL_present_gen_t;
+    end generate g_filter_a_val_bit_val_a_val_slice_4_t;
 
-    FILTER_A_VAL_present_gen_f : if (SUP_FILT_A = false) generate
-        control_registers_out_i.filter_a_val_bit_val_a_val <= (others => '0');
-    end generate FILTER_A_VAL_present_gen_f;
+    g_filter_a_val_bit_val_a_val_slice_4_f : if (not(G_FILT_A_EN)) generate
+        control_registers_out_i.filter_a_val_bit_val_a_val(28 downto 24) <= (others => '0');
+    end generate g_filter_a_val_bit_val_a_val_slice_4_f;
 
-    FILTER_B_MASK_present_gen_t : if (SUP_FILT_B = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_B_MASK[BIT_MASK_B_VAL_SLICE_1]
     ----------------------------------------------------------------------------
+    g_filter_b_mask_bit_mask_b_val_slice_1_t : if (G_FILT_B_EN) generate
 
-    filter_b_mask_bit_mask_b_val_slice_1_reg_comp : memory_reg_rw
+    i_filter_b_mask_bit_mask_b_val_slice_1_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(17) ,-- in
         reg_value                       => control_registers_out_i.filter_b_mask_bit_mask_b_val(7 downto 0) -- out
     );
 
+    end generate g_filter_b_mask_bit_mask_b_val_slice_1_t;
+
+    g_filter_b_mask_bit_mask_b_val_slice_1_f : if (not(G_FILT_B_EN)) generate
+        control_registers_out_i.filter_b_mask_bit_mask_b_val(7 downto 0) <= (others => '0');
+    end generate g_filter_b_mask_bit_mask_b_val_slice_1_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_B_MASK[BIT_MASK_B_VAL_SLICE_2]
     ----------------------------------------------------------------------------
+    g_filter_b_mask_bit_mask_b_val_slice_2_t : if (G_FILT_B_EN) generate
 
-    filter_b_mask_bit_mask_b_val_slice_2_reg_comp : memory_reg_rw
+    i_filter_b_mask_bit_mask_b_val_slice_2_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(17) ,-- in
         reg_value                       => control_registers_out_i.filter_b_mask_bit_mask_b_val(15 downto 8) -- out
     );
 
+    end generate g_filter_b_mask_bit_mask_b_val_slice_2_t;
+
+    g_filter_b_mask_bit_mask_b_val_slice_2_f : if (not(G_FILT_B_EN)) generate
+        control_registers_out_i.filter_b_mask_bit_mask_b_val(15 downto 8) <= (others => '0');
+    end generate g_filter_b_mask_bit_mask_b_val_slice_2_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_B_MASK[BIT_MASK_B_VAL_SLICE_3]
     ----------------------------------------------------------------------------
+    g_filter_b_mask_bit_mask_b_val_slice_3_t : if (G_FILT_B_EN) generate
 
-    filter_b_mask_bit_mask_b_val_slice_3_reg_comp : memory_reg_rw
+    i_filter_b_mask_bit_mask_b_val_slice_3_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(17) ,-- in
         reg_value                       => control_registers_out_i.filter_b_mask_bit_mask_b_val(23 downto 16) -- out
     );
 
+    end generate g_filter_b_mask_bit_mask_b_val_slice_3_t;
+
+    g_filter_b_mask_bit_mask_b_val_slice_3_f : if (not(G_FILT_B_EN)) generate
+        control_registers_out_i.filter_b_mask_bit_mask_b_val(23 downto 16) <= (others => '0');
+    end generate g_filter_b_mask_bit_mask_b_val_slice_3_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_B_MASK[BIT_MASK_B_VAL_SLICE_4]
     ----------------------------------------------------------------------------
+    g_filter_b_mask_bit_mask_b_val_slice_4_t : if (G_FILT_B_EN) generate
 
-    filter_b_mask_bit_mask_b_val_slice_4_reg_comp : memory_reg_rw
+    i_filter_b_mask_bit_mask_b_val_slice_4_reg : memory_reg_rw
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(17) ,-- in
         reg_value                       => control_registers_out_i.filter_b_mask_bit_mask_b_val(28 downto 24) -- out
     );
 
-    end generate FILTER_B_MASK_present_gen_t;
+    end generate g_filter_b_mask_bit_mask_b_val_slice_4_t;
 
-    FILTER_B_MASK_present_gen_f : if (SUP_FILT_B = false) generate
-        control_registers_out_i.filter_b_mask_bit_mask_b_val <= (others => '0');
-    end generate FILTER_B_MASK_present_gen_f;
+    g_filter_b_mask_bit_mask_b_val_slice_4_f : if (not(G_FILT_B_EN)) generate
+        control_registers_out_i.filter_b_mask_bit_mask_b_val(28 downto 24) <= (others => '0');
+    end generate g_filter_b_mask_bit_mask_b_val_slice_4_f;
 
-    FILTER_B_VAL_present_gen_t : if (SUP_FILT_B = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_B_VAL[BIT_VAL_B_VAL_SLICE_1]
     ----------------------------------------------------------------------------
+    g_filter_b_val_bit_val_b_val_slice_1_t : if (G_FILT_B_EN) generate
 
-    filter_b_val_bit_val_b_val_slice_1_reg_comp : memory_reg_rw
+    i_filter_b_val_bit_val_b_val_slice_1_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(18) ,-- in
         reg_value                       => control_registers_out_i.filter_b_val_bit_val_b_val(7 downto 0) -- out
     );
 
+    end generate g_filter_b_val_bit_val_b_val_slice_1_t;
+
+    g_filter_b_val_bit_val_b_val_slice_1_f : if (not(G_FILT_B_EN)) generate
+        control_registers_out_i.filter_b_val_bit_val_b_val(7 downto 0) <= (others => '0');
+    end generate g_filter_b_val_bit_val_b_val_slice_1_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_B_VAL[BIT_VAL_B_VAL_SLICE_2]
     ----------------------------------------------------------------------------
+    g_filter_b_val_bit_val_b_val_slice_2_t : if (G_FILT_B_EN) generate
 
-    filter_b_val_bit_val_b_val_slice_2_reg_comp : memory_reg_rw
+    i_filter_b_val_bit_val_b_val_slice_2_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(18) ,-- in
         reg_value                       => control_registers_out_i.filter_b_val_bit_val_b_val(15 downto 8) -- out
     );
 
+    end generate g_filter_b_val_bit_val_b_val_slice_2_t;
+
+    g_filter_b_val_bit_val_b_val_slice_2_f : if (not(G_FILT_B_EN)) generate
+        control_registers_out_i.filter_b_val_bit_val_b_val(15 downto 8) <= (others => '0');
+    end generate g_filter_b_val_bit_val_b_val_slice_2_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_B_VAL[BIT_VAL_B_VAL_SLICE_3]
     ----------------------------------------------------------------------------
+    g_filter_b_val_bit_val_b_val_slice_3_t : if (G_FILT_B_EN) generate
 
-    filter_b_val_bit_val_b_val_slice_3_reg_comp : memory_reg_rw
+    i_filter_b_val_bit_val_b_val_slice_3_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(18) ,-- in
         reg_value                       => control_registers_out_i.filter_b_val_bit_val_b_val(23 downto 16) -- out
     );
 
+    end generate g_filter_b_val_bit_val_b_val_slice_3_t;
+
+    g_filter_b_val_bit_val_b_val_slice_3_f : if (not(G_FILT_B_EN)) generate
+        control_registers_out_i.filter_b_val_bit_val_b_val(23 downto 16) <= (others => '0');
+    end generate g_filter_b_val_bit_val_b_val_slice_3_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_B_VAL[BIT_VAL_B_VAL_SLICE_4]
     ----------------------------------------------------------------------------
+    g_filter_b_val_bit_val_b_val_slice_4_t : if (G_FILT_B_EN) generate
 
-    filter_b_val_bit_val_b_val_slice_4_reg_comp : memory_reg_rw
+    i_filter_b_val_bit_val_b_val_slice_4_reg : memory_reg_rw
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(18) ,-- in
         reg_value                       => control_registers_out_i.filter_b_val_bit_val_b_val(28 downto 24) -- out
     );
 
-    end generate FILTER_B_VAL_present_gen_t;
+    end generate g_filter_b_val_bit_val_b_val_slice_4_t;
 
-    FILTER_B_VAL_present_gen_f : if (SUP_FILT_B = false) generate
-        control_registers_out_i.filter_b_val_bit_val_b_val <= (others => '0');
-    end generate FILTER_B_VAL_present_gen_f;
+    g_filter_b_val_bit_val_b_val_slice_4_f : if (not(G_FILT_B_EN)) generate
+        control_registers_out_i.filter_b_val_bit_val_b_val(28 downto 24) <= (others => '0');
+    end generate g_filter_b_val_bit_val_b_val_slice_4_f;
 
-    FILTER_C_MASK_present_gen_t : if (SUP_FILT_C = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_C_MASK[BIT_MASK_C_VAL_SLICE_1]
     ----------------------------------------------------------------------------
+    g_filter_c_mask_bit_mask_c_val_slice_1_t : if (G_FILT_C_EN) generate
 
-    filter_c_mask_bit_mask_c_val_slice_1_reg_comp : memory_reg_rw
+    i_filter_c_mask_bit_mask_c_val_slice_1_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(19) ,-- in
         reg_value                       => control_registers_out_i.filter_c_mask_bit_mask_c_val(7 downto 0) -- out
     );
 
+    end generate g_filter_c_mask_bit_mask_c_val_slice_1_t;
+
+    g_filter_c_mask_bit_mask_c_val_slice_1_f : if (not(G_FILT_C_EN)) generate
+        control_registers_out_i.filter_c_mask_bit_mask_c_val(7 downto 0) <= (others => '0');
+    end generate g_filter_c_mask_bit_mask_c_val_slice_1_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_C_MASK[BIT_MASK_C_VAL_SLICE_2]
     ----------------------------------------------------------------------------
+    g_filter_c_mask_bit_mask_c_val_slice_2_t : if (G_FILT_C_EN) generate
 
-    filter_c_mask_bit_mask_c_val_slice_2_reg_comp : memory_reg_rw
+    i_filter_c_mask_bit_mask_c_val_slice_2_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(19) ,-- in
         reg_value                       => control_registers_out_i.filter_c_mask_bit_mask_c_val(15 downto 8) -- out
     );
 
+    end generate g_filter_c_mask_bit_mask_c_val_slice_2_t;
+
+    g_filter_c_mask_bit_mask_c_val_slice_2_f : if (not(G_FILT_C_EN)) generate
+        control_registers_out_i.filter_c_mask_bit_mask_c_val(15 downto 8) <= (others => '0');
+    end generate g_filter_c_mask_bit_mask_c_val_slice_2_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_C_MASK[BIT_MASK_C_VAL_SLICE_3]
     ----------------------------------------------------------------------------
+    g_filter_c_mask_bit_mask_c_val_slice_3_t : if (G_FILT_C_EN) generate
 
-    filter_c_mask_bit_mask_c_val_slice_3_reg_comp : memory_reg_rw
+    i_filter_c_mask_bit_mask_c_val_slice_3_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(19) ,-- in
         reg_value                       => control_registers_out_i.filter_c_mask_bit_mask_c_val(23 downto 16) -- out
     );
 
+    end generate g_filter_c_mask_bit_mask_c_val_slice_3_t;
+
+    g_filter_c_mask_bit_mask_c_val_slice_3_f : if (not(G_FILT_C_EN)) generate
+        control_registers_out_i.filter_c_mask_bit_mask_c_val(23 downto 16) <= (others => '0');
+    end generate g_filter_c_mask_bit_mask_c_val_slice_3_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_C_MASK[BIT_MASK_C_VAL_SLICE_4]
     ----------------------------------------------------------------------------
+    g_filter_c_mask_bit_mask_c_val_slice_4_t : if (G_FILT_C_EN) generate
 
-    filter_c_mask_bit_mask_c_val_slice_4_reg_comp : memory_reg_rw
+    i_filter_c_mask_bit_mask_c_val_slice_4_reg : memory_reg_rw
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(19) ,-- in
         reg_value                       => control_registers_out_i.filter_c_mask_bit_mask_c_val(28 downto 24) -- out
     );
 
-    end generate FILTER_C_MASK_present_gen_t;
+    end generate g_filter_c_mask_bit_mask_c_val_slice_4_t;
 
-    FILTER_C_MASK_present_gen_f : if (SUP_FILT_C = false) generate
-        control_registers_out_i.filter_c_mask_bit_mask_c_val <= (others => '0');
-    end generate FILTER_C_MASK_present_gen_f;
+    g_filter_c_mask_bit_mask_c_val_slice_4_f : if (not(G_FILT_C_EN)) generate
+        control_registers_out_i.filter_c_mask_bit_mask_c_val(28 downto 24) <= (others => '0');
+    end generate g_filter_c_mask_bit_mask_c_val_slice_4_f;
 
-    FILTER_C_VAL_present_gen_t : if (SUP_FILT_C = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_C_VAL[BIT_VAL_C_VAL_SLICE_1]
     ----------------------------------------------------------------------------
+    g_filter_c_val_bit_val_c_val_slice_1_t : if (G_FILT_C_EN) generate
 
-    filter_c_val_bit_val_c_val_slice_1_reg_comp : memory_reg_rw
+    i_filter_c_val_bit_val_c_val_slice_1_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(20) ,-- in
         reg_value                       => control_registers_out_i.filter_c_val_bit_val_c_val(7 downto 0) -- out
     );
 
+    end generate g_filter_c_val_bit_val_c_val_slice_1_t;
+
+    g_filter_c_val_bit_val_c_val_slice_1_f : if (not(G_FILT_C_EN)) generate
+        control_registers_out_i.filter_c_val_bit_val_c_val(7 downto 0) <= (others => '0');
+    end generate g_filter_c_val_bit_val_c_val_slice_1_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_C_VAL[BIT_VAL_C_VAL_SLICE_2]
     ----------------------------------------------------------------------------
+    g_filter_c_val_bit_val_c_val_slice_2_t : if (G_FILT_C_EN) generate
 
-    filter_c_val_bit_val_c_val_slice_2_reg_comp : memory_reg_rw
+    i_filter_c_val_bit_val_c_val_slice_2_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(20) ,-- in
         reg_value                       => control_registers_out_i.filter_c_val_bit_val_c_val(15 downto 8) -- out
     );
 
+    end generate g_filter_c_val_bit_val_c_val_slice_2_t;
+
+    g_filter_c_val_bit_val_c_val_slice_2_f : if (not(G_FILT_C_EN)) generate
+        control_registers_out_i.filter_c_val_bit_val_c_val(15 downto 8) <= (others => '0');
+    end generate g_filter_c_val_bit_val_c_val_slice_2_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_C_VAL[BIT_VAL_C_VAL_SLICE_3]
     ----------------------------------------------------------------------------
+    g_filter_c_val_bit_val_c_val_slice_3_t : if (G_FILT_C_EN) generate
 
-    filter_c_val_bit_val_c_val_slice_3_reg_comp : memory_reg_rw
+    i_filter_c_val_bit_val_c_val_slice_3_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(20) ,-- in
         reg_value                       => control_registers_out_i.filter_c_val_bit_val_c_val(23 downto 16) -- out
     );
 
+    end generate g_filter_c_val_bit_val_c_val_slice_3_t;
+
+    g_filter_c_val_bit_val_c_val_slice_3_f : if (not(G_FILT_C_EN)) generate
+        control_registers_out_i.filter_c_val_bit_val_c_val(23 downto 16) <= (others => '0');
+    end generate g_filter_c_val_bit_val_c_val_slice_3_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_C_VAL[BIT_VAL_C_VAL_SLICE_4]
     ----------------------------------------------------------------------------
+    g_filter_c_val_bit_val_c_val_slice_4_t : if (G_FILT_C_EN) generate
 
-    filter_c_val_bit_val_c_val_slice_4_reg_comp : memory_reg_rw
+    i_filter_c_val_bit_val_c_val_slice_4_reg : memory_reg_rw
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(20) ,-- in
         reg_value                       => control_registers_out_i.filter_c_val_bit_val_c_val(28 downto 24) -- out
     );
 
-    end generate FILTER_C_VAL_present_gen_t;
+    end generate g_filter_c_val_bit_val_c_val_slice_4_t;
 
-    FILTER_C_VAL_present_gen_f : if (SUP_FILT_C = false) generate
-        control_registers_out_i.filter_c_val_bit_val_c_val <= (others => '0');
-    end generate FILTER_C_VAL_present_gen_f;
+    g_filter_c_val_bit_val_c_val_slice_4_f : if (not(G_FILT_C_EN)) generate
+        control_registers_out_i.filter_c_val_bit_val_c_val(28 downto 24) <= (others => '0');
+    end generate g_filter_c_val_bit_val_c_val_slice_4_f;
 
-    FILTER_RAN_LOW_present_gen_t : if (SUP_RANGE = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_RAN_LOW[BIT_RAN_LOW_VAL_SLICE_1]
     ----------------------------------------------------------------------------
+    g_filter_ran_low_bit_ran_low_val_slice_1_t : if (G_FILT_RANGE_EN) generate
 
-    filter_ran_low_bit_ran_low_val_slice_1_reg_comp : memory_reg_rw
+    i_filter_ran_low_bit_ran_low_val_slice_1_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(21) ,-- in
         reg_value                       => control_registers_out_i.filter_ran_low_bit_ran_low_val(7 downto 0) -- out
     );
 
+    end generate g_filter_ran_low_bit_ran_low_val_slice_1_t;
+
+    g_filter_ran_low_bit_ran_low_val_slice_1_f : if (not(G_FILT_RANGE_EN)) generate
+        control_registers_out_i.filter_ran_low_bit_ran_low_val(7 downto 0) <= (others => '0');
+    end generate g_filter_ran_low_bit_ran_low_val_slice_1_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_RAN_LOW[BIT_RAN_LOW_VAL_SLICE_2]
     ----------------------------------------------------------------------------
+    g_filter_ran_low_bit_ran_low_val_slice_2_t : if (G_FILT_RANGE_EN) generate
 
-    filter_ran_low_bit_ran_low_val_slice_2_reg_comp : memory_reg_rw
+    i_filter_ran_low_bit_ran_low_val_slice_2_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(21) ,-- in
         reg_value                       => control_registers_out_i.filter_ran_low_bit_ran_low_val(15 downto 8) -- out
     );
 
+    end generate g_filter_ran_low_bit_ran_low_val_slice_2_t;
+
+    g_filter_ran_low_bit_ran_low_val_slice_2_f : if (not(G_FILT_RANGE_EN)) generate
+        control_registers_out_i.filter_ran_low_bit_ran_low_val(15 downto 8) <= (others => '0');
+    end generate g_filter_ran_low_bit_ran_low_val_slice_2_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_RAN_LOW[BIT_RAN_LOW_VAL_SLICE_3]
     ----------------------------------------------------------------------------
+    g_filter_ran_low_bit_ran_low_val_slice_3_t : if (G_FILT_RANGE_EN) generate
 
-    filter_ran_low_bit_ran_low_val_slice_3_reg_comp : memory_reg_rw
+    i_filter_ran_low_bit_ran_low_val_slice_3_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(21) ,-- in
         reg_value                       => control_registers_out_i.filter_ran_low_bit_ran_low_val(23 downto 16) -- out
     );
 
+    end generate g_filter_ran_low_bit_ran_low_val_slice_3_t;
+
+    g_filter_ran_low_bit_ran_low_val_slice_3_f : if (not(G_FILT_RANGE_EN)) generate
+        control_registers_out_i.filter_ran_low_bit_ran_low_val(23 downto 16) <= (others => '0');
+    end generate g_filter_ran_low_bit_ran_low_val_slice_3_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_RAN_LOW[BIT_RAN_LOW_VAL_SLICE_4]
     ----------------------------------------------------------------------------
+    g_filter_ran_low_bit_ran_low_val_slice_4_t : if (G_FILT_RANGE_EN) generate
 
-    filter_ran_low_bit_ran_low_val_slice_4_reg_comp : memory_reg_rw
+    i_filter_ran_low_bit_ran_low_val_slice_4_reg : memory_reg_rw
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(21) ,-- in
         reg_value                       => control_registers_out_i.filter_ran_low_bit_ran_low_val(28 downto 24) -- out
     );
 
-    end generate FILTER_RAN_LOW_present_gen_t;
+    end generate g_filter_ran_low_bit_ran_low_val_slice_4_t;
 
-    FILTER_RAN_LOW_present_gen_f : if (SUP_RANGE = false) generate
-        control_registers_out_i.filter_ran_low_bit_ran_low_val <= (others => '0');
-    end generate FILTER_RAN_LOW_present_gen_f;
+    g_filter_ran_low_bit_ran_low_val_slice_4_f : if (not(G_FILT_RANGE_EN)) generate
+        control_registers_out_i.filter_ran_low_bit_ran_low_val(28 downto 24) <= (others => '0');
+    end generate g_filter_ran_low_bit_ran_low_val_slice_4_f;
 
-    FILTER_RAN_HIGH_present_gen_t : if (SUP_RANGE = true) generate
     ----------------------------------------------------------------------------
     -- FILTER_RAN_HIGH[BIT_RAN_HIGH_VAL_SLICE_1]
     ----------------------------------------------------------------------------
+    g_filter_ran_high_bit_ran_high_val_slice_1_t : if (G_FILT_RANGE_EN) generate
 
-    filter_ran_high_bit_ran_high_val_slice_1_reg_comp : memory_reg_rw
+    i_filter_ran_high_bit_ran_high_val_slice_1_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(22) ,-- in
         reg_value                       => control_registers_out_i.filter_ran_high_bit_ran_high_val(7 downto 0) -- out
     );
 
+    end generate g_filter_ran_high_bit_ran_high_val_slice_1_t;
+
+    g_filter_ran_high_bit_ran_high_val_slice_1_f : if (not(G_FILT_RANGE_EN)) generate
+        control_registers_out_i.filter_ran_high_bit_ran_high_val(7 downto 0) <= (others => '0');
+    end generate g_filter_ran_high_bit_ran_high_val_slice_1_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_RAN_HIGH[BIT_RAN_HIGH_VAL_SLICE_2]
     ----------------------------------------------------------------------------
+    g_filter_ran_high_bit_ran_high_val_slice_2_t : if (G_FILT_RANGE_EN) generate
 
-    filter_ran_high_bit_ran_high_val_slice_2_reg_comp : memory_reg_rw
+    i_filter_ran_high_bit_ran_high_val_slice_2_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(22) ,-- in
         reg_value                       => control_registers_out_i.filter_ran_high_bit_ran_high_val(15 downto 8) -- out
     );
 
+    end generate g_filter_ran_high_bit_ran_high_val_slice_2_t;
+
+    g_filter_ran_high_bit_ran_high_val_slice_2_f : if (not(G_FILT_RANGE_EN)) generate
+        control_registers_out_i.filter_ran_high_bit_ran_high_val(15 downto 8) <= (others => '0');
+    end generate g_filter_ran_high_bit_ran_high_val_slice_2_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_RAN_HIGH[BIT_RAN_HIGH_VAL_SLICE_3]
     ----------------------------------------------------------------------------
+    g_filter_ran_high_bit_ran_high_val_slice_3_t : if (G_FILT_RANGE_EN) generate
 
-    filter_ran_high_bit_ran_high_val_slice_3_reg_comp : memory_reg_rw
+    i_filter_ran_high_bit_ran_high_val_slice_3_reg : memory_reg_rw
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(22) ,-- in
         reg_value                       => control_registers_out_i.filter_ran_high_bit_ran_high_val(23 downto 16) -- out
     );
 
+    end generate g_filter_ran_high_bit_ran_high_val_slice_3_t;
+
+    g_filter_ran_high_bit_ran_high_val_slice_3_f : if (not(G_FILT_RANGE_EN)) generate
+        control_registers_out_i.filter_ran_high_bit_ran_high_val(23 downto 16) <= (others => '0');
+    end generate g_filter_ran_high_bit_ran_high_val_slice_3_f;
+
     ----------------------------------------------------------------------------
     -- FILTER_RAN_HIGH[BIT_RAN_HIGH_VAL_SLICE_4]
     ----------------------------------------------------------------------------
+    g_filter_ran_high_bit_ran_high_val_slice_4_t : if (G_FILT_RANGE_EN) generate
 
-    filter_ran_high_bit_ran_high_val_slice_4_reg_comp : memory_reg_rw
+    i_filter_ran_high_bit_ran_high_val_slice_4_reg : memory_reg_rw
     generic map(
         data_width                      => 5 ,
         reset_value                     => "00000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(28 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(22) ,-- in
         reg_value                       => control_registers_out_i.filter_ran_high_bit_ran_high_val(28 downto 24) -- out
     );
 
-    end generate FILTER_RAN_HIGH_present_gen_t;
+    end generate g_filter_ran_high_bit_ran_high_val_slice_4_t;
 
-    FILTER_RAN_HIGH_present_gen_f : if (SUP_RANGE = false) generate
-        control_registers_out_i.filter_ran_high_bit_ran_high_val <= (others => '0');
-    end generate FILTER_RAN_HIGH_present_gen_f;
+    g_filter_ran_high_bit_ran_high_val_slice_4_f : if (not(G_FILT_RANGE_EN)) generate
+        control_registers_out_i.filter_ran_high_bit_ran_high_val(28 downto 24) <= (others => '0');
+    end generate g_filter_ran_high_bit_ran_high_val_slice_4_f;
 
     ----------------------------------------------------------------------------
     -- FILTER_CONTROL[FANB]
     ----------------------------------------------------------------------------
 
-    filter_control_fanb_reg_comp : memory_reg_rw
+    i_filter_control_fanb_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "1" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(0 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2185,14 +2354,14 @@ begin
     -- FILTER_CONTROL[FANE]
     ----------------------------------------------------------------------------
 
-    filter_control_fane_reg_comp : memory_reg_rw
+    i_filter_control_fane_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "1" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(1 downto 1) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2203,14 +2372,14 @@ begin
     -- FILTER_CONTROL[FAFB]
     ----------------------------------------------------------------------------
 
-    filter_control_fafb_reg_comp : memory_reg_rw
+    i_filter_control_fafb_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "1" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(2 downto 2) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2221,14 +2390,14 @@ begin
     -- FILTER_CONTROL[FAFE]
     ----------------------------------------------------------------------------
 
-    filter_control_fafe_reg_comp : memory_reg_rw
+    i_filter_control_fafe_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "1" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(3 downto 3) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2239,14 +2408,14 @@ begin
     -- FILTER_CONTROL[FBNB]
     ----------------------------------------------------------------------------
 
-    filter_control_fbnb_reg_comp : memory_reg_rw
+    i_filter_control_fbnb_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(4 downto 4) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2257,14 +2426,14 @@ begin
     -- FILTER_CONTROL[FBNE]
     ----------------------------------------------------------------------------
 
-    filter_control_fbne_reg_comp : memory_reg_rw
+    i_filter_control_fbne_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(5 downto 5) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2275,14 +2444,14 @@ begin
     -- FILTER_CONTROL[FBFB]
     ----------------------------------------------------------------------------
 
-    filter_control_fbfb_reg_comp : memory_reg_rw
+    i_filter_control_fbfb_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(6 downto 6) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2293,14 +2462,14 @@ begin
     -- FILTER_CONTROL[FBFE]
     ----------------------------------------------------------------------------
 
-    filter_control_fbfe_reg_comp : memory_reg_rw
+    i_filter_control_fbfe_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(7 downto 7) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2311,14 +2480,14 @@ begin
     -- FILTER_CONTROL[FCNB]
     ----------------------------------------------------------------------------
 
-    filter_control_fcnb_reg_comp : memory_reg_rw
+    i_filter_control_fcnb_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(8 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2329,14 +2498,14 @@ begin
     -- FILTER_CONTROL[FCNE]
     ----------------------------------------------------------------------------
 
-    filter_control_fcne_reg_comp : memory_reg_rw
+    i_filter_control_fcne_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(9 downto 9) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2347,14 +2516,14 @@ begin
     -- FILTER_CONTROL[FCFB]
     ----------------------------------------------------------------------------
 
-    filter_control_fcfb_reg_comp : memory_reg_rw
+    i_filter_control_fcfb_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(10 downto 10) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2365,14 +2534,14 @@ begin
     -- FILTER_CONTROL[FCFE]
     ----------------------------------------------------------------------------
 
-    filter_control_fcfe_reg_comp : memory_reg_rw
+    i_filter_control_fcfe_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(11 downto 11) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2383,14 +2552,14 @@ begin
     -- FILTER_CONTROL[FRNB]
     ----------------------------------------------------------------------------
 
-    filter_control_frnb_reg_comp : memory_reg_rw
+    i_filter_control_frnb_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(12 downto 12) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2401,14 +2570,14 @@ begin
     -- FILTER_CONTROL[FRNE]
     ----------------------------------------------------------------------------
 
-    filter_control_frne_reg_comp : memory_reg_rw
+    i_filter_control_frne_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(13 downto 13) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2419,14 +2588,14 @@ begin
     -- FILTER_CONTROL[FRFB]
     ----------------------------------------------------------------------------
 
-    filter_control_frfb_reg_comp : memory_reg_rw
+    i_filter_control_frfb_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(14 downto 14) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2437,14 +2606,14 @@ begin
     -- FILTER_CONTROL[FRFE]
     ----------------------------------------------------------------------------
 
-    filter_control_frfe_reg_comp : memory_reg_rw
+    i_filter_control_frfe_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 15) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(23) ,-- in
@@ -2455,14 +2624,14 @@ begin
     -- RX_SETTINGS[RTSOP]
     ----------------------------------------------------------------------------
 
-    rx_settings_rtsop_reg_comp : memory_reg_rw
+    i_rx_settings_rtsop_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(16 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(26) ,-- in
@@ -2473,13 +2642,13 @@ begin
     -- RX_DATA access signallization
     ----------------------------------------------------------------------------
 
-    rx_data_access_signaller_comp : read_access_signaller
+    i_rx_data_access_signaller : read_access_signaller
     generic map(
         data_width                      => 32 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         cs                              => reg_sel(27) ,-- in
         read                            => read ,-- in
         be                              => be(3 downto 0) ,-- in
@@ -2490,14 +2659,14 @@ begin
     -- TX_COMMAND[TXCE]
     ----------------------------------------------------------------------------
 
-    tx_command_txce_reg_comp : memory_reg_os
+    i_tx_command_txce_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(0 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(29) ,-- in
@@ -2508,14 +2677,14 @@ begin
     -- TX_COMMAND[TXCR]
     ----------------------------------------------------------------------------
 
-    tx_command_txcr_reg_comp : memory_reg_os
+    i_tx_command_txcr_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(1 downto 1) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(29) ,-- in
@@ -2526,14 +2695,14 @@ begin
     -- TX_COMMAND[TXCA]
     ----------------------------------------------------------------------------
 
-    tx_command_txca_reg_comp : memory_reg_os
+    i_tx_command_txca_reg : memory_reg_os
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(2 downto 2) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(29) ,-- in
@@ -2544,14 +2713,14 @@ begin
     -- TX_COMMAND[TXB1]
     ----------------------------------------------------------------------------
 
-    tx_command_txb1_reg_comp : memory_reg_rw
+    i_tx_command_txb1_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(8 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
@@ -2562,14 +2731,14 @@ begin
     -- TX_COMMAND[TXB2]
     ----------------------------------------------------------------------------
 
-    tx_command_txb2_reg_comp : memory_reg_rw
+    i_tx_command_txb2_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(9 downto 9) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
@@ -2579,123 +2748,165 @@ begin
     ----------------------------------------------------------------------------
     -- TX_COMMAND[TXB3]
     ----------------------------------------------------------------------------
+    g_tx_command_txb3_t : if (G_TXT_BUF_COUNT > 2) generate
 
-    tx_command_txb3_reg_comp : memory_reg_rw
+    i_tx_command_txb3_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(10 downto 10) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
         reg_value(0)                    => control_registers_out_i.tx_command_txb3 -- out
     );
 
+    end generate g_tx_command_txb3_t;
+
+    g_tx_command_txb3_f : if (not(G_TXT_BUF_COUNT > 2)) generate
+        control_registers_out_i.tx_command_txb3 <= '0';
+    end generate g_tx_command_txb3_f;
+
     ----------------------------------------------------------------------------
     -- TX_COMMAND[TXB4]
     ----------------------------------------------------------------------------
+    g_tx_command_txb4_t : if (G_TXT_BUF_COUNT > 3) generate
 
-    tx_command_txb4_reg_comp : memory_reg_rw
+    i_tx_command_txb4_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(11 downto 11) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
         reg_value(0)                    => control_registers_out_i.tx_command_txb4 -- out
     );
 
+    end generate g_tx_command_txb4_t;
+
+    g_tx_command_txb4_f : if (not(G_TXT_BUF_COUNT > 3)) generate
+        control_registers_out_i.tx_command_txb4 <= '0';
+    end generate g_tx_command_txb4_f;
+
     ----------------------------------------------------------------------------
     -- TX_COMMAND[TXB5]
     ----------------------------------------------------------------------------
+    g_tx_command_txb5_t : if (G_TXT_BUF_COUNT > 4) generate
 
-    tx_command_txb5_reg_comp : memory_reg_rw
+    i_tx_command_txb5_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(12 downto 12) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
         reg_value(0)                    => control_registers_out_i.tx_command_txb5 -- out
     );
 
+    end generate g_tx_command_txb5_t;
+
+    g_tx_command_txb5_f : if (not(G_TXT_BUF_COUNT > 4)) generate
+        control_registers_out_i.tx_command_txb5 <= '0';
+    end generate g_tx_command_txb5_f;
+
     ----------------------------------------------------------------------------
     -- TX_COMMAND[TXB6]
     ----------------------------------------------------------------------------
+    g_tx_command_txb6_t : if (G_TXT_BUF_COUNT > 5) generate
 
-    tx_command_txb6_reg_comp : memory_reg_rw
+    i_tx_command_txb6_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(13 downto 13) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
         reg_value(0)                    => control_registers_out_i.tx_command_txb6 -- out
     );
 
+    end generate g_tx_command_txb6_t;
+
+    g_tx_command_txb6_f : if (not(G_TXT_BUF_COUNT > 5)) generate
+        control_registers_out_i.tx_command_txb6 <= '0';
+    end generate g_tx_command_txb6_f;
+
     ----------------------------------------------------------------------------
     -- TX_COMMAND[TXB7]
     ----------------------------------------------------------------------------
+    g_tx_command_txb7_t : if (G_TXT_BUF_COUNT > 6) generate
 
-    tx_command_txb7_reg_comp : memory_reg_rw
+    i_tx_command_txb7_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(14 downto 14) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
         reg_value(0)                    => control_registers_out_i.tx_command_txb7 -- out
     );
 
+    end generate g_tx_command_txb7_t;
+
+    g_tx_command_txb7_f : if (not(G_TXT_BUF_COUNT > 6)) generate
+        control_registers_out_i.tx_command_txb7 <= '0';
+    end generate g_tx_command_txb7_f;
+
     ----------------------------------------------------------------------------
     -- TX_COMMAND[TXB8]
     ----------------------------------------------------------------------------
+    g_tx_command_txb8_t : if (G_TXT_BUF_COUNT > 7) generate
 
-    tx_command_txb8_reg_comp : memory_reg_rw
+    i_tx_command_txb8_reg : memory_reg_rw
     generic map(
         data_width                      => 1 ,
         reset_value                     => "0" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(15 downto 15) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(29) ,-- in
         reg_value(0)                    => control_registers_out_i.tx_command_txb8 -- out
     );
 
+    end generate g_tx_command_txb8_t;
+
+    g_tx_command_txb8_f : if (not(G_TXT_BUF_COUNT > 7)) generate
+        control_registers_out_i.tx_command_txb8 <= '0';
+    end generate g_tx_command_txb8_f;
+
     ----------------------------------------------------------------------------
     -- TX_PRIORITY[TXT1P]
     ----------------------------------------------------------------------------
 
-    tx_priority_txt1p_reg_comp : memory_reg_rw
+    i_tx_priority_txt1p_reg : memory_reg_rw
     generic map(
         data_width                      => 3 ,
         reset_value                     => "001" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(2 downto 0) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(30) ,-- in
@@ -2706,14 +2917,14 @@ begin
     -- TX_PRIORITY[TXT2P]
     ----------------------------------------------------------------------------
 
-    tx_priority_txt2p_reg_comp : memory_reg_rw
+    i_tx_priority_txt2p_reg : memory_reg_rw
     generic map(
         data_width                      => 3 ,
         reset_value                     => "000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(6 downto 4) ,-- in
         write                           => write_en(0) ,-- in
         cs                              => reg_sel(30) ,-- in
@@ -2723,123 +2934,165 @@ begin
     ----------------------------------------------------------------------------
     -- TX_PRIORITY[TXT3P]
     ----------------------------------------------------------------------------
+    g_tx_priority_txt3p_t : if (G_TXT_BUF_COUNT > 2) generate
 
-    tx_priority_txt3p_reg_comp : memory_reg_rw
+    i_tx_priority_txt3p_reg : memory_reg_rw
     generic map(
         data_width                      => 3 ,
         reset_value                     => "000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(10 downto 8) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(30) ,-- in
         reg_value                       => control_registers_out_i.tx_priority_txt3p -- out
     );
 
+    end generate g_tx_priority_txt3p_t;
+
+    g_tx_priority_txt3p_f : if (not(G_TXT_BUF_COUNT > 2)) generate
+        control_registers_out_i.tx_priority_txt3p <= (others => '0');
+    end generate g_tx_priority_txt3p_f;
+
     ----------------------------------------------------------------------------
     -- TX_PRIORITY[TXT4P]
     ----------------------------------------------------------------------------
+    g_tx_priority_txt4p_t : if (G_TXT_BUF_COUNT > 3) generate
 
-    tx_priority_txt4p_reg_comp : memory_reg_rw
+    i_tx_priority_txt4p_reg : memory_reg_rw
     generic map(
         data_width                      => 3 ,
         reset_value                     => "000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(14 downto 12) ,-- in
         write                           => write_en(1) ,-- in
         cs                              => reg_sel(30) ,-- in
         reg_value                       => control_registers_out_i.tx_priority_txt4p -- out
     );
 
+    end generate g_tx_priority_txt4p_t;
+
+    g_tx_priority_txt4p_f : if (not(G_TXT_BUF_COUNT > 3)) generate
+        control_registers_out_i.tx_priority_txt4p <= (others => '0');
+    end generate g_tx_priority_txt4p_f;
+
     ----------------------------------------------------------------------------
     -- TX_PRIORITY[TXT5P]
     ----------------------------------------------------------------------------
+    g_tx_priority_txt5p_t : if (G_TXT_BUF_COUNT > 4) generate
 
-    tx_priority_txt5p_reg_comp : memory_reg_rw
+    i_tx_priority_txt5p_reg : memory_reg_rw
     generic map(
         data_width                      => 3 ,
         reset_value                     => "000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(18 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(30) ,-- in
         reg_value                       => control_registers_out_i.tx_priority_txt5p -- out
     );
 
+    end generate g_tx_priority_txt5p_t;
+
+    g_tx_priority_txt5p_f : if (not(G_TXT_BUF_COUNT > 4)) generate
+        control_registers_out_i.tx_priority_txt5p <= (others => '0');
+    end generate g_tx_priority_txt5p_f;
+
     ----------------------------------------------------------------------------
     -- TX_PRIORITY[TXT6P]
     ----------------------------------------------------------------------------
+    g_tx_priority_txt6p_t : if (G_TXT_BUF_COUNT > 5) generate
 
-    tx_priority_txt6p_reg_comp : memory_reg_rw
+    i_tx_priority_txt6p_reg : memory_reg_rw
     generic map(
         data_width                      => 3 ,
         reset_value                     => "000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(22 downto 20) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(30) ,-- in
         reg_value                       => control_registers_out_i.tx_priority_txt6p -- out
     );
 
+    end generate g_tx_priority_txt6p_t;
+
+    g_tx_priority_txt6p_f : if (not(G_TXT_BUF_COUNT > 5)) generate
+        control_registers_out_i.tx_priority_txt6p <= (others => '0');
+    end generate g_tx_priority_txt6p_f;
+
     ----------------------------------------------------------------------------
     -- TX_PRIORITY[TXT7P]
     ----------------------------------------------------------------------------
+    g_tx_priority_txt7p_t : if (G_TXT_BUF_COUNT > 6) generate
 
-    tx_priority_txt7p_reg_comp : memory_reg_rw
+    i_tx_priority_txt7p_reg : memory_reg_rw
     generic map(
         data_width                      => 3 ,
         reset_value                     => "000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(26 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(30) ,-- in
         reg_value                       => control_registers_out_i.tx_priority_txt7p -- out
     );
 
+    end generate g_tx_priority_txt7p_t;
+
+    g_tx_priority_txt7p_f : if (not(G_TXT_BUF_COUNT > 6)) generate
+        control_registers_out_i.tx_priority_txt7p <= (others => '0');
+    end generate g_tx_priority_txt7p_f;
+
     ----------------------------------------------------------------------------
     -- TX_PRIORITY[TXT8P]
     ----------------------------------------------------------------------------
+    g_tx_priority_txt8p_t : if (G_TXT_BUF_COUNT > 7) generate
 
-    tx_priority_txt8p_reg_comp : memory_reg_rw
+    i_tx_priority_txt8p_reg : memory_reg_rw
     generic map(
         data_width                      => 3 ,
         reset_value                     => "000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(30 downto 28) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(30) ,-- in
         reg_value                       => control_registers_out_i.tx_priority_txt8p -- out
     );
 
+    end generate g_tx_priority_txt8p_t;
+
+    g_tx_priority_txt8p_f : if (not(G_TXT_BUF_COUNT > 7)) generate
+        control_registers_out_i.tx_priority_txt8p <= (others => '0');
+    end generate g_tx_priority_txt8p_f;
+
     ----------------------------------------------------------------------------
     -- SSP_CFG[SSP_OFFSET]
     ----------------------------------------------------------------------------
 
-    ssp_cfg_ssp_offset_reg_comp : memory_reg_rw_lock
+    i_ssp_cfg_ssp_offset_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 8 ,
         reset_value                     => "00001010" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write_en(2) ,-- in
         cs                              => reg_sel(32) ,-- in
@@ -2851,14 +3104,14 @@ begin
     -- SSP_CFG[SSP_SRC]
     ----------------------------------------------------------------------------
 
-    ssp_cfg_ssp_src_reg_comp : memory_reg_rw_lock
+    i_ssp_cfg_ssp_src_reg : memory_reg_rw_lock
     generic map(
         data_width                      => 2 ,
         reset_value                     => "00" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
+        rst_n                           => rst_n ,-- in
         data_in                         => w_data(25 downto 24) ,-- in
         write                           => write_en(3) ,-- in
         cs                              => reg_sel(32) ,-- in
@@ -3081,9 +3334,9 @@ begin
     ----------------------------------------------------------------------------
     -- Output register
     ----------------------------------------------------------------------------
-    read_data_reg_proc : process(res_n, clk_sys)
+    p_read_data_reg : process(rst_n, clk_sys)
     begin
-        if (res_n = '0') then
+        if (rst_n = '0') then
             r_data <= (others => '0');
         elsif (rising_edge(clk_sys)) then
             if (cs = '1' and read = '1') then

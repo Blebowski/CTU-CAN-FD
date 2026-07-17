@@ -233,6 +233,22 @@ package body mode_rst_ftest is
             return;
         end if;
 
+        -- Fields of TX_PRIORITY are conditionally present based on number of
+        -- TXT Buffers! Needs to mask the register value accordingly!
+        if (reg.address = TX_PRIORITY_ADR) then
+            info_m("Masking TX_PRIORITY fields for " & integer'image(hw_cfg.txt_buffer_count) &
+                    " TXT Buffers");
+            case (hw_cfg.txt_buffer_count) is
+            when 2 => rand_data(31 downto 8)  := (others => '0');
+            when 3 => rand_data(31 downto 12) := (others => '0');
+            when 4 => rand_data(31 downto 16) := (others => '0');
+            when 5 => rand_data(31 downto 20) := (others => '0');
+            when 6 => rand_data(31 downto 24) := (others => '0');
+            when 7 => rand_data(31 downto 28) := (others => '0');
+            when others => null;
+            end case;
+        end if;
+
         info_m ("Testing RW register at address: " & to_hstring(reg.address) &
                 " size: " & integer'image(reg.size));
 

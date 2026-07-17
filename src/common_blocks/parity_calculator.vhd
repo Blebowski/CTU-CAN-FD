@@ -97,7 +97,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Parity calculation process
     -----------------------------------------------------------------------------------------------
-    parity_calc_proc : process(data_in)
+    p_parity_calc : process(data_in)
         variable parity_tmp : std_logic;
     begin
         parity_tmp := G_PARITY_TYPE;

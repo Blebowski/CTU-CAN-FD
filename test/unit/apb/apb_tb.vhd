@@ -70,7 +70,7 @@
 -- @TestInfoStart
 --
 -- @Purpose:
---    Simple test of can_top_apb, performing register read/write via APB.
+--    Simple test of ctu_can_fd_top_apb, performing register read/write via APB.
 --
 -- @Verifies:
 --  @1. Read transactions to CTU CAN FD via APB.
@@ -108,42 +108,6 @@ context vunit_lib.vunit_context;
 
 
 architecture apb_unit_test of CAN_test is
-    component can_top_apb is
-        generic(
-            rx_buffer_size     : natural range 32 to 4098 := 128;
-            txt_buffer_count   : natural range 2 to 8     := 4;
-            sup_filtA          : boolean                  := true;
-            sup_filtB          : boolean                  := true;
-            sup_filtC          : boolean                  := true;
-            sup_range          : boolean                  := true;
-            sup_traffic_ctrs   : boolean                  := true;
-            sup_test_registers : boolean                  := true
-        );
-        port(
-            aclk             : in  std_logic;
-            arstn            : in  std_logic;
-
-            scan_enable      : in  std_logic;
-
-            irq              : out std_logic;
-            CAN_tx           : out std_logic;
-            CAN_rx           : in  std_logic;
-            timestamp        : in std_logic_vector(63 downto 0);
-
-            -- Ports of APB4
-            s_apb_paddr      : in  std_logic_vector(31 downto 0);
-            s_apb_penable    : in  std_logic;
-            s_apb_pprot      : in  std_logic_vector(2 downto 0);
-            s_apb_prdata     : out std_logic_vector(31 downto 0);
-            s_apb_pready     : out std_logic;
-            s_apb_psel       : in  std_logic;
-            s_apb_pslverr    : out std_logic;
-            s_apb_pstrb      : in  std_logic_vector(3 downto 0);
-            s_apb_pwdata     : in  std_logic_vector(31 downto 0);
-            s_apb_pwrite     : in  std_logic
-    );
-    end component can_top_apb;
-
     signal s_apb_paddr      : std_logic_vector(31 downto 0);
     signal s_apb_penable    : std_logic;
     signal s_apb_pprot      : std_logic_vector(2 downto 0);
@@ -159,23 +123,24 @@ architecture apb_unit_test of CAN_test is
     signal arstn : std_logic := '0';
 
 begin
-    can_inst : entity ctu_can_fd_rtl.can_top_apb
+    i_can : entity ctu_can_fd_rtl.ctu_can_fd_top_apb
         generic map (
-            rx_buffer_size      => 128,
-            txt_buffer_count    => 4,
-            sup_filtA           => false,
-            sup_filtB           => false,
-            sup_filtC           => false,
-            sup_range           => false,
-            sup_test_registers  => true
+            G_RX_BUF_SIZE       => 128,
+            G_TXT_BUF_COUNT     => 4,
+            G_FILT_A_EN         => false,
+            G_FILT_B_EN         => false,
+            G_FILT_C_EN         => false,
+            G_FILT_RANGE_EN     => false,
+            G_TEST_REGS_EN      => true
         )
         port map (
             CAN_rx           => '1',
             timestamp        => (others => '0'),
             aclk             => aclk,
             arstn            => arstn,
+            rst_n_out        => open,
 
-            scan_enable      => '0',
+            scan_mode        => '0',
 
             -- APB ports
             s_apb_paddr    => s_apb_paddr,
@@ -194,7 +159,7 @@ begin
 
     assert s_apb_pslverr = '0' or arstn = '0' or now = 0 fs report "Slave error!" severity error;
 
-    main_proc : process
+    p_main : process
         procedure apb_write(
             constant addr : std_logic_vector(11 downto 0);
             constant data : std_logic_vector(31 downto 0);

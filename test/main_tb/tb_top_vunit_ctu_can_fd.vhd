@@ -127,16 +127,16 @@ entity tb_top_ctu_can_fd is
         cfg_ssp_offset          : natural := 10;
 
         -- DUT configuration
-        rx_buffer_size          : natural := 64;
-        txt_buffer_count        : natural range 2 to 8 := 8;
-        sup_filtA               : boolean := true;
-        sup_filtB               : boolean := true;
-        sup_filtC               : boolean := true;
-        sup_range               : boolean := true;
-        sup_traffic_ctrs        : boolean := true;
-        sup_parity              : boolean := true;
-        target_technology       : natural := C_TECH_ASIC;
-        reset_buffer_rams       : boolean := false;
+        G_RX_BUF_SIZE          : natural := 64;
+        G_TXT_BUF_COUNT        : natural range 2 to 8 := 8;
+        G_FILT_A_EN               : boolean := true;
+        G_FILT_B_EN               : boolean := true;
+        G_FILT_C_EN               : boolean := true;
+        G_FILT_RANGE_EN               : boolean := true;
+        G_TRAFFIC_CTRS_EN        : boolean := true;
+        G_PARITY_EN              : boolean := true;
+        G_TECHNOLOGY       : natural := C_TECH_ASIC;
+        G_RESET_BUF_RAMS       : boolean := false;
 
         -- Seed
         seed                    : natural := 0
@@ -180,8 +180,8 @@ architecture tb of tb_top_ctu_can_fd is
        func_cov_en             : boolean;
 
        -- DUT configuration
-       rx_buffer_size          : natural;
-       txt_buffer_count        : natural range 2 to 8 := 8;
+       G_RX_BUF_SIZE          : natural;
+       G_TXT_BUF_COUNT        : natural range 2 to 8 := 8;
 
        -- DUT Clock period
        cfg_sys_clk_period      : string;
@@ -244,26 +244,26 @@ begin
     ---------------------------------------------------------------------------
     -- DUT (Use RAM-like memory bus)
     ---------------------------------------------------------------------------
-    dut : entity ctu_can_fd_rtl.can_top_level
+    i_dut : entity ctu_can_fd_rtl.ctu_can_fd_top
     generic map(
-        rx_buffer_size      => rx_buffer_size,
-        txt_buffer_count    => txt_buffer_count,
-        sup_filtA           => sup_filtA,
-        sup_filtB           => sup_filtB,
-        sup_filtC           => sup_filtC,
-        sup_range           => sup_range,
-        sup_traffic_ctrs    => sup_traffic_ctrs,
-        sup_parity          => sup_parity,
-        target_technology   => target_technology,
-        reset_buffer_rams   => reset_buffer_rams
+        G_RX_BUF_SIZE        => G_RX_BUF_SIZE,
+        G_TXT_BUF_COUNT      => G_TXT_BUF_COUNT,
+        G_FILT_A_EN          => G_FILT_A_EN,
+        G_FILT_B_EN          => G_FILT_B_EN,
+        G_FILT_C_EN          => G_FILT_C_EN,
+        G_FILT_RANGE_EN      => G_FILT_RANGE_EN,
+        G_TRAFFIC_CTRS_EN    => G_TRAFFIC_CTRS_EN,
+        G_PARITY_EN          => G_PARITY_EN,
+        G_TECHNOLOGY         => G_TECHNOLOGY,
+        G_RESET_BUF_RAMS     => G_RESET_BUF_RAMS
     )
     port map(
         -- Clock and Asynchronous reset
         clk_sys     => clk_sys,
-        res_n       => res_n,
+        rst_n       => res_n,
 
         -- DFT support
-        scan_enable => scan_enable,
+        scan_mode   => scan_enable,
 
         -- Memory interface
         data_in     => write_data,
@@ -292,14 +292,14 @@ begin
     ---------------------------------------------------------------------------
     -- CTU CAN FD VIP
     ---------------------------------------------------------------------------
-    ctu_can_fd_vip_inst : ctu_can_fd_vip
+    i_ctu_can_fd_vip : ctu_can_fd_vip
     generic map(
         test_name               => test_name,
         test_type               => test_type,
         func_cov_en             => func_cov_en,
 
-        rx_buffer_size          => rx_buffer_size,
-        txt_buffer_count        => txt_buffer_count,
+        G_RX_BUF_SIZE          => G_RX_BUF_SIZE,
+        G_TXT_BUF_COUNT        => G_TXT_BUF_COUNT,
 
         cfg_sys_clk_period      => cfg_sys_clk_period,
         finish_on_error         => finish_on_error,
@@ -365,7 +365,7 @@ begin
     ---------------------------------------------------------------------------
     -- Vunit manager - controls CTU CAN FD VIP
     ---------------------------------------------------------------------------
-    vunit_manager_proc : process
+    p_vunit_manager : process
     begin
         test_runner_setup(runner, runner_cfg);
         wait for 10 ns;
@@ -386,15 +386,15 @@ begin
         info_m("  Force support: " & boolean'image(is_force_supported));
         info_m("");
         info_m("DUT configuration:");
-        info_m("  RX buffer size: " & integer'image(rx_buffer_size));
-        info_m("  TXT Buffer count: " & integer'image(txt_buffer_count));
-        info_m("  Filter A: " & boolean'image(sup_filtA));
-        info_m("  Filter B: " & boolean'image(sup_filtB));
-        info_m("  Filter C: " & boolean'image(sup_filtC));
-        info_m("  Range filter: " & boolean'image(sup_range));
-        info_m("  Traffic counters: " & boolean'image(sup_traffic_ctrs));
-        info_m("  Target technology: " & integer'image(target_technology));
-        info_m("  Reset Buffer RAMS: " & boolean'image(reset_buffer_rams));
+        info_m("  RX buffer size: " & integer'image(G_RX_BUF_SIZE));
+        info_m("  TXT Buffer count: " & integer'image(G_TXT_BUF_COUNT));
+        info_m("  Filter A: " & boolean'image(G_FILT_A_EN));
+        info_m("  Filter B: " & boolean'image(G_FILT_B_EN));
+        info_m("  Filter C: " & boolean'image(G_FILT_C_EN));
+        info_m("  Range filter: " & boolean'image(G_FILT_RANGE_EN));
+        info_m("  Traffic counters: " & boolean'image(G_TRAFFIC_CTRS_EN));
+        info_m("  Target technology: " & integer'image(G_TECHNOLOGY));
+        info_m("  Reset Buffer RAMS: " & boolean'image(G_RESET_BUF_RAMS));
         info_m("");
         info_m("Bit timing settings (Nominal):");
         info_m("  BRP: " & integer'image(cfg_brp));
@@ -450,7 +450,7 @@ begin
     ---------------------------------------------------------------------------
     -- Spawn watchdog
     ---------------------------------------------------------------------------
-    watchdog: if time'value(timeout) > 0 ns generate
+    g_watchdog: if time'value(timeout) > 0 ns generate
         test_runner_watchdog(runner, time'value(timeout));
     end generate;
 

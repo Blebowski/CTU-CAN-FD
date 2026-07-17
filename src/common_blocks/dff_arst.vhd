@@ -100,7 +100,7 @@ end dff_arst;
 architecture rtl of dff_arst is
 begin
 
-    dff_proc : process (clk, arst)
+    p_dff : process (clk, arst)
     begin
         if (arst = G_RESET_POLARITY) then
             reg_q <= G_RST_VAL;
