@@ -1,4 +1,4 @@
 library: ctu_can_fd_gates
 
 source_list:
-    - file: ../synthesis/Vivado/ci_benchmark/medium_design_config/can_top_level.vhd
+    - file: ../synthesis/Vivado/ci_benchmark/medium_design_config/ctu_can_fd_top.vhd
