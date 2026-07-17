@@ -15,8 +15,9 @@ jobs:
 
   build_compliance_lib:
     runs-on: [self-hosted, lds_runner]
-    container:
+    container: &sim_container
       image: ghcr.io/logic-design-services/digital-simulation
+      options: --user 1000:1000
     permissions:
       contents: read
       packages: read
@@ -100,8 +101,7 @@ jobs:
   test_unit_rx_buffer:
     runs-on: [self-hosted, lds_runner]
     needs: build_done
-    container:
-      image: ghcr.io/logic-design-services/digital-simulation
+    container: *sim_container
     permissions:
       contents: read
       packages: read
@@ -159,8 +159,7 @@ jobs:
     needs: test_unit_done
     continue-on-error: true
     timeout-minutes: 120
-    container:
-      image: ghcr.io/logic-design-services/digital-simulation
+    container: *sim_container
     permissions:
       contents: read
       packages: read
@@ -212,8 +211,7 @@ jobs:
     needs: test_unit_done
     continue-on-error: true
     timeout-minutes: 120
-    container:
-      image: ghcr.io/logic-design-services/digital-simulation
+    container: *sim_container
     permissions:
       contents: read
       packages: read
@@ -263,8 +261,7 @@ jobs:
     needs: test_unit_done
     continue-on-error: true
     timeout-minutes: 120
-    container:
-      image: ghcr.io/logic-design-services/digital-simulation
+    container: *sim_container
     permissions:
       contents: read
       packages: read
@@ -314,8 +311,7 @@ jobs:
     needs: test_unit_done
     continue-on-error: true
     timeout-minutes: 120
-    container:
-      image: ghcr.io/logic-design-services/digital-simulation
+    container: *sim_container
     permissions:
       contents: read
       packages: read
@@ -365,8 +361,7 @@ jobs:
     needs: test_unit_done
     continue-on-error: true
     timeout-minutes: 180
-    container:
-      image: ghcr.io/logic-design-services/digital-simulation
+    container: *sim_container
     permissions:
       contents: read
       packages: read
@@ -435,8 +430,7 @@ jobs:
     needs: test_rtl_feature_done
     continue-on-error: true
     timeout-minutes: 120
-    container:
-      image: ghcr.io/logic-design-services/digital-simulation
+    container: *sim_container
     permissions:
       contents: read
       packages: read
@@ -487,8 +481,7 @@ jobs:
     needs: test_rtl_feature_done
     continue-on-error: true
     timeout-minutes: 120
-    container:
-      image: ghcr.io/logic-design-services/digital-simulation
+    container: *sim_container
     permissions:
       contents: read
       packages: read
@@ -538,8 +531,7 @@ jobs:
     needs: test_rtl_feature_done
     continue-on-error: true
     timeout-minutes: 180
-    container:
-      image: ghcr.io/logic-design-services/digital-simulation
+    container: *sim_container
     permissions:
       contents: read
       packages: read
@@ -589,8 +581,7 @@ jobs:
     needs: test_rtl_feature_done
     continue-on-error: true
     timeout-minutes: 120
-    container:
-      image: ghcr.io/logic-design-services/digital-simulation
+    container: *sim_container
     permissions:
       contents: read
       packages: read
@@ -660,8 +651,7 @@ jobs:
       - build_done
     continue-on-error: true
     timeout-minutes: 100
-    container:
-      image: ghcr.io/logic-design-services/digital-simulation
+    container: *sim_container
     permissions:
       contents: read
       packages: read
@@ -713,8 +703,7 @@ jobs:
       - build_done
     continue-on-error: true
     timeout-minutes: 100
-    container:
-      image: ghcr.io/logic-design-services/digital-simulation
+    container: *sim_container
     permissions:
       contents: read
       packages: read
@@ -778,8 +767,7 @@ jobs:
   process_coverage:
     runs-on: [self-hosted, lds_runner]
     needs: test_gate_done
-    container:
-      image: ghcr.io/logic-design-services/digital-simulation
+    container: *sim_container
     permissions:
       contents: read
       packages: read
@@ -828,8 +816,7 @@ jobs:
   generate_test_matrix:
     runs-on: [self-hosted, lds_runner]
     needs: test_gate_done
-    container:
-      image: ghcr.io/logic-design-services/digital-simulation
+    container: *sim_container
     permissions:
       contents: read
       packages: read
@@ -869,8 +856,7 @@ jobs:
     needs:
       - process_coverage
       - generate_test_matrix
-    container:
-      image: ghcr.io/logic-design-services/digital-simulation
+    container: *sim_container
     permissions:
       contents: read
       packages: read

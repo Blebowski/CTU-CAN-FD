@@ -153,7 +153,7 @@ def load_tgt_tlf(vu, tgt, tgt_name):
 
         sim_opts["nvc.elab_flags"] = nvc_elab_opts
         sim_opts["nvc.heap_size"] = '256m'
-        sim_opts["nvc.sim_flags"] = ['--ieee-warnings=off']
+        sim_opts["nvc.sim_flags"] = ['--ieee-warnings=off', "--dump-arrays"]
 
         # Create the test
         tb.add_config(test_name, generics=filtered_generics, sim_options=sim_opts)
