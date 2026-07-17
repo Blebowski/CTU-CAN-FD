@@ -67,9 +67,9 @@ jobs:
           vivado -mode tcl -source vivado_benchmark_big.tcl
 
           # Remove reference to UNISIM library, all cell models are included in netlist!
-          sed -i 's\library UNISIM;\\g' small_design_config/can_top_level.vhd
-          sed -i 's\library UNISIM;\\g' medium_design_config/can_top_level.vhd
-          sed -i 's\library UNISIM;\\g' big_design_config/can_top_level.vhd
+          sed -i 's\library UNISIM;\\g' small_design_config/ctu_can_fd_top.vhd
+          sed -i 's\library UNISIM;\\g' medium_design_config/ctu_can_fd_top.vhd
+          sed -i 's\library UNISIM;\\g' big_design_config/ctu_can_fd_top.vhd
 
       - name: Upload synthesis artifacts
         if: always()
