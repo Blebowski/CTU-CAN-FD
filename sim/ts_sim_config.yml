@@ -1701,7 +1701,25 @@ targets:
             - rtl_ctu_can_fd
             - test/slf_tb_dependencies_simple.yml
             - test/slf_tb_common.yml
-            - test/unit/slf_tb_unit_tests.yml
+            - test/unit/rx_buffer/slf_rx_buffer_tb.yml
+
+    ###############################################################################################
+    # APB unit test
+    ###############################################################################################
+    tb_rtl_apb_unit:
+        top_entity: ctu_can_fd_tb_unit.APB_TB
+        test_list_file: test/unit/tlf_tb_unit_tests.yml
+        generics:
+            #log_level: info
+            #error_tolerance: 0
+            #debug: false
+            /APB_TB/iterations: 1
+
+        source_list_files:
+            - rtl_ctu_can_fd
+            - test/slf_tb_dependencies_simple.yml
+            - test/slf_tb_common.yml
+            - test/unit/apb/slf_apb_tb.yml
 
 check_severity: error
 

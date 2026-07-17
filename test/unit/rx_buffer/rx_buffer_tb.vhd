@@ -144,10 +144,7 @@ use ctu_can_fd_tb_unit.random_unit_pkg.all;
 entity rx_buffer_tb is
     generic (
         runner_cfg      : string         := runner_cfg_default;
-        test_name       : string         := "dummy";
-        finish_on_error : integer        := 0;
         iterations      : natural        := 1;
-        error_tol       : natural        := 0;
         timeout         : string         := "0 ms";
         seed            : natural        := 0
     );

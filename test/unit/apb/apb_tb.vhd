@@ -91,23 +91,32 @@ use ieee.math_real.ALL;
 use ieee.std_logic_textio.all;
 use STD.textio.all;
 
-library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.can_constants_pkg.all;
-use ctu_can_fd_rtl.can_types_pkg.all;
-use ctu_can_fd_rtl.can_config_pkg.all;
+library vunit_lib;
+context vunit_lib.vunit_context;
 
-use ctu_can_fd_rtl.CAN_FD_register_map.all;
-use ctu_can_fd_rtl.CAN_FD_frame_format.all;
+-- Common contexts
+Library ctu_can_fd_tb;
+context ctu_can_fd_tb.ieee_context;
+context ctu_can_fd_tb.tb_common_context;
+context ctu_can_fd_tb.tb_agents_context;
+context ctu_can_fd_tb.rtl_context;
 
 library ctu_can_fd_tb_unit;
-use ctu_can_fd_tb_unit.can_unit_test_pkg.all;
 use ctu_can_fd_tb_unit.random_unit_pkg.all;
 
 library vunit_lib;
 context vunit_lib.vunit_context;
 
+entity apb_tb is
+    generic (
+        runner_cfg      : string         := runner_cfg_default;
+        iterations      : natural        := 1;
+        error_tol       : natural        := 0;
+        seed            : natural        := 0
+    );
+end entity;
 
-architecture apb_unit_test of CAN_test is
+architecture test of apb_tb is
     signal s_apb_paddr      : std_logic_vector(31 downto 0);
     signal s_apb_penable    : std_logic;
     signal s_apb_pprot      : std_logic_vector(2 downto 0);
@@ -181,7 +190,7 @@ begin
                 wait until rising_edge(aclk);
                 exit L when s_apb_pready = '1';
                 i := i + 1;
-                check(i < 5, "Peripheral is stalling for too many cycles for APB write.");
+                check_m(i < 5, "Peripheral is stalling for too many cycles for APB write.");
             end loop;
             s_apb_penable <= '0';
             s_apb_psel <= '0';
@@ -203,7 +212,7 @@ begin
                 wait until rising_edge(aclk);
                 exit L when s_apb_pready = '1';
                 i := i + 1;
-                check(i < 5, "Peripheral is stalling for too many cycles for APB read.");
+                check_m(i < 5, "Peripheral is stalling for too many cycles for APB read.");
             end loop;
             s_apb_penable <= '0';
             s_apb_psel <= '0';
@@ -214,43 +223,42 @@ begin
         begin
             apb_write(addr, data, b"1111");
             apb_read(addr);
-            check(s_apb_prdata = data, "pattern " & to_hstring(data) & " mismatch: got " & to_hstring(s_apb_prdata));
+            check_m(s_apb_prdata = data, "pattern " & to_hstring(data) & " mismatch: got " & to_hstring(s_apb_prdata));
         end procedure;
     begin
+        test_runner_setup(runner, runner_cfg);
+        wait for 10 ns;
+
         s_apb_penable  <= '0';
         s_apb_pprot    <= (others => 'X');
         s_apb_psel     <= '0';
 
-        info("Restarting APB test");
-        status         <= waiting;
-        if not run then wait until run; end if;
-        print_test_info(iterations, log_level, error_beh, error_tol);
+        info_m("Restarting APB test");
         wait until rising_edge(aclk); -- some time in reset
         arstn     <= '1';
-        status    <= running;
-        error_ctr <= 0;
 
         wait until rising_edge(aclk);
         wait until rising_edge(aclk);
         wait until rising_edge(aclk);
 
+        info("Reading ID");
         apb_read(DEVICE_ID_ADR);
-        check(s_apb_prdata = x"0204CAFD", "CAN ID reg mismatch (just after HW reset)");
+        check_m(s_apb_prdata(15 downto 0) = x"CAFD", "CAN ID reg mismatch (just after HW reset)");
 
         apb_write(BTR_ADR, x"FFFFFFFF", b"1111");
         apb_read(DEVICE_ID_ADR);
-        check(s_apb_prdata = x"0204CAFD", "CAN ID reg mismatch");
+        check_m(s_apb_prdata(15 downto 0) = x"CAFD", "CAN ID reg mismatch");
         apb_read(BTR_ADR);
-        check(s_apb_prdata = x"FFFFFFFF", "readback mismatch");
+        check_m(s_apb_prdata = x"FFFFFFFF", "readback mismatch");
 
         apb_write(BTR_ADR, x"00000000", b"0011");
         apb_read(BTR_ADR);
-        check(s_apb_prdata = x"FFFF0000", "write low word: readback mismatch");
+        check_m(s_apb_prdata = x"FFFF0000", "write low word: readback mismatch");
 
         apb_write(BTR_ADR, x"FFFFFFFF", b"1111");
         apb_write(BTR_ADR, x"00000000", b"1100");
         apb_read(BTR_ADR);
-        check(s_apb_prdata = x"0000FFFF", "write high word: readback mismatch");
+        check_m(s_apb_prdata = x"0000FFFF", "write high word: readback mismatch");
 
         apb_test_pattern(BTR_ADR, x"AAAAAAAA");
         apb_test_pattern(BTR_ADR, x"55555555");
@@ -260,10 +268,10 @@ begin
 
         apb_write(BTR_ADR, x"87654321", b"1111");
         apb_read(BTR_ADR);
-        check(s_apb_prdata = x"87654321", "readback mismatch");
+        check_m(s_apb_prdata = x"87654321", "readback mismatch");
         apb_write(BTR_ADR, x"000055aa", b"0011");
         apb_read(BTR_ADR);
-        check(s_apb_prdata = x"876555aa", "write low word: readback mismatch");
+        check_m(s_apb_prdata = x"876555aa", "write low word: readback mismatch");
 
         -- write after HW reset
         arstn     <= '0';
@@ -275,13 +283,15 @@ begin
 
         apb_write(BTR_ADR, x"DEADBEEF", b"1111");
         apb_read(BTR_ADR);
-        check(s_apb_prdata = x"DEADBEEF", "Readback for write-after-HW-reset mismatch.");
+        check_m(s_apb_prdata = x"DEADBEEF", "Readback for write-after-HW-reset mismatch.");
 
         wait until aclk;
         wait until aclk;
         wait until aclk;
         wait until aclk;
 
-        evaluate_test(error_tol, error_ctr, status);
+        test_runner_cleanup(runner);
+        std.env.finish;
+
     end process;
 end architecture;
