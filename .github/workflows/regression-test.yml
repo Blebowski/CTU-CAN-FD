@@ -14,7 +14,7 @@ jobs:
   ##############################################################################
 
   build_compliance_lib:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     container:
       image: ghcr.io/logic-design-services/digital-simulation
     permissions:
@@ -44,7 +44,7 @@ jobs:
             test/main_tb/iso-16845-compliance-tests/build/Release/src/cosimulation/libNVC_VHPI_COSIM_LIB.so
 
   run_synthesis:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     continue-on-error: true
     steps:
       - name: Checkout CTU-CAN-FD
@@ -86,7 +86,7 @@ jobs:
   ##############################################################################
 
   build_done:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     needs:
       - build_compliance_lib
       - run_synthesis
@@ -98,7 +98,7 @@ jobs:
   ##############################################################################
 
   test_unit_rx_buffer:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     needs: build_done
     container:
       image: ghcr.io/logic-design-services/digital-simulation
@@ -144,7 +144,7 @@ jobs:
   ##############################################################################
 
   test_unit_done:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     needs:
       - test_unit_rx_buffer
     steps:
@@ -155,7 +155,7 @@ jobs:
   ##############################################################################
 
   test_rtl_small_asic_max_feature:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     needs: test_unit_done
     continue-on-error: true
     timeout-minutes: 120
@@ -208,7 +208,7 @@ jobs:
             test/tb_rtl_small_asic_max_feature.ncdb
 
   test_rtl_medium_asic_max_feature:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     needs: test_unit_done
     continue-on-error: true
     timeout-minutes: 120
@@ -259,7 +259,7 @@ jobs:
             test/tb_rtl_medium_asic_max_feature.ncdb
 
   test_rtl_big_asic_max_feature:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     needs: test_unit_done
     continue-on-error: true
     timeout-minutes: 120
@@ -310,7 +310,7 @@ jobs:
             test/tb_rtl_big_asic_max_feature.ncdb
 
   test_rtl_medium_fpga_max_feature:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     needs: test_unit_done
     continue-on-error: true
     timeout-minutes: 120
@@ -361,7 +361,7 @@ jobs:
             test/tb_rtl_medium_fpga_max_feature.ncdb
 
   test_rtl_medium_asic_typ_feature:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     needs: test_unit_done
     continue-on-error: true
     timeout-minutes: 180
@@ -416,7 +416,7 @@ jobs:
   ##############################################################################
 
   test_rtl_feature_done:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     needs:
       - test_rtl_small_asic_max_feature
       - test_rtl_medium_asic_max_feature
@@ -431,7 +431,7 @@ jobs:
   ##############################################################################
 
   test_rtl_small_asic_max_compliance:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     needs: test_rtl_feature_done
     continue-on-error: true
     timeout-minutes: 120
@@ -483,7 +483,7 @@ jobs:
             test/tb_rtl_small_asic_max_compliance.ncdb
 
   test_rtl_small_asic_typ_compliance:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     needs: test_rtl_feature_done
     continue-on-error: true
     timeout-minutes: 120
@@ -534,7 +534,7 @@ jobs:
             test/tb_rtl_small_asic_typ_compliance.ncdb
 
   test_rtl_small_asic_min_compliance:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     needs: test_rtl_feature_done
     continue-on-error: true
     timeout-minutes: 180
@@ -585,7 +585,7 @@ jobs:
             test/tb_rtl_small_asic_min_compliance.ncdb
 
   test_rtl_small_asic_sjw0_compliance:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     needs: test_rtl_feature_done
     continue-on-error: true
     timeout-minutes: 120
@@ -640,7 +640,7 @@ jobs:
   ##############################################################################
 
   test_rtl_compliance_done:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     needs:
       - test_rtl_small_asic_max_compliance
       - test_rtl_small_asic_typ_compliance
@@ -654,7 +654,7 @@ jobs:
   ##############################################################################
 
   test_gate_xilinx_medium_fpga_max_feature:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     needs:
       - test_rtl_compliance_done
       - build_done
@@ -707,7 +707,7 @@ jobs:
             test/tb_gate_xilinx_medium_fpga_max_feature.sim_time
 
   test_gate_xilinx_small_fpga_max_compliance:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     needs:
       - test_rtl_compliance_done
       - build_done
@@ -764,7 +764,7 @@ jobs:
   ##############################################################################
 
   test_gate_done:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     needs:
       - test_gate_xilinx_medium_fpga_max_feature
       - test_gate_xilinx_small_fpga_max_compliance
@@ -776,7 +776,7 @@ jobs:
   ##############################################################################
 
   process_coverage:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     needs: test_gate_done
     container:
       image: ghcr.io/logic-design-services/digital-simulation
@@ -826,7 +826,7 @@ jobs:
             test/cobertura_coverage.xml
 
   generate_test_matrix:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     needs: test_gate_done
     container:
       image: ghcr.io/logic-design-services/digital-simulation
@@ -865,7 +865,7 @@ jobs:
   ##############################################################################
 
   assemble_pages:
-    runs-on: lds_runner
+    runs-on: [self-hosted, lds_runner]
     needs:
       - process_coverage
       - generate_test_matrix
