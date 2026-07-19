@@ -1721,6 +1721,25 @@ targets:
             - test/slf_tb_common.yml
             - test/unit/apb/slf_apb_tb.yml
 
+    ###############################################################################################
+    # AHB unit test
+    ###############################################################################################
+    tb_rtl_ahb_unit:
+        top_entity: ctu_can_fd_tb_unit.AHB_TB
+        test_list_file: test/unit/tlf_tb_unit_tests.yml
+        generics:
+            #log_level: info
+            #error_tolerance: 0
+            #debug: false
+            /AHB_TB/timeout: 1 ms
+            /AHB_TB/iterations: 5
+
+        source_list_files:
+            - rtl_ctu_can_fd
+            - test/slf_tb_dependencies_simple.yml
+            - test/slf_tb_common.yml
+            - test/unit/ahb/slf_ahb_tb.yml
+
 check_severity: error
 
 license_wait: true

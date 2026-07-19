@@ -1,0 +1,7 @@
+library: ctu_can_fd_tb_unit
+
+source_list:
+
+    - file: ../lib/random_unit_pkg.vhd
+
+    - file: ahb_tb.vhd
