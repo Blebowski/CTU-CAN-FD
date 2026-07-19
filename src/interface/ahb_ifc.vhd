@@ -102,152 +102,121 @@ entity ahb_ifc is
         -------------------------------------------------------------------------------------------
         -- AHB interface
         -------------------------------------------------------------------------------------------
-        hresetn          : in std_logic;
-        hclk             : in std_logic;
-        haddr            : in std_logic_vector(31 downto 0);
-        hwdata           : in std_logic_vector(31 downto 0);
-        hsel             : in std_logic;
-        hwrite           : in std_logic;
-        hsize            : in std_logic_vector(2 downto 0);
-        hburst           : in std_logic_vector(2 downto 0);
-        hprot            : in std_logic_vector(3 downto 0);
-        htrans           : in std_logic_vector(1 downto 0);
-        hmastlock        : in std_logic;
-        hready           : in std_logic;
+        hresetn          : in  std_logic;
+        hclk             : in  std_logic;
+        haddr            : in  std_logic_vector(31 downto 0);
+        hwdata           : in  std_logic_vector(31 downto 0);
+        hsel             : in  std_logic;
+        hwrite           : in  std_logic;
+        hsize            : in  std_logic_vector(2 downto 0);
+        hburst           : in  std_logic_vector(2 downto 0);
+        hprot            : in  std_logic_vector(3 downto 0);
+        htrans           : in  std_logic_vector(1 downto 0);
+        hmastlock        : in  std_logic;
+        hready           : in  std_logic;
         hreadyout        : out std_logic;
-        hresp            : out std_logic;
+        hresp            : out std_logic_vector(1 downto 0);
         hrdata           : out std_logic_vector(31 downto 0)
     );
 end entity;
 
 architecture rtl of ahb_ifc is
 
-    -- Transfer type busy
-    constant TT_BUSY   : std_logic_vector(1 downto 0) := "01";
+    -- Registered address phase signals
+    signal haddr_q          : std_logic_vector(15 downto 0);
+    signal hsel_q           : std_logic;
+    signal hwrite_q         : std_logic;
+    signal hsize_q          : std_logic_vector(2 downto 0);
 
-    signal hsel_valid  : std_logic;
+    -- Registered ready
+    signal hready_q         : std_logic;
 
-    signal write_acc_d : std_logic;
-    signal write_acc_q : std_logic;
-
-    signal haddr_q     : std_logic_vector(15 downto 0);
-
-    -- HReady signals
-    signal h_ready_raw : std_logic;
-
-    -- Byte enable decoding
-    signal sbe_d       : std_logic_vector(3 downto 0);
-    signal sbe_q       : std_logic_vector(3 downto 0);
-
-    signal swr_i       : std_logic;
-    signal srd_i       : std_logic;
-
+    -- Stall indication
+    signal hreadyout_d      : std_logic;
 
 begin
 
-    -- Only accept transaction if previous one completed OK!
-    hsel_valid <= '1' when (hsel = '1' and hready = '1' and
-                            htrans /= TT_BUSY)
-                      else
-                  '0';
-
-    write_acc_d <= '1' when (hsel_valid = '1' and hwrite = '1')
-                       else
-                   '0' when (htrans /= TT_BUSY)
-                       else
-                   write_acc_q;
-
-    p_write_acc_reg : process(hclk, hresetn)
+    p_addr_phase_reg : process(hresetn, hclk)
     begin
         if (hresetn = '0') then
-            write_acc_q <= '0';
+            haddr_q   <= (others => '0');
+            hsel_q    <= '0';
+            hwrite_q  <= '0';
+            hsize_q   <= (others => '0');
         elsif (rising_edge(hclk)) then
-            write_acc_q <= write_acc_d;
-        end if;
-    end process;
-
-    p_haddr_reg : process(hclk, hresetn)
-    begin
-        if (hresetn = '0') then
-            haddr_q <= (OTHERS => '0');
-            sbe_q   <= "0000";
-        elsif (rising_edge(hclk)) then
-            if (write_acc_d = '1') then
-                haddr_q <= haddr(15 downto 0);
-                sbe_q <= sbe_d;
+            if (hready = '1') then
+                haddr_q   <= haddr(15 downto 0);
+                hsel_q    <= hsel;
+                hwrite_q  <= hwrite;
+                hsize_q   <= hsize;
             end if;
         end if;
     end process;
 
-    -----------------------------------------------------------------------------------------------
-    -- Mux for address / Byte enables:
-    --  1. Choose registered address for writes because data are available one clock cycle later.
-    --  2. Otherwise choose direct adress.
-    -----------------------------------------------------------------------------------------------
-    adress <= haddr_q when (write_acc_q = '1') else
-              haddr(15 downto 0);
-    sbe <= sbe_q when (write_acc_q = '1') else
-           sbe_d;
+    -- Stall upon read
+    hreadyout_d <= '0' when (hsel = '1' and hwrite = '0' and hready = '1')
+                       else
+                   '1';
+
+    p_hready_regs : process(hresetn, hclk)
+    begin
+        if (hresetn = '0') then
+            hreadyout <= '1';
+            hready_q <= '1';
+        elsif (rising_edge(hclk)) then
+            hreadyout <= hreadyout_d;
+            hready_q <= hready;
+        end if;
+    end process;
+
+    -- Activate on CTU CAN FDs RAM-like bus only upon first cycle
+    -- of current AHB transfer. If "hready" is low, then the AHB
+    -- master keeps the address phase valid, and we don't sample
+    -- the next address phase, therefore we would execute a
+    -- transfer twice. Since read may have side effect, this is
+    -- undesirable!
+    scs <= '1' when (hsel_q = '1' and hready_q = '1') else
+           '0';
+
+    swr <= '1' when (hsel_q = '1' and hready_q = '1' and hwrite_q = '1') else
+           '0';
+
+    srd <= '1' when (hsel_q = '1' and hready_q = '1' and hwrite_q = '0') else
+           '0';
+
+    adress <= haddr_q;
+
+    data_in <= hwdata;
+    hrdata <= data_out;
+    hresp <= "00";
 
     -----------------------------------------------------------------------------------------------
     -- Decoding HSIZE to Byte enables
     -----------------------------------------------------------------------------------------------
-    p_h_size_dec : process(hsize, haddr)
+    p_h_size_dec : process(hsize_q, haddr_q)
     begin
-        sbe_d <= "0000";
-        case (hsize) is
+        sbe <= "0000";
+        case (hsize_q) is
         when "000" =>
-            case haddr(1 downto 0) is
-            when "00" => sbe_d <= "0001";
-            when "01" => sbe_d <= "0010";
-            when "10" => sbe_d <= "0100";
-            when "11" => sbe_d <= "1000";
-            when others => sbe_d <= "0000";
+            case haddr_q(1 downto 0) is
+            when "00" => sbe <= "0001";
+            when "01" => sbe <= "0010";
+            when "10" => sbe <= "0100";
+            when "11" => sbe <= "1000";
+            when others => sbe <= "0000";
             end case;
         when "001" =>
-            if (haddr(1) = '0') then
-                sbe_d <= "0011";
+            if (haddr_q(1) = '0') then
+                sbe <= "0011";
             else
-                sbe_d <= "1100";
+                sbe <= "1100";
             end if;
         when "010" =>
-            sbe_d <= "1111";
+            sbe <= "1111";
         when others =>
-            sbe_d <= "0000";
+            sbe <= "0000";
         end case;
     end process;
-
-    -----------------------------------------------------------------------------------------------
-    -- Write control:
-    --  When write access was registered, but master is not busy.
-    -----------------------------------------------------------------------------------------------
-    swr_i <= '1' when (write_acc_q = '1' and htrans /= TT_BUSY)
-               else
-            '0';
-
-    srd_i <= '1' when (hsel_valid = '1' and htrans /= TT_BUSY and hwrite = '0')
-               else
-           '0';
-
-    scs <= '1' when (swr_i = '1' or srd_i = '1') else
-           '0';
-
-    swr <= swr_i;
-    srd <= srd_i;
-
-    -----------------------------------------------------------------------------------------------
-    -- We need to stall the master when there is Read after write because we can't deliver the read
-    -- data in the same clock cycle as we are writing!
-    -----------------------------------------------------------------------------------------------
-    hreadyout <= '0' when (write_acc_q = '1' and hsel_valid = '1' and hwrite = '0')
-                     else
-                 '1';
-
-    data_in <= hwdata;
-    hrdata <= data_out;
-
-    -- No errors
-    hresp <= '0';
 
     -- <RELEASE_OFF>
     -----------------------------------------------------------------------------------------------
