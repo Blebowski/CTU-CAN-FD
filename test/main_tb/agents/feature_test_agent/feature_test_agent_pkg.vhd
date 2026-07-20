@@ -1953,7 +1953,7 @@ package feature_test_agent_pkg is
         -- Test node connections
         -----------------------------------------------------------------------
         clk_sys         :   in  std_logic;
-        res_n           :   in  std_logic;
+        rst_n           :   in  std_logic;
 
         write_data      :   in  std_logic_vector(31 DOWNTO 0);
         read_data       :   out std_logic_vector(31 DOWNTO 0);

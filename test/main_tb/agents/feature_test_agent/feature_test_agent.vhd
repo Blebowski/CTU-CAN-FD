@@ -117,7 +117,7 @@ entity feature_test_agent is
         -- Test node connections
         -----------------------------------------------------------------------
         clk_sys         :   in  std_logic;
-        res_n           :   in  std_logic;
+        rst_n           :   in  std_logic;
 
         write_data      :   in  std_logic_vector(31 DOWNTO 0);
         read_data       :   out std_logic_vector(31 DOWNTO 0);
@@ -195,7 +195,7 @@ begin
     port map(
         -- Clock and Asynchronous reset
         clk_sys     => clk_sys,
-        rst_n       => res_n,
+        rst_n       => rst_n,
 
         -- DFT support
         scan_mode   => test_node_scan_enable,
@@ -332,11 +332,11 @@ begin
 
     ---------------------------------------------------------------------------
     -- On RTL, can_tx is 'U' at time zero, and it gets defined value when
-    -- res_n is asserted. Thus 'U' -> 1 event occurs in non-zero time.
-    -- On Xilinx gate level sims, having res_n = 'U' first few nanoseconds of
+    -- rst_n is asserted. Thus 'U' -> 1 event occurs in non-zero time.
+    -- On Xilinx gate level sims, having rst_n = 'U' first few nanoseconds of
     -- simulation does cause output of flop in reset synchronizer to be '0',
     -- not 'U'. Thus synchronized reset is '0' from time 0, and there is no
-    -- event on it when res_n input gets asserted non-'U' value! This causes
+    -- event on it when rst_n input gets asserted non-'U' value! This causes
     -- can_tx to be set to '1' from time 0 of simulation. As consequence of
     -- this, signal delayer will ignore the first event on can_tx in time 0,
     -- and will keep its output at 0!

@@ -131,7 +131,7 @@ entity ctu_can_fd_vip is
 
         -- DUT interface
         clk_sys             : out std_logic;
-        res_n               : out std_logic;
+        rst_n               : out std_logic;
 
         -- DFT support
         scan_enable         : out   std_logic;
@@ -176,7 +176,7 @@ architecture behav of ctu_can_fd_vip is
     signal read_data_test_node      : std_logic_vector(31 downto 0);
     signal read_data_muxed          : std_logic_vector(31 downto 0);
 
-    signal res_n_i                  : std_logic;
+    signal rst_n_i                  : std_logic;
 
 
     -- PLI interface for communication with compliance test library
@@ -210,7 +210,7 @@ begin
     ---------------------------------------------------------------------------
     i_reset_agent : reset_agent
     port map (
-        reset   => res_n_i
+        reset   => rst_n_i
     );
 
     ---------------------------------------------------------------------------
@@ -367,7 +367,7 @@ begin
         port map (
             -- Test node connections
             clk_sys             => clk_sys_i,
-            res_n               => res_n_i,
+            rst_n               => rst_n_i,
 
             write_data          => write_data,
             read_data           => read_data_test_node,
@@ -420,7 +420,7 @@ begin
 
     clk_sys_i <= clk_sys_clock_agent;
     clk_sys <= clk_sys_clock_agent;
-    res_n <= res_n_i;
+    rst_n <= rst_n_i;
 
     ---------------------------------------------------------------------------
     -- CAN bus connection
