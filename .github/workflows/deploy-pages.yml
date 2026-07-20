@@ -28,6 +28,10 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # Neither "find latest run" step hard-fails when it can't find one -
+      # a missing/expired source just means the merged site is published
+      # with only the other producer's content (see the corresponding
+      # download steps below), not a broken deploy.
       - name: Find latest successful "Test - Regression" run
         id: find_regression_run
         uses: actions/github-script@v7
@@ -41,7 +45,7 @@ jobs:
               per_page: 1,
             });
             if (runs.data.workflow_runs.length === 0) {
-              core.setFailed('No successful "Test - Regression" run found');
+              core.warning('No successful "Test - Regression" run found - deploying without its content');
               return;
             }
             core.setOutput('run_id', runs.data.workflow_runs[0].id);
@@ -59,12 +63,18 @@ jobs:
               per_page: 1,
             });
             if (runs.data.workflow_runs.length === 0) {
-              core.setFailed('No successful "Build - HW documentation" run found');
+              core.warning('No successful "Build - HW documentation" run found - deploying without its content');
               return;
             }
             core.setOutput('run_id', runs.data.workflow_runs[0].id);
 
+      # continue-on-error also covers the case where a run was found but its
+      # artifact already expired/is missing - either way, missing content
+      # from one producer must not block deploying the other's.
       - name: Download regression-test Pages content
+        id: download_regression
+        if: steps.find_regression_run.outputs.run_id != ''
+        continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: regression-pages-content
@@ -73,12 +83,32 @@ jobs:
           run-id: ${{ steps.find_regression_run.outputs.run_id }}
 
       - name: Download HW documentation Pages content
+        id: download_doc
+        if: steps.find_doc_run.outputs.run_id != ''
+        continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: doc-pages-content
           path: public
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ steps.find_doc_run.outputs.run_id }}
+
+      - name: Warn about any missing content
+        if: steps.download_regression.outcome != 'success' || steps.download_doc.outcome != 'success'
+        run: |
+          if [ "${{ steps.download_regression.outcome }}" != "success" ]; then
+            echo "::warning::Regression-test Pages content unavailable - deploying without it"
+          fi
+          if [ "${{ steps.download_doc.outcome }}" != "success" ]; then
+            echo "::warning::HW documentation Pages content unavailable - deploying without it"
+          fi
+
+      - name: Fail if no content is available at all
+        run: |
+          if [ -z "$(ls -A public 2>/dev/null)" ]; then
+            echo "Neither producer's content is available - refusing to deploy an empty site" >&2
+            exit 1
+          fi
 
       - name: Generate merged directory indexes
         uses: gacts/directory-listing@v1
