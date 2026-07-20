@@ -61,7 +61,7 @@ jobs:
           path: pages
 
   Deploy-to-Pages:
-    needs: Build-HW-docs
+    needs: build_hw_docs
 
     # Run only on main branch -> It has rights to push to the pages
     if: ${{ github.ref == 'refs/heads/master' }}
