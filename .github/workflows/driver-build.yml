@@ -1,10 +1,10 @@
-name: Driver Build
+name: Build - Linux Driver
 
 on: [pull_request]
 
 jobs:
 
-  Sanity_test:
+  build_linux_driver:
     runs-on: ubuntu-latest
 
     steps:

@@ -1,4 +1,4 @@
-name: CTU CAN FD Regression
+name: Test - Regression
 
 on:
   workflow_dispatch:

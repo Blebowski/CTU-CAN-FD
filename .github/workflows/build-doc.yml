@@ -1,10 +1,10 @@
-name: Build documentation
+name: Build - HW documentation
 
 on: [push, pull_request]
 
 jobs:
 
-  Build-HW-docs:
+  build_hw_docs:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/logic-design-services/lyx-docu

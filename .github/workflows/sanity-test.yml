@@ -1,11 +1,11 @@
-name: Sanity test
+name: Test - Sanity
 
 on: [pull_request]
 
 jobs:
 
-  Sanity_test:
-    runs-on: ubuntu-22.04
+  test_sanity:
+    runs-on: ubuntu-latest
 
     container:
       image: ghcr.io/logic-design-services/digital-simulation
