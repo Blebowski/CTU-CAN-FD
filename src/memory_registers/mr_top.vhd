@@ -428,7 +428,7 @@ begin
                             else
                         '0';
 
-    i_clk_gate_control_regs_comp : entity ctu_can_fd_rtl.clk_gate
+    i_clk_gate_control_regs : entity ctu_can_fd_rtl.clk_gate
     generic map(
         G_TECHNOLOGY       => G_TECHNOLOGY
     )
@@ -440,7 +440,7 @@ begin
         clk_out            => clk_control_regs                  -- OUT
     );
 
-    i_clk_gate_test_regs_comp : entity ctu_can_fd_rtl.clk_gate
+    i_clk_gate_test_regs : entity ctu_can_fd_rtl.clk_gate
     generic map(
         G_TECHNOLOGY       => G_TECHNOLOGY
     )
@@ -455,7 +455,7 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Control registers instance
     -----------------------------------------------------------------------------------------------
-    i_control_registers_reg_map_comp : entity ctu_can_fd_rtl.control_registers_reg_map
+    i_control_registers_reg_map : entity ctu_can_fd_rtl.control_registers_reg_map
     generic map(
         DATA_WIDTH              => 32,
         ADDRESS_WIDTH           => 8,
@@ -490,7 +490,7 @@ begin
     -- Test registers instance
     -----------------------------------------------------------------------------------------------
     g_test_registers_true : if (G_TEST_REGS_EN) generate
-        i_test_registers_reg_map_comp : entity ctu_can_fd_rtl.test_registers_reg_map
+        i_test_registers_reg_map : entity ctu_can_fd_rtl.test_registers_reg_map
         generic map (
             DATA_WIDTH          => 32,
             ADDRESS_WIDTH       => 8,
