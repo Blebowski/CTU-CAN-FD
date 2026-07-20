@@ -147,7 +147,7 @@ architecture tb of tb_top_ctu_can_fd is
 
    -- DUT interface
    signal clk_sys       : std_logic;
-   signal res_n         : std_logic;
+   signal rst_n         : std_logic;
 
    signal write_data    : std_logic_vector(31 DOWNTO 0);
    signal read_data     : std_logic_vector(31 DOWNTO 0);
@@ -217,7 +217,7 @@ architecture tb of tb_top_ctu_can_fd is
 
        -- DUT interface
        clk_sys             : out std_logic;
-       res_n               : out std_logic;
+       rst_n               : out std_logic;
 
        scan_enable         : out   std_logic;
 
@@ -260,7 +260,7 @@ begin
     port map(
         -- Clock and Asynchronous reset
         clk_sys     => clk_sys,
-        rst_n       => res_n,
+        rst_n       => rst_n,
 
         -- DFT support
         scan_mode   => scan_enable,
@@ -333,7 +333,7 @@ begin
 
         -- Clock, reset
         clk_sys     => clk_sys,
-        res_n       => res_n,
+        rst_n       => rst_n,
 
         -- DFT support
         scan_enable => scan_enable,
