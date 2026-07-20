@@ -54,28 +54,13 @@ jobs:
           make -C doc/driver
           mv doc/driver/build/* pages/linux_driver
 
+      # Actual Pages deployment is centralized in the "Deploy Pages" workflow,
+      # which merges this content with the regression-test output before
+      # publishing - this job only publishes its content as a plain artifact
+      # for that workflow to pick up.
       - name: Upload Artifacts
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: github-pages
+          name: doc-pages-content
           path: pages
-
-  Deploy-to-Pages:
-    needs: build_hw_docs
-
-    # Run only on main branch -> It has rights to push to the pages
-    if: ${{ github.ref == 'refs/heads/master' }}
-
-    permissions:
-      pages: write      # to deploy to  Pages
-      id-token: write   # to verify the deployment originates from an appropriate source
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          retention-days: 90

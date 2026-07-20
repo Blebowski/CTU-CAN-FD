@@ -996,27 +996,9 @@ jobs:
         run: |
           du -skh public/*
 
-      - name: Generate Directory Indexes
-        uses: gacts/directory-listing@v1
+      - name: Upload pages content artifact
+        uses: actions/upload-artifact@v4
         with:
-          target: public
-
-      - name: Upload pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          name: github-pages
+          name: regression-pages-content
           path: public
-
-  deploy_pages:
-    needs: assemble_pages
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          retention-days: 90
