@@ -62,20 +62,20 @@ configurations:
 #### Small:
 
 2 TXT Buffers, 32 word RX Buffer, no frame filters
-Results: [Area](https://logic-design-services.github.io/ctu-can-regression/synthesis/minimal_design_config/utilization.rpt)
-[Timing](https://logic-design-services.github.io/ctu-can-regression/synthesis/minimal_design_config/timing_summary.rpt)
+Results: [Area](https://logic-design-services.github.io/CTU-CAN-FD/synthesis/minimal_design_config/utilization.rpt)
+[Timing](https://logic-design-services.github.io/CTU-CAN-FD/synthesis/minimal_design_config/timing_summary.rpt)
 
 #### Medium:
 
 4 TXT Buffers, 128 word RX Buffer, only one bit filter
-Results: [Area](https://logic-design-services.github.io/ctu-can-regression/synthesis/medium_design_config/utilization.rpt)
-[Timing](https://logic-design-services.github.io/ctu-can-regression/synthesis/medium_design_config/timing_summary.rpt)
+Results: [Area](https://logic-design-services.github.io/CTU-CAN-FD/synthesis/medium_design_config/utilization.rpt)
+[Timing](https://logic-design-services.github.io/CTU-CAN-FD/synthesis/medium_design_config/timing_summary.rpt)
 
 #### Big:
 
 8 TXT Buffers, 1024 word RX Buffer, all frame filters
-Results: [Area](https://logic-design-services.github.io/ctu-can-regression/synthesis/big_design_config/utilization.rpt)
-[Timing](https://logic-design-services.github.io/ctu-can-regression/synthesis/big_design_config/timing_summary.rpt)
+Results: [Area](https://logic-design-services.github.io/CTU-CAN-FD/synthesis/big_design_config/utilization.rpt)
+[Timing](https://logic-design-services.github.io/CTU-CAN-FD/synthesis/big_design_config/timing_summary.rpt)
 
 Note that design is constrained to 100 MHz with no timing violations, combinatorial loops
 or latches inferred (FPGA config without clock gate is used). These results together with
@@ -108,21 +108,21 @@ as measured by NVC and VCS simulators.
 Functional coverage is implemented by PSL assertions.
 
 The code coverage and functional coverage can be seen in:
-[![Coverage](https://img.shields.io/badge/Code%20Coverage--orange.svg)](https://logic-design-services.github.io/ctu-can-regression/code_coverage_report/index.html)
+[![Coverage](https://img.shields.io/badge/Code%20Coverage--orange.svg)](https://logic-design-services.github.io/CTU-CAN-FD/code_coverage_report/index.html)
 
 Description of test-bench and CTU CAN FD VIP is in:
 [![Testbench documentation](https://img.shields.io/badge/Testbench--blue.svg)]( https://logic-design-services.github.io/CTU-CAN-FD/ctu_can_fd_testbench.pdf)
 
 Documentation of all the tests with mapping to a feature being verified:
-[![Verification Requirement Matrix](https://img.shields.io/badge/Verification%20Requirement%20Matrix--orange.svg)]( https://logic-design-services.github.io/ctu-can-regression/regression_results/VRM.html )
+[![Verification Requirement Matrix](https://img.shields.io/badge/Verification%20Requirement%20Matrix--orange.svg)]( https://logic-design-services.github.io/CTU-CAN-FD/regression_results/VRM.html )
 
 CTU CAN FD is simulated as RTL, and as post-synthesis gate-level netlist with Xilinx UNISIM library.
 
 You can see artifacts from the latest regresision run at:
-[![Regression artifacts](https://img.shields.io/badge/Regression%20Artifacts--orange.svg)]( https://logic-design-services.github.io/ctu-can-regression/ )
+[![Regression artifacts](https://img.shields.io/badge/Regression%20Artifacts--orange.svg)]( https://logic-design-services.github.io/CTU-CAN-FD/ )
 
 You can find the regression CI jobs at:
-[![Regression CI](https://img.shields.io/badge/Regression%20CI--orange.svg)]( https://github.com/Logic-Design-Services/ctu-can-regression/actions/workflows/ctu_can_fd_regression.yml )
+[![Regression CI](https://img.shields.io/badge/Regression%20CI--orange.svg)]( https://github.com/Logic-Design-Services/CTU-CAN-FD/actions/workflows/ctu_can_fd_regression.yml )
 
 
 See the instructions below in "How to run CTU CAN FD testbench" subsection.
