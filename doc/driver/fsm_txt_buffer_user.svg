@@ -93,9 +93,9 @@
    <ellipse cx="144.827" cy="159.143" rx="10.8866" ry="4.39308"/>
    <ellipse cx="59.4364" cy="142.823" rx="7.36455" ry="4.39308"/>
    <ellipse cx="144.827" cy="129.196" rx="10.8866" ry="4.39308"/>
-   <ellipse cx="143.077" cy="180.53" rx="10.8866" ry="4.39308"/>
   </g>
-  <ellipse cx="110.386" cy="180.53" rx="10.8866" ry="4.39308" fill="#ffcb35" stroke="#000" stroke-linecap="square" stroke-width=".499999"/>
+  <ellipse cx="110.386" cy="180.53" rx="10.8866" ry="4.39308" fill="#28a4ff" stroke="#000" stroke-linecap="square" stroke-width=".499999"/>
+  <ellipse cx="143.077" cy="180.53" rx="10.8866" ry="4.39308" fill="#ffcb35" stroke="#000" stroke-linecap="square" stroke-width=".499999"/>
   <text x="110.90907" y="179.42688" font-size="3.175px" xml:space="preserve"><tspan x="110.90907" y="179.42688" dy="0.60000002" text-align="center" text-anchor="middle">Accessible</tspan><tspan x="110.90907" y="183.39563"><tspan font-size="3.175px" text-align="center" text-anchor="middle">for S</tspan>W</tspan></text>
   <text x="143.5869" y="179.52795" xml:space="preserve"><tspan x="143.5869" y="179.52795" dy="1 0 0 0 0 0" font-family="sans-serif" font-size="2.82222px" text-align="center" text-anchor="middle" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal">Inaccessible</tspan><tspan x="143.5869" y="183.36786" font-size="3.175px"><tspan font-size="3.175px" text-align="center" text-anchor="middle">for S</tspan>W</tspan></text>
   <g font-size="3.175px">
@@ -129,10 +129,10 @@
    </g>
   </g>
   <text transform="matrix(.264583 0 0 .264583 91.8919 139.964)" x="26.959213" y="9.11724" fill="#2aa1ff" filter="url(#filter1204-6-2-9-1-3-1)" font-size="12px" stroke-width="3.77953" text-align="center" text-anchor="middle" style="line-height:1.1" xml:space="preserve"><tspan x="26.959213" y="9.11724" text-align="center">Set</tspan><tspan x="26.959213" y="22.31724" text-align="center">abort</tspan></text>
-  <text transform="translate(49.0277 104.823)" x="57.620724" y="16.855087" filter="url(#filter1204)" font-size="3.175px" text-align="center" text-anchor="middle" style="line-height:1.1" xml:space="preserve"><tspan x="57.620724" y="16.855087" text-align="center">Transmission</tspan><tspan x="57.620724" y="20.347588" text-align="center">unsuccesfull</tspan></text>
+  <text transform="translate(49.0277 104.823)" x="57.620724" y="16.855087" filter="url(#filter1204)" font-size="3.175px" text-align="center" text-anchor="middle" style="line-height:1.1" xml:space="preserve"><tspan x="57.620724" y="16.855087" text-align="center">Transmission</tspan><tspan x="57.620724" y="20.347588" text-align="center">unsuccessful</tspan></text>
   <g font-size="12px" stroke-width="3.77953" text-anchor="middle">
    <text transform="matrix(.264583 0 0 .264583 68.5988 118.913)" x="38.824219" y="9.1171875" filter="url(#filter1204)" text-align="center" style="line-height:1.1" xml:space="preserve"><tspan x="38.824219" y="9.1171875" text-align="center">Transmission</tspan><tspan x="38.824219" y="22.317188" text-align="center">starts</tspan></text>
-   <text transform="matrix(.264583 0 0 .264583 106.802 130.509)" x="38.824219" y="9.1171875" filter="url(#filter1204)" text-align="center" style="line-height:1.1" xml:space="preserve"><tspan x="38.824219" y="9.1171875" text-align="center">Transmission</tspan><tspan x="38.824219" y="22.317188" text-align="center">succesfull</tspan></text>
+   <text transform="matrix(.264583 0 0 .264583 106.802 130.509)" x="38.824219" y="9.1171875" filter="url(#filter1204)" text-align="center" style="line-height:1.1" xml:space="preserve"><tspan x="38.824219" y="9.1171875" text-align="center">Transmission</tspan><tspan x="38.824219" y="22.317188" text-align="center">successful</tspan></text>
    <text transform="matrix(.264583 0 0 .264583 107.77 145.476)" x="38.824219" y="9.1171875" filter="url(#filter1204)" text-align="center" style="line-height:1.1" xml:space="preserve"><tspan x="38.824219" y="9.1171875" text-align="center">Transmission</tspan><tspan x="38.824219" y="22.317188" text-align="center">sborted</tspan></text>
   </g>
   <g stroke-width="3.77953" text-anchor="middle">
