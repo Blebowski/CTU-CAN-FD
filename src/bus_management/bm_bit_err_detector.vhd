@@ -100,8 +100,8 @@ entity bm_bit_err_detector is
         -------------------------------------------------------------------------------------------
         -- Control signals from CAN core
         -------------------------------------------------------------------------------------------
-        -- Sample control
-        sp_control               :in   std_logic_vector(1 downto 0);
+        -- Secondary sample point
+        is_secondary_sample      :in   std_logic;
 
         -- RX Trigger
         rx_trigger               :in   std_logic;
@@ -139,10 +139,6 @@ end entity;
 
 architecture rtl of bm_bit_err_detector is
 
-    -- Bit error detected value
-    signal bit_err_d                : std_logic;
-    signal bit_err_q                : std_logic;
-
     -- Capture register for Secondary sampling point bit error
     signal bit_err_ssp_capt_d       : std_logic;
     signal bit_err_ssp_capt_q       : std_logic;
@@ -161,8 +157,7 @@ begin
     -- in the moment of SSP!
     -------------------------------------------------------------------------------------------
     bit_err_ssp_condition <= '1' when (data_tx_delayed /= data_rx_synced and
-                                       sample_sec = '1' and
-                                       bit_err_enable = '1')
+                                       sample_sec = '1' and bit_err_enable = '1')
                                  else
                              '0';
 
@@ -189,12 +184,12 @@ begin
     -- register (bit_err_ssp_capt_q) and also SSP condition because SSP might occur at the same
     -- cycle as RX Trigger and in this case bit error is processed immediately and not captured!
     -------------------------------------------------------------------------------------------
-    bit_err_ssp_valid <= '1' when (sp_control = SECONDARY_SAMPLE and rx_trigger = '1' and
+    bit_err_ssp_valid <= '1' when (is_secondary_sample = '1' and rx_trigger = '1' and
                                    (bit_err_ssp_capt_q = '1' or bit_err_ssp_condition = '1'))
                              else
                          '0';
 
-    bit_err_norm_valid <= '1' when (sp_control /= SECONDARY_SAMPLE and
+    bit_err_norm_valid <= '1' when (is_secondary_sample = '0' and
                                     data_rx_synced /= data_tx and
                                     rx_trigger = '1' and
                                     bit_err_enable = '1')
@@ -204,24 +199,10 @@ begin
     -------------------------------------------------------------------------------------------
     -- Expected data is not equal to actual data in sample point -> Bit Error!
     -------------------------------------------------------------------------------------------
-    bit_err_d <= '0' when (mr_settings_ena = CTU_CAN_DISABLED) else
-                 '1' when (bit_err_ssp_valid = '1') else
-                 '1' when (bit_err_norm_valid = '1') else
-                 '0';
-
-    -------------------------------------------------------------------------------------------
-    -- Bit error register
-    -------------------------------------------------------------------------------------------
-    p_bit_err_reg : process(clk_sys, rst_n)
-    begin
-        if (rst_n = '0') then
-            bit_err_q <= '0';
-        elsif (rising_edge(clk_sys)) then
-            bit_err_q <= bit_err_d;
-        end if;
-    end process;
-
-    -- Propagation to output
-    bit_err <= bit_err_q;
+    -- TODO: Is it really necessary to gate here by SETTINGS[ENA] ?
+    bit_err <= '0' when (mr_settings_ena = CTU_CAN_DISABLED) else
+               '1' when (bit_err_ssp_valid = '1') else
+               '1' when (bit_err_norm_valid = '1') else
+               '0';
 
 end architecture;

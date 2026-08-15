@@ -273,7 +273,7 @@ entity mac_pc_top is
         is_bus_off              : in  std_logic;
 
         -- Error detected
-        err_detected            : out std_logic;
+        err_detected_d          : out std_logic;
 
         -- Primary Error
         primary_err             : out std_logic;
@@ -383,17 +383,12 @@ entity mac_pc_top is
         -------------------------------------------------------------------------------------------
         -- Control signals
         -------------------------------------------------------------------------------------------
-        -- Sample control (Nominal, Data, Secondary)
-        sp_control              : out std_logic_vector(1 downto 0);
+        -- Current bit-rate
+        bit_rate_d              : out t_bit_rate;
+        bit_rate_q              : out t_bit_rate;
 
-        -- Sample control (Registered)
-        sp_control_q            : out std_logic_vector(1 downto 0);
-
-        -- Enable Nominal Bit time counters.
-        nbt_ctrs_en             : out  std_logic;
-
-        -- Enable Data Bit time counters.
-        dbt_ctrs_en             : out  std_logic;
+        -- Sample point control
+        is_secondary_sample     : out std_logic;
 
         -- Synchronisation control (No synchronisation, Hard Synchronisation, Resynchronisation
         sync_control            : out std_logic_vector(1 downto 0);
@@ -439,7 +434,7 @@ end entity;
 architecture rtl of mac_pc_top is
 
     -- Error frame request
-    signal err_frm_req              :     std_logic;
+    signal err_detected_q           :     std_logic;
 
     -- Load commands for TX Shift register
     signal tx_load_base_id          :     std_logic;
@@ -577,6 +572,7 @@ architecture rtl of mac_pc_top is
     -- Debug status of protocol controller
     signal pc_dbg_i                :      t_protocol_control_dbg;
 
+
 begin
 
     -----------------------------------------------------------------------------------------------
@@ -589,7 +585,8 @@ begin
 
         -- Signals which cause state change
         rx_trigger              => rx_trigger,              -- IN
-        err_frm_req             => err_frm_req,             -- IN
+        err_detected_q          => err_detected_q,          -- IN
+        err_detected_d          => err_detected_d,          -- IN
 
         -- Memory registers interface
         mr_settings_ena         => mr_settings_ena,         -- IN
@@ -722,10 +719,9 @@ begin
         decrement_rec           => decrement_rec,           -- OUT
 
         -- Other control signals
-        sp_control              => sp_control,              -- OUT
-        sp_control_q            => sp_control_q,            -- OUT
-        nbt_ctrs_en             => nbt_ctrs_en,             -- OUT
-        dbt_ctrs_en             => dbt_ctrs_en,             -- OUT
+        bit_rate_d              => bit_rate_d,              -- OUT
+        bit_rate_q              => bit_rate_q,              -- OUT
+        is_secondary_sample     => is_secondary_sample,     -- OUT
         sync_control            => sync_control,            -- OUT
         ssp_reset               => ssp_reset,               -- OUT
         tran_delay_meas         => tran_delay_meas,         -- OUT
@@ -861,8 +857,8 @@ begin
         is_err_passive          => is_err_passive,          -- IN
 
         -- Status output
-        err_frm_req             => err_frm_req,             -- OUT
-        err_detected            => err_detected,            -- OUT
+        err_detected_q          => err_detected_q,          -- OUT
+        err_detected_d          => err_detected_d,          -- OUT
         crc_match               => crc_match,               -- OUT
         err_ctrs_unchanged      => err_ctrs_unchanged       -- OUT
     );
@@ -896,7 +892,7 @@ begin
         crc_17                  => crc_17,                  -- IN
         crc_21                  => crc_21,                  -- IN
 
-        err_frm_req             => err_frm_req,             -- IN
+        err_detected_q          => err_detected_q,          -- IN
         is_err_active           => is_err_active,           -- IN
         bst_ctr                 => bst_ctr,                 -- IN
         tran_identifier         => tran_identifier,         -- IN
@@ -976,7 +972,7 @@ begin
     -- report "ACK, Stuff, CRC Errors can't occur during Error or overload flag";
 
     -- psl sample_sec_proper_asrt : assert never
-    --  (sp_control = SECONDARY_SAMPLE and is_transmitter = '0')
+    --  (is_secondary_sample = '1' and is_transmitter = '0')
     --  report "Secondary sampling is allowed only for transmitter!";
 
     -- psl no_simul_tx_rx_trigger_asrt : assert never
@@ -988,11 +984,11 @@ begin
     --  report "Unit can't be transmitter and receiver simultaneously!";
 
     -- psl no_h_sync_in_data_bit_rate_asrt : assert always
-    --  (sync_control = HARD_SYNC) -> (sp_control = NOMINAL_SAMPLE)
+    --  (sync_control = HARD_SYNC) -> (bit_rate_q = BIT_RATE_NOMINAL)
     --  report "Hard synchronisation shall be used in Nominal bit rate only!";
 
     -- psl no_simul_err_req_asrt : assert never
-    --  (tran_valid = '1' and err_frm_req = '1')
+    --  (tran_valid = '1' and err_detected_q = '1')
     -- report "Tranmission OK and Error frame request can't occur at once!";
 
     -- <RELEASE_ON>

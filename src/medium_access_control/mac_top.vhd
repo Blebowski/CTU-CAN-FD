@@ -95,9 +95,6 @@ use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity mac_top is
     generic (
-        -- Number of signals in Sample trigger
-        G_SAMPLE_TRIGGER_COUNT  :     natural range 2 to 8;
-
         -- Control counter width
         G_CTRL_CTR_WIDTH        :     natural;
 
@@ -274,7 +271,7 @@ entity mac_top is
         br_shifted              : out std_logic;
 
         -- Error is detected (Error frame will be transmitted)
-        err_detected            : out std_logic;
+        err_detected_d          : out std_logic;
 
         -- Fault confinement state changed
         fcs_changed             : out std_logic;
@@ -286,7 +283,7 @@ entity mac_top is
         -- Prescaler interface
         -------------------------------------------------------------------------------------------
         -- RX Triggers (in Sample Point)
-        rx_triggers             : in  std_logic_vector(G_SAMPLE_TRIGGER_COUNT - 1 downto 0);
+        rx_trigger             : in  std_logic;
 
         -- TX Trigger
         tx_trigger              : in  std_logic;
@@ -298,14 +295,12 @@ entity mac_top is
         -- No positive resynchronisation
         no_pos_resync           : out std_logic;
 
-        -- Sample control (Nominal, Data, Secondary)
-        sp_control              : out std_logic_vector(1 downto 0);
+        -- Bit rate control
+        bit_rate_d              : out t_bit_rate;
+        bit_rate_q              : out t_bit_rate;
 
-        -- Enable Nominal Bit time counters.
-        nbt_ctrs_en             : out std_logic;
-
-        -- Enable Data Bit time counters.
-        dbt_ctrs_en             : out std_logic;
+        -- Sample point control
+        is_secondary_sample     : out std_logic;
 
         -------------------------------------------------------------------------------------------
         -- CAN Bus serial data stream
@@ -315,6 +310,11 @@ entity mac_top is
 
         -- TX Data to CAN Bus
         tx_data_wbs             : out std_logic;
+
+        -------------------------------------------------------------------------------------------
+        -- Debug signals for testbench
+        -------------------------------------------------------------------------------------------
+        test_probe              : out t_ctu_can_fd_test_probe;
 
         -------------------------------------------------------------------------------------------
         -- Others
@@ -341,10 +341,7 @@ entity mac_top is
         sync_edge               : in  std_logic;
 
         -- Bit error enable
-        bit_err_enable          : out std_logic;
-
-        -- RX Trigger of Protocol control FSM (sample point)
-        pc_rx_trigger           : out std_logic
+        bit_err_enable          : out std_logic
     );
 end entity;
 
@@ -378,7 +375,6 @@ architecture rtl of mac_top is
     signal is_err_active            : std_logic;
     signal is_err_passive           : std_logic;
     signal is_bus_off_i             : std_logic;
-    signal err_detected_i           : std_logic;
     signal primary_err              : std_logic;
     signal act_err_ovr_flag         : std_logic;
     signal err_delim_late           : std_logic;
@@ -403,8 +399,6 @@ architecture rtl of mac_top is
     signal crc_21                   : std_logic_vector(20 downto 0);
 
     -- Protocol control - control outputs
-    signal sp_control_i             : std_logic_vector(1 downto 0);
-    signal sp_control_q             : std_logic_vector(1 downto 0);
     signal tran_valid_i             : std_logic;
     signal rec_valid_i              : std_logic;
 
@@ -416,7 +410,7 @@ architecture rtl of mac_top is
 
     -- Protocol control triggers
     signal pc_tx_trigger            : std_logic;
-    signal pc_rx_trigger_i          : std_logic;
+    signal pc_rx_trigger            : std_logic;
 
     -- Protocol control data inputs/outputs
     signal pc_tx_data_nbs           : std_logic;
@@ -425,8 +419,6 @@ architecture rtl of mac_top is
     -- CRC Data inputs
     signal crc_data_tx_wbs          : std_logic;
     signal crc_data_tx_nbs          : std_logic;
-    signal crc_data_rx_wbs          : std_logic;
-    signal crc_data_rx_nbs          : std_logic;
 
     -- CRC Trigger inputs
     signal crc_trig_tx_wbs          : std_logic;
@@ -437,13 +429,10 @@ architecture rtl of mac_top is
     -- Bit stuffing signals
     signal bst_data_in              : std_logic;
     signal bst_data_out             : std_logic;
-    signal bst_trigger              : std_logic;
     signal data_halt                : std_logic;
 
     -- Bit destuffing signals
     signal bds_data_in              : std_logic;
-    signal bds_data_out             : std_logic;
-    signal bds_trigger              : std_logic;
     signal destuffed                : std_logic;
 
     -- Bus traffic counters
@@ -564,7 +553,7 @@ begin
         is_err_active           => is_err_active,               -- IN
         is_err_passive          => is_err_passive,              -- IN
         is_bus_off              => is_bus_off_i,                -- IN
-        err_detected            => err_detected_i,              -- OUT
+        err_detected_d          => err_detected_d,              -- OUT
         primary_err             => primary_err,                 -- OUT
         act_err_ovr_flag        => act_err_ovr_flag,            -- OUT
         err_delim_late          => err_delim_late,              -- OUT
@@ -573,7 +562,7 @@ begin
 
         -- TX and RX Trigger signals to Sample and Transmitt Data
         tx_trigger              => pc_tx_trigger,               -- IN
-        rx_trigger              => pc_rx_trigger_i,             -- IN
+        rx_trigger              => pc_rx_trigger,               -- IN
 
         -- CAN Bus serial data stream
         tx_data_nbs             => pc_tx_data_nbs,              -- OUT
@@ -607,10 +596,9 @@ begin
         crc_21                  => crc_21,                      -- IN
 
         -- Control signals
-        sp_control              => sp_control_i,                -- OUT
-        sp_control_q            => sp_control_q,                -- OUT
-        nbt_ctrs_en             => nbt_ctrs_en,                 -- OUT
-        dbt_ctrs_en             => dbt_ctrs_en,                 -- OUT
+        bit_rate_d              => bit_rate_d,                  -- OUT
+        bit_rate_q              => bit_rate_q,                  -- OUT
+        is_secondary_sample     => is_secondary_sample,         -- OUT
         sync_control            => sync_control,                -- OUT
         ssp_reset               => ssp_reset,                   -- OUT
         tran_delay_meas         => tran_delay_meas,             -- OUT
@@ -637,7 +625,7 @@ begin
         rst_n                   => rst_n,                       -- IN
 
         -- Prescaler Interface
-        rx_trigger              => pc_rx_trigger_i,             -- IN
+        rx_trigger              => pc_rx_trigger,               -- IN
 
         -- Fault confinement Interface
         is_bus_off              => is_bus_off_i,                -- IN
@@ -662,7 +650,7 @@ begin
         rst_n                   => rst_n,                       -- IN
 
         -- DFT support
-        scan_mode             => scan_mode,                 -- IN
+        scan_mode               => scan_mode,                   -- IN
 
         mr_mode_rom             => mr_mode_rom,                 -- IN
         mr_ewl_ew_limit         => mr_ewl_ew_limit,             -- IN
@@ -683,9 +671,9 @@ begin
         is_receiver             => is_receiver,                 -- IN
 
         -- Protocol control Interface
-        sp_control              => sp_control_i,                -- IN
+        bit_rate_q              => bit_rate_q,                  -- IN
         set_err_active          => set_err_active,              -- IN
-        err_detected            => err_detected_i,              -- IN
+        err_detected_d          => err_detected_d,              -- IN
         err_ctrs_unchanged      => err_ctrs_unchanged,          -- IN
         primary_err             => primary_err,                 -- IN
         act_err_ovr_flag        => act_err_ovr_flag,            -- IN
@@ -726,8 +714,7 @@ begin
         -- Data inputs for CRC calculation
         data_tx_wbs             => crc_data_tx_wbs,             -- IN
         data_tx_nbs             => crc_data_tx_nbs,             -- IN
-        data_rx_wbs             => crc_data_rx_wbs,             -- IN
-        data_rx_nbs             => crc_data_rx_nbs,             -- IN
+        data_rx                 => bds_data_in,                 -- IN
 
         -- Trigger signals to process the data on each CRC input.
         trig_tx_wbs             => crc_trig_tx_wbs,             -- IN
@@ -761,7 +748,7 @@ begin
         data_out                => bst_data_out,                -- OUT
 
         -- Control signals
-        bst_trigger             => bst_trigger,                 -- IN
+        tx_trigger              => tx_trigger,                  -- IN
         stuff_enable            => stuff_enable,                -- IN
         fixed_stuff             => fixed_stuff,                 -- IN
         tx_frame_no_sof         => tx_frame_no_sof,             -- IN
@@ -782,10 +769,9 @@ begin
 
         -- Data-path
         data_in                 => bds_data_in,                 -- IN
-        data_out                => bds_data_out,                -- OUT
 
         -- Control signals
-        bds_trigger             => bds_trigger,                 -- IN
+        rx_trigger              => rx_trigger,                  -- IN
         destuff_enable          => destuff_enable,              -- IN
         fixed_stuff             => fixed_stuff,                 -- IN
 
@@ -805,7 +791,7 @@ begin
         port map (
             clk_sys             => clk_sys,                     -- IN
             rst_n               => rst_n,                       -- IN
-            scan_mode         => scan_mode,                 -- IN
+            scan_mode           => scan_mode,                   -- IN
 
             -- Memory registers interface
             mr_command_rxfcrst  => mr_command_rxfcrst,          -- IN
@@ -830,36 +816,27 @@ begin
     -- Trigger multiplexor
     -----------------------------------------------------------------------------------------------
     i_mac_trigger_mux : entity ctu_can_fd_rtl.mac_trigger_mux
-    generic map (
-        G_SAMPLE_TRIGGER_COUNT  => G_SAMPLE_TRIGGER_COUNT
-    )
     port map (
         -- Clock and Asynchronous reset
         clk_sys                => clk_sys,                      -- IN
         rst_n                  => rst_n,                        -- IN
 
         -- Input triggers
-        rx_triggers            => rx_triggers,                  -- IN
+        rx_trigger             => rx_trigger,                   -- IN
         tx_trigger             => tx_trigger,                   -- IN
 
         -- Control signals
         data_halt              => data_halt,                    -- IN
         destuffed              => destuffed,                    -- IN
         fixed_stuff            => fixed_stuff,                  -- IN
-        bds_data_in            => bds_data_in,                  -- IN
 
         -- Output triggers
         pc_tx_trigger          => pc_tx_trigger,                -- OUT
-        pc_rx_trigger          => pc_rx_trigger_i,              -- OUT
-        bst_trigger            => bst_trigger,                  -- OUT
-        bds_trigger            => bds_trigger,                  -- OUT
+        pc_rx_trigger          => pc_rx_trigger,                -- OUT
         crc_trig_rx_nbs        => crc_trig_rx_nbs,              -- OUT
         crc_trig_tx_nbs        => crc_trig_tx_nbs,              -- OUT
         crc_trig_rx_wbs        => crc_trig_rx_wbs,              -- OUT
-        crc_trig_tx_wbs        => crc_trig_tx_wbs,              -- OUT
-
-        -- Status signals
-        crc_data_rx_wbs        => crc_data_rx_wbs               -- OUT
+        crc_trig_tx_wbs        => crc_trig_tx_wbs               -- OUT
     );
 
 
@@ -871,19 +848,17 @@ begin
 
     -----------------------------------------------------------------------------------------------
     -- Protocol control datapath connection:
-    --  1. RX Data - Output of bit destuffing.
+    --  1. RX Data - Input to bit stuffing - valid in the same cycle (when rx_trigger = '1')
     --  2. TX Data - Input to bit stuffing.
     -----------------------------------------------------------------------------------------------
-    pc_rx_data_nbs <= bds_data_out;
+    pc_rx_data_nbs <= bds_data_in;
     bst_data_in <= pc_tx_data_nbs;
 
     -----------------------------------------------------------------------------------------------
     -- CRC 15 (No bit stuffing) data inputs:
     --  1. TX Data from Protocol control.
-    --  2. RX Data after bit destuffing.
     -----------------------------------------------------------------------------------------------
     crc_data_tx_nbs <= pc_tx_data_nbs;
-    crc_data_rx_nbs <= bds_data_out;
 
     -----------------------------------------------------------------------------------------------
     -- CRC 17,21 (With bit stuffing) data inputs:
@@ -902,7 +877,7 @@ begin
     --  2. Looped back dominant Bit for Bus monitoring Mode.
     --  3. Regular RX Data
     -----------------------------------------------------------------------------------------------
-    bds_data_in <= bst_data_out when (sp_control_q = SECONDARY_SAMPLE) else
+    bds_data_in <= bst_data_out when (is_secondary_sample = '1') else
                    lpb_dominant when (mr_mode_bmm = '1') else
                     rx_data_wbs;
 
@@ -920,6 +895,13 @@ begin
     -----------------------------------------------------------------------------------------------
     no_pos_resync <= '1' when (tx_data_wbs_i = DOMINANT) else
                      '0';
+
+    -----------------------------------------------------------------------------------------------
+    -- Test probe for observation
+    -----------------------------------------------------------------------------------------------
+    test_probe.rx_trigger_nbs <= pc_rx_trigger;
+    test_probe.rx_trigger_wbs <= rx_trigger;
+    test_probe.tx_trigger <= tx_trigger;
 
     -----------------------------------------------------------------------------------------------
     -- CAN Core status record connections
@@ -953,12 +935,7 @@ begin
     rec_valid               <= rec_valid_i;
     arbitration_lost        <= arbitration_lost_i;
     tran_valid              <= tran_valid_i;
-    err_detected            <= err_detected_i;
     tx_data_wbs             <= tx_data_wbs_i;
-    sp_control              <= sp_control_i;
-
-    -- Test signals observation
-    pc_rx_trigger           <= pc_rx_trigger_i;
 
     -----------------------------------------------------------------------------------------------
     -----------------------------------------------------------------------------------------------

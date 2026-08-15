@@ -113,8 +113,8 @@ entity mac_bit_stuffing is
         -------------------------------------------------------------------------------------------
         -- Control signals
         -------------------------------------------------------------------------------------------
-        -- Bit Stuffing Trigger (in SYNC segment)
-        bst_trigger         : in  std_logic;
+        -- TX Trigger before start of SYNC segment
+        tx_trigger          : in  std_logic;
 
         -- Bit Stuffing enabled. If not, data are only passed to the output
         stuff_enable        : in  std_logic;
@@ -234,7 +234,7 @@ begin
     --  2. Store "fixed_stuff" configuration when data are processed
     -----------------------------------------------------------------------------------------------
     fixed_reg_d <= '0'         when (enable_prev = '0') else
-                   fixed_stuff when (bst_trigger = '1') else
+                   fixed_stuff when (tx_trigger = '1') else
                    fixed_reg_q;
 
     -----------------------------------------------------------------------------------------------
@@ -267,7 +267,7 @@ begin
     --  3. Keep previous value otherwise.
     -----------------------------------------------------------------------------------------------
     bst_ctr_d <=        "000" when (enable_prev = '0') else
-                  bst_ctr_add when (bst_trigger = '1' and stuff_lvl_reached = '1' and
+                  bst_ctr_add when (tx_trigger = '1' and stuff_lvl_reached = '1' and
                                     fixed_stuff = '0') else
                     bst_ctr_q;
 
@@ -303,7 +303,7 @@ begin
     --  2. When processing bit and should be restarted by dedicated signal.
     -----------------------------------------------------------------------------------------------
     same_bits_rst <= '1' when (enable_prev = '0') or
-                              (bst_trigger = '1' and same_bits_rst_trig = '1')
+                              (tx_trigger = '1' and same_bits_rst_trig = '1')
                          else
                      '0';
 
@@ -330,7 +330,7 @@ begin
     -----------------------------------------------------------------------------------------------
     same_bits_d <= ('0' & tx_no_sof_val) when (tx_frame_no_sof = '1') else
                                    "001" when (same_bits_rst = '1') else
-                           same_bits_add when (bst_trigger = '1') else
+                           same_bits_add when (tx_trigger = '1') else
                              same_bits_q;
 
     -----------------------------------------------------------------------------------------------
@@ -379,15 +379,15 @@ begin
     --  3. Pipe the input data upon trigger without stufffing
     --  4. Keep previous value otherwise
     -----------------------------------------------------------------------------------------------
-    data_out_d_ena <= (not data_out_i) when (bst_trigger = '1' and insert_stuff_bit = '1') else
-                              data_in  when (bst_trigger = '1') else
+    data_out_d_ena <= (not data_out_i) when (tx_trigger = '1' and insert_stuff_bit = '1') else
+                              data_in  when (tx_trigger = '1') else
                            data_out_i;
 
     data_out_d <= data_out_d_ena when (stuff_enable = '1') else
-                         data_in when (bst_trigger = '1') else
+                         data_in when (tx_trigger = '1') else
                       data_out_i;
 
-    data_out_ce <= '1' when (stuff_enable = '1' or bst_trigger = '1') else
+    data_out_ce <= '1' when (stuff_enable = '1' or tx_trigger = '1') else
                      '0';
 
     -----------------------------------------------------------------------------------------------
@@ -419,8 +419,8 @@ begin
     --  3. Erase when bit is processed, but stuff bit is not inserted.
     -----------------------------------------------------------------------------------------------
     data_halt_d <= '0' when (enable_prev = '0' or stuff_enable = '0') else
-                   '1' when (bst_trigger = '1' and insert_stuff_bit = '1') else
-                   '0' when (bst_trigger = '1') else
+                   '1' when (tx_trigger = '1' and insert_stuff_bit = '1') else
+                   '0' when (tx_trigger = '1') else
                    data_halt_q;
 
     -----------------------------------------------------------------------------------------------

@@ -274,6 +274,11 @@ package can_types_pkg is
         is_suspend           : std_logic;
     end record;
 
+    -- Bit rate
+    type t_bit_rate is (
+        BIT_RATE_NOMINAL,
+        BIT_RATE_FD
+    );
 
     ----------------------------------------------------------------------------
     -- DLC Types

@@ -71,30 +71,28 @@
 --  Trigger multiplexor.
 --
 -- Purpose:
---  Creates trigger (clock enable) signals for pipeline stages within CAN Core.
---  Creates following trigger signals:
---      1. Protocol control TX Trigger - Stuff pipeline stage. Gated when a bit
---         was stuffed.
---      2. Protocol control RX Trigger - Process pipeline state. Gated when a
---         bit was destuffed.
---      3. Bit stuffing trigger - Stuff pipeline stage.
---      4. Bit destuffing trigger - Destuff pipeline stage
---      5. CRC RX With bit stuffing trigger - Process pipeline stage. Gated
---         when fixed stuff bit is destuffed since CRC 17, 21 shall not be
---         calculated from fixed stuff bits.
---      6. CRC RX No bit stuffing trigger - Process pipeline stage. Gated when
---         a bit is destuffed.
---      7. CRC TX No bit stuffing trigger - Stuff pipeline stage. Gated when
---         a stuff bit was inserted after previous bit.
---      7. CRC TX With bit stuffing trigger - Stuff pipeline stage + 1 clock
---         cycle. Gated when fixed stuff bit was inserted.
+--  Creates trigger (clock enable) signals for various control logic in MAC.
+--  Creates following TX trigger signals when new bit starts:
+--      1. Protocol control TX Trigger - Gated when a bit was stuffed.
+--      2. Bit stuffing trigger
+--      3. CRC TX No bit stuffing trigger - Gated when a stuff bit was
+--         inserted after previous bit.
+--      4. CRC TX With bit stuffing trigger - 1 clock cycle after TX trigger.
+--         Gated when fixed stuff bit was inserted.
+--  Creates following RX trigger signals at sample point:
+--      1. Protocol control RX Trigger - Gated when a bit was destuffed.
+--      2. Bit destuffing trigger
+--      3. CRC RX With bit stuffing trigger - Gated when fixed stuff bit is
+--         destuffed since CRC 17, 21 shall not be calculated from fixed stuff
+--         bits.
+--      4. CRC RX No bit stuffing trigger - Gated when a bit is destuffed.
 --------------------------------------------------------------------------------
 
-Library ieee;
+library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
 
-Library ctu_can_fd_rtl;
+library ctu_can_fd_rtl;
 use ctu_can_fd_rtl.can_constants_pkg.all;
 use ctu_can_fd_rtl.can_types_pkg.all;
 
@@ -102,10 +100,6 @@ use ctu_can_fd_rtl.CAN_FD_register_map.all;
 use ctu_can_fd_rtl.CAN_FD_frame_format.all;
 
 entity mac_trigger_mux is
-    generic (
-        -- Number of Sample Triggers
-        G_SAMPLE_TRIGGER_COUNT  :    natural
-    );
     port (
         -------------------------------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -116,8 +110,8 @@ entity mac_trigger_mux is
         -------------------------------------------------------------------------------------------
         -- Input triggers
         -------------------------------------------------------------------------------------------
-        -- RX Triggers
-        rx_triggers            :in   std_logic_vector(G_SAMPLE_TRIGGER_COUNT - 1 downto 0);
+        -- RX Trigger
+        rx_trigger             :in   std_logic;
 
         -- TX Trigger
         tx_trigger             :in   std_logic;
@@ -134,9 +128,6 @@ entity mac_trigger_mux is
         -- Fixed bit stuffing method is used
         fixed_stuff            :in   std_logic;
 
-        -- Bit Destuffing Data input
-        bds_data_in            :in   std_logic;
-
         -------------------------------------------------------------------------------------------
         -- Output triggers
         -------------------------------------------------------------------------------------------
@@ -145,12 +136,6 @@ entity mac_trigger_mux is
 
         -- Protocol control RX Trigger
         pc_rx_trigger          :out  std_logic;
-
-        -- Bit Stuffing Trigger
-        bst_trigger            :out  std_logic;
-
-        -- Bit De-Stuffing Trigger
-        bds_trigger            :out  std_logic;
 
         -- CRC Trigger RX - No bit stuffing
         crc_trig_rx_nbs        :out  std_logic;
@@ -162,13 +147,7 @@ entity mac_trigger_mux is
         crc_trig_rx_wbs        :out  std_logic;
 
         -- CRC Trigger TX - With bit stuffing
-        crc_trig_tx_wbs        :out  std_logic;
-
-        -------------------------------------------------------------------------------------------
-        -- Status signals
-        -------------------------------------------------------------------------------------------
-        -- CRC RX With Bit Stuffing - Data input
-        crc_data_rx_wbs        :out  std_logic
+        crc_trig_tx_wbs        :out  std_logic
     );
 end entity;
 
@@ -185,38 +164,24 @@ begin
     --  2. Protocol control trigger (RX) - shifts RX Shift register, is enabled when stuff bit is
     --     not destuffed! Active in Process pipeline stage.
     -----------------------------------------------------------------------------------------------
-    pc_tx_trigger <= '1' when (tx_trigger = '1' and data_halt = '0')
-                         else
+    pc_tx_trigger <= '1' when (tx_trigger = '1' and data_halt = '0') else
                      '0';
 
-    pc_rx_trigger <= '1' when (rx_triggers(0) = '1' and destuffed = '0')
-                         else
+    pc_rx_trigger <= '1' when (rx_trigger = '1' and destuffed = '0') else
                      '0';
-
-    -----------------------------------------------------------------------------------------------
-    -- Bit stuffing/destuffing triggers:
-    --  1. Bit Stuffing Trigger (TX) - Processes data on Bit stuffing input, active in Stuff
-    --     pipeline stage.
-    --  2. Bit Destuffing Trigger (RX) - Processes data on Bit Destuffin input, active in Destuff
-    --     pipeline stage.
-    -----------------------------------------------------------------------------------------------
-    bst_trigger <= tx_trigger;
-    bds_trigger <= rx_triggers(1);
 
     -----------------------------------------------------------------------------------------------
     -- CRC Triggers for CRC 15 (CRC without stuff bits):
     --  1. CRC RX NBS - Trigger for CRC15 from RX data without bit stuffing. Trigger must be gated
     --     when bit was destuffed, because CRC15 for CAN 2.0 frames shall not take stuff bits into
-    --     account! Active in Process pipeline stage.
+    --     account!
     --  2. CRC TX NBS - Trigger for CRC15 from TX data without bit stuffing. Must be gated when
-    --     stuff bit is inserted! Active in Stuff pipeline stage.
+    --     stuff bit is inserted!
     -----------------------------------------------------------------------------------------------
-    crc_trig_rx_nbs <= '1' when (rx_triggers(0) = '1' and destuffed = '0')
-                           else
+    crc_trig_rx_nbs <= '1' when (rx_trigger = '1' and destuffed = '0') else
                        '0';
 
-    crc_trig_tx_nbs <= '1' when (tx_trigger = '1' and data_halt = '0')
-                           else
+    crc_trig_tx_nbs <= '1' when (tx_trigger = '1' and data_halt = '0') else
                        '0';
 
     -----------------------------------------------------------------------------------------------
@@ -244,28 +209,8 @@ begin
                        '1' when (tx_trigger_q = '1') else
                        '0';
 
-    -----------------------------------------------------------------------------------------------
-    -- We must gate fixed stuff bit for CRC from RX With Bit Stuffing. But we don't know if it is
-    -- stuff bit in Stuff pipeline stage. So we must delay the information to Process pipeline
-    -- stage. We sample the data (Bit Destuffing input) to avoid possible change, and calculate the
-    -- CRC with rx_trigger(0) (in Process pipeline stage).
-    -----------------------------------------------------------------------------------------------
-    i_crc_data_rx_wbs_reg : entity ctu_can_fd_rtl.dff_arst_ce
-    generic map(
-        G_RESET_POLARITY   => '0',
-        G_RST_VAL          => '0'
-    )
-    port map(
-        arst               => rst_n,            -- IN
-        clk                => clk_sys,          -- IN
-        reg_d              => bds_data_in,      -- IN
-        ce                 => rx_triggers(1),   -- IN
-
-        reg_q              => crc_data_rx_wbs   -- OUT
-    );
-
     crc_trig_rx_wbs <= '0' when (fixed_stuff = '1' and destuffed = '1') else
-                       '1' when (rx_triggers(0) = '1') else
+                       '1' when (rx_trigger = '1') else
                        '0';
 
 end architecture;

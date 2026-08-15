@@ -109,7 +109,7 @@ entity im_top is
         -- Interrupt sources
         -------------------------------------------------------------------------------------------
         -- Error appeared
-        err_detected                    : in  std_logic;
+        err_detected_d                  : in  std_logic;
 
         -- Fault confinement state changed
         fcs_changed                     : in  std_logic;
@@ -234,7 +234,7 @@ begin
     int_input_active(DOI_IND)       <= rx_data_overrun;
     int_input_active(FCSI_IND)      <= fcs_changed;
     int_input_active(ALI_IND)       <= arbitration_lost;
-    int_input_active(BEI_IND)       <= err_detected;
+    int_input_active(BEI_IND)       <= err_detected_d;
     int_input_active(OFI_IND)       <= is_overload;
     int_input_active(RXFI_IND)      <= rx_full;
     int_input_active(BSI_IND)       <= br_shifted;

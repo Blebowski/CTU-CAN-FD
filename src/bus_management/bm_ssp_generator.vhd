@@ -118,7 +118,7 @@ entity bm_ssp_generator is
         ssp_delay           :in    std_logic_vector(G_SSP_POS_WIDTH - 1 downto 0);
 
         -- SSP enable (SSP trigger gated when disabled)
-        ssp_enable          :in    std_logic;
+        is_secondary_sample :in    std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Trigger signals
@@ -234,7 +234,7 @@ begin
     --  2. Disable when SSP gets disabled
     -------------------------------------------------------------------------------------------
     sspc_ena_d <= '1' when (gen_first_ssp = '1' and tx_trigger = '1') else
-                  '0' when (ssp_enable = '0') else
+                  '0' when (is_secondary_sample = '0') else
                   sspc_ena_q;
 
     p_sspc_run_flag : process(clk_sys, rst_n)

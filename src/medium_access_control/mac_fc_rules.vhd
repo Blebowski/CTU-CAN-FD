@@ -108,7 +108,7 @@ entity mac_fc_rules is
         -- Protocol Control interface
         -------------------------------------------------------------------------------------------
         -- Error is detected
-        err_detected            : in  std_logic;
+        err_detected_d          : in  std_logic;
 
         -- Error counter should remain unchanged
         err_ctrs_unchanged      : in  std_logic;
@@ -161,7 +161,7 @@ begin
     -- Increment RX Error counter by 1 when Receiver detects an error which is not during Active
     -- Error flag or Overload flag!
     -----------------------------------------------------------------------------------------------
-    inc_one_i <= '1' when (err_detected = '1' and act_err_ovr_flag = '0' and is_receiver = '1')
+    inc_one_i <= '1' when (err_detected_d = '1' and act_err_ovr_flag = '0' and is_receiver = '1')
                      else
                  '0';
 
@@ -169,16 +169,16 @@ begin
     -- Increment by 8:
     --  - Receiver detects DOMINANT bit as first bit after sending and Error flag (rule "b")
     --  - Transmitter/Receiver detect a bit error while sending Active Error flag or an Overload
-    --    flag! Note that other than bit error can't be signalled in Error Flag on 'err_detected'!
+    --    flag! Note that other than bit error can't be signalled in Error Flag on 'err_detected_d'!
     --    (rules "d" and "e")
     --  - Transmitter sends Error flag but non of the exceptions are valid (rule "c")
     --  - Error delimiter comes too late (more than 14 consecutive bits), (rule "f")
     --  - ACK Error followed by bit error during passive error frame!
     -----------------------------------------------------------------------------------------------
     inc_eight_i <= '1' when (primary_err = '1' and is_receiver = '1') else
-                   '1' when (act_err_ovr_flag = '1' and err_detected = '1') else
+                   '1' when (act_err_ovr_flag = '1' and err_detected_d = '1') else
                    '1' when (is_transmitter = '1' and
-                             err_detected = '1' and
+                             err_detected_d = '1' and
                              err_ctrs_unchanged = '0') else
                    '1' when (err_delim_late = '1' or bit_err_after_ack_err = '1') else
                    '0';

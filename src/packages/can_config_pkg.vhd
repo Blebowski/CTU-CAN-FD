@@ -90,45 +90,31 @@ package can_config_pkg is
     -- Number of Interrupts
     constant C_INT_COUNT            : natural := 12;
 
-    -- Number of Sample Triggers
-    constant C_SAMPLE_TRIGGER_COUNT : natural range 2 to 8 := 2;
-
     -- Width of control counter
     constant C_CTRL_CTR_WIDTH       : natural := 9;
 
     -- Width of retransmitt counter
     constant C_RETR_LIM_CTR_WIDTH   : natural := 4;
 
-    -- TSEG1 Width - Nominal Bit Time
+    -- TSEG1 Width
     -- SYNC (1) + PROP_NBT (127) + PH1_NBT (63) = 191 -> Fits into 8 bits
-    constant C_TSEG1_NBT_WIDTH      : natural := 8;
-
-    -- TSEG2 Width - Nominal Bit Time
-    -- PH2_NBT (63) -> Fits into 6 bits
-    constant C_TSEG2_NBT_WIDTH      : natural := 6;
-
-    -- Baud rate prescaler Width - Nominal Bit Time
-    -- BRP_NBT (255) -> Fits into 8 bits
-    constant C_BRP_NBT_WIDTH        : natural := 8;
-
-    -- Synchronisation Jump width Width - Nominal Bit Time
-    -- SJW_NBT (31) -> Fits into 5 bits
-    constant C_SJW_NBT_WIDTH        : natural := 5;
-
-    -- TSEG1 Width - Data Bit Time
     -- SYNC (1) + PROP_DBT (63) + PH1_DBT (31) = 95 -> Fits into 7 bits
-    constant C_TSEG1_DBT_WIDTH      : natural := 7;
+    constant C_TSEG1_WIDTH          : natural := 8;
 
-    -- TSEG2 Width - Data Bit Time
+    -- TSEG2 Width
+    -- PH2_NBT (63) -> Fits into 6 bits
     -- PH2_DBT (31) -> Fits into 5 bits
-    constant C_TSEG2_DBT_WIDTH      : natural := 5;
+    constant C_TSEG2_WIDTH          : natural := 6;
 
-    -- Baud rate prescaler width - Data Bit Time
+    -- Baud rate prescaler Width
+    -- BRP_NBT (255) -> Fits into 8 bits
     -- BRP_DBT (255) -> Fits into 8 bits
-    constant C_BRP_DBT_WIDTH        : natural := 8;
+    constant C_BRP_WIDTH            : natural := 8;
 
-    -- Synchronisation Jump Width width - Data Bit Time
-    constant C_SJW_DBT_WIDTH        : natural := 5;
+    -- Synchronisation Jump width Width
+    -- SJW_NBT (31) -> Fits into 5 bits
+    -- SJW_DBT (31) -> Fits into 5 bits
+    constant C_SJW_WIDTH            : natural := 5;
 
     -- Secondary sampling point Shift registers length
     constant C_SSP_DELAY_SAT_VAL    : natural := 510;

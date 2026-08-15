@@ -169,8 +169,8 @@ entity bm_top is
         -- RX data
         rx_data_wbs             :out  std_logic;
 
-        -- Sample control
-        sp_control              :in   std_logic_vector(1 downto 0);
+        -- Secondary sampling point enable
+        is_secondary_sample     :in   std_logic;
 
         -- Reset for Secondary Sampling point Shift register.
         ssp_reset               :in   std_logic;
@@ -239,9 +239,6 @@ architecture rtl of bm_top is
     -------------------------------------------------------------------------------------------
     signal shift_regs_res_d         : std_logic;
     signal shift_regs_res_q_scan    : std_logic;
-
-    -- Enable for secondary sampling point shift register
-    signal ssp_enable               : std_logic;
 
 begin
 
@@ -367,23 +364,19 @@ begin
         dbt_measure_start           => dbt_measure_start,       -- (IN)
         gen_first_ssp               => gen_first_ssp,           -- (IN)
         ssp_delay                   => ssp_delay,               -- (IN)
-        ssp_enable                  => ssp_enable,              -- (IN)
+        is_secondary_sample         => is_secondary_sample,     -- (IN)
 
         -- Trigger signals
         tx_trigger                  => tx_trigger,              -- (IN)
         sample_sec                  => sample_sec               -- (OUT)
     );
 
-    -- Secondary sampling point shift register clock enable
-    ssp_enable <= '1' when (sp_control = SECONDARY_SAMPLE) else
-                  '0';
-
     -------------------------------------------------------------------------------------------
     -- Secondary sampling point input: Delayed TX Trigger gated and available only during
     -- secondary sampling! TX trigger for storing data to TX cache must be delayed since TX
     -- data will be one output of Bit Stuffing only one clock cycle after TX Trigger!
     -------------------------------------------------------------------------------------------
-    tx_trigger_ssp <= '1' when (tx_trigger_q = '1' and sp_control = SECONDARY_SAMPLE)
+    tx_trigger_ssp <= '1' when (tx_trigger_q = '1' and is_secondary_sample = '1')
                           else
                       '0';
 
@@ -417,7 +410,7 @@ begin
         clk_sys                     => clk_sys,                 -- IN
         rst_n                       => rst_n,                   -- IN
         mr_settings_ena             => mr_settings_ena,         -- IN
-        sp_control                  => sp_control,              -- IN
+        is_secondary_sample         => is_secondary_sample,     -- IN
         rx_trigger                  => rx_trigger,              -- IN
         sample_sec                  => sample_sec,              -- IN
         bit_err_enable              => bit_err_enable,          -- IN
@@ -436,7 +429,7 @@ begin
         clk_sys                     => clk_sys,                 -- IN
         rst_n                       => rst_n,                   -- IN
         mr_settings_ena             => mr_settings_ena,         -- IN
-        sp_control                  => sp_control,              -- IN
+        is_secondary_sample         => is_secondary_sample,     -- IN
         rx_trigger                  => rx_trigger,              -- IN
         sample_sec                  => sample_sec,              -- IN
         data_rx_synced              => data_rx_synced,          -- IN

@@ -121,16 +121,6 @@ begin
         clk => clk_delayed
     );
 
-    i_func_cov_prescaler_nbt : entity ctu_can_fd_tb.func_cov_prescaler_nbt
-    port map (
-        clk => clk_delayed
-    );
-
-    i_func_cov_prescaler_dbt : entity ctu_can_fd_tb.func_cov_prescaler_dbt
-    port map (
-        clk => clk_delayed
-    );
-
     i_func_cov_bus_sampling : entity ctu_can_fd_tb.func_cov_bus_sampling
     port map (
         clk => clk_delayed

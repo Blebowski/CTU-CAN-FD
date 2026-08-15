@@ -97,8 +97,8 @@ entity bm_sample_mux is
         -------------------------------------------------------------------------------------------
         -- Control signals
         -------------------------------------------------------------------------------------------
-        -- Sample control (nominal, data, secondary)
-        sp_control           :in   std_logic_vector(1 downto 0);
+        -- Secondary sample point enable
+        is_secondary_sample  :in   std_logic;
 
         -- RX Trigger
         rx_trigger           :in   std_logic;
@@ -136,7 +136,7 @@ begin
     -------------------------------------------------------------------------------------------
     -- Sample point multiplexor
     -------------------------------------------------------------------------------------------
-    sample <= sample_sec when (sp_control = SECONDARY_SAMPLE) else
+    sample <= sample_sec when (is_secondary_sample = '1') else
               rx_trigger;
 
     -------------------------------------------------------------------------------------------

@@ -212,8 +212,6 @@ source_list:
     - file: main_tb/agents/reference_test_agent/reference_test_agent.vhd
 
     - file: main_tb/agents/functional_coverage_agent/func_cov_can_core.vhd
-    - file: main_tb/agents/functional_coverage_agent/func_cov_prescaler_nbt.vhd
-    - file: main_tb/agents/functional_coverage_agent/func_cov_prescaler_dbt.vhd
     - file: main_tb/agents/functional_coverage_agent/func_cov_prescaler.vhd
     - file: main_tb/agents/functional_coverage_agent/func_cov_bus_sampling.vhd
     - file: main_tb/agents/functional_coverage_agent/func_cov_rx_buffer.vhd

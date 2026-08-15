@@ -158,8 +158,8 @@ entity mac_pc_tx_shift_reg is
         -------------------------------------------------------------------------------------------
         -- Error detector Interface
         -------------------------------------------------------------------------------------------
-        -- Error frame request
-        err_frm_req             : in  std_logic;
+        -- Error was detected
+        err_detected_q          : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Fault confinement Interface
@@ -342,8 +342,8 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Calculation of next data bit value!
     -----------------------------------------------------------------------------------------------
-    tx_data_nbs <= DOMINANT when (err_frm_req = '1' and is_err_active = '1') else
-                   RECESSIVE when (err_frm_req = '1') else
+    tx_data_nbs <= DOMINANT when (err_detected_q = '1' and is_err_active = '1') else
+                   RECESSIVE when (err_detected_q = '1') else
                    DOMINANT when (tx_dominant = '1') else
                    tx_sr_output when (tx_shift_ena = '1') else
                    RECESSIVE;

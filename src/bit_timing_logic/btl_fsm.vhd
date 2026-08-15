@@ -68,13 +68,7 @@
 
 --------------------------------------------------------------------------------
 -- Module:
---  Bit time FSM.
---
--- Purpose:
---  Determines segment of a Bit in which unit actually is (TSEG1, TSEG2).
---  Generates trigger requests:
---   TX Trigger request - Last cycle of TSEG2 (end of bit time).
---   RX Trigger request - Last cycle of TSEG1 (sample point).
+--  Bit Timing Logic - FSM
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -97,30 +91,16 @@ entity btl_fsm is
         rst_n               : in  std_logic;
 
         -------------------------------------------------------------------------------------------
-        -- Memory registers interface
-        -------------------------------------------------------------------------------------------
-        mr_settings_ena     : in  std_logic;
-
-        -------------------------------------------------------------------------------------------
         -- Control interface
         -------------------------------------------------------------------------------------------
-        -- Segment end (either due to re-sync, or reaching expected length)
-        segm_end            : in  std_logic;
+        rx_trigger          : in  std_logic;
+        tx_trigger          : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Status signals
         -------------------------------------------------------------------------------------------
-        -- Bit time FSM is in TSEG1
         is_tseg1            : out std_logic;
-
-        -- Bit time FSM is in TSEG2
-        is_tseg2            : out std_logic;
-
-        -- Sample signal request (to sample point generator)
-        rx_trig_req         : out std_logic;
-
-        -- Sync signal request
-        tx_trig_req         : out std_logic
+        is_tseg2            : out std_logic
     );
 end entity;
 
@@ -130,64 +110,48 @@ architecture rtl of btl_fsm is
     signal current_state    : t_bit_time;
     signal next_state       : t_bit_time;
 
-    -- Bit time FSM clock enable
-    signal bt_fsm_ce        : std_logic;
-
 begin
 
     -------------------------------------------------------------------------------------------
     -- Next state process (combinational)
     -------------------------------------------------------------------------------------------
-    p_next_state : process(current_state, segm_end, mr_settings_ena)
+    p_next_state : process(current_state, rx_trigger, tx_trigger)
     begin
         next_state <= current_state;
 
-        if (mr_settings_ena = CTU_CAN_DISABLED) then
-            next_state <= s_bt_reset;
-        else
-            case current_state is
-            when s_bt_tseg1 =>
-                if (segm_end = '1') then
-                    next_state <= s_bt_tseg2;
-                end if;
-            when s_bt_tseg2 =>
-                if (segm_end = '1') then
-                    next_state <= s_bt_tseg1;
-                end if;
-            when s_bt_reset =>
+        case current_state is
+        when s_bt_tseg1 =>
+            if (rx_trigger = '1') then
+                next_state <= s_bt_tseg2;
+            end if;
+        when s_bt_tseg2 =>
+            if (tx_trigger = '1') then
                 next_state <= s_bt_tseg1;
-            end case;
-        end if;
+            end if;
+        when s_bt_reset =>
+            next_state <= s_bt_tseg1;
+        end case;
     end process;
 
     -------------------------------------------------------------------------------------------
     -- Current state process (combinational)
     -------------------------------------------------------------------------------------------
-    p_curr_state : process(current_state, segm_end, mr_settings_ena)
+    p_curr_state : process(current_state)
     begin
         -- Default values
-        is_tseg1       <= '0';
-        is_tseg2       <= '0';
-        rx_trig_req    <= '0';
-        tx_trig_req    <= '0';
+        is_tseg1 <= '0';
+        is_tseg2 <= '0';
 
         case current_state is
         when s_bt_reset =>
-            if (mr_settings_ena = CTU_CAN_ENABLED) then
-                tx_trig_req <= '1';
-            end if;
+            -- To correctly preload Segment counters after reset!
+            is_tseg2 <= '1';
 
         when s_bt_tseg1 =>
             is_tseg1 <= '1';
-            if (segm_end = '1') then
-                rx_trig_req <= '1';
-            end if;
 
         when s_bt_tseg2 =>
             is_tseg2 <= '1';
-            if (segm_end = '1') then
-                tx_trig_req <= '1';
-            end if;
 
         end case;
     end process;
@@ -200,13 +164,8 @@ begin
         if (rst_n = '0') then
             current_state <= s_bt_reset;
         elsif (rising_edge(clk_sys)) then
-            if (bt_fsm_ce = '1') then
-                current_state <= next_state;
-            end if;
+            current_state <= next_state;
         end if;
     end process;
-
-    bt_fsm_ce <= '1' when (next_state /= current_state) else
-                 '0';
 
 end architecture rtl;

@@ -109,8 +109,8 @@ entity mac_fc_err_counters is
         -------------------------------------------------------------------------------------------
         -- Control inputs
         -------------------------------------------------------------------------------------------
-        -- Sample control (Nominal, Data, Secondary)
-        sp_control              : in  std_logic_vector(1 downto 0);
+        -- Current bit-rate
+        bit_rate_q              : in  t_bit_rate;
 
         -- Increment error counter by 1
         inc_one                 : in  std_logic;
@@ -343,7 +343,7 @@ begin
     -----------------------------------------------------------------------------------------------
 
     -- Selection of counter to be incremented
-    nom_dat_sel_ctr <= nom_err_ctr_q when (sp_control = NOMINAL_SAMPLE) else
+    nom_dat_sel_ctr <= nom_err_ctr_q when (bit_rate_q = BIT_RATE_NOMINAL) else
                        data_err_ctr_q;
 
     nom_dat_sel_ctr_add <= nom_dat_sel_ctr + 1;
@@ -359,13 +359,13 @@ begin
     -- Clock enables for counters, increment only
     nom_err_ctr_ce <= '1' when (mr_ctr_pres_enorm_q = '1') or
                                ((inc_one = '1' or inc_eight = '1') and
-                                (sp_control = NOMINAL_SAMPLE))
+                                (bit_rate_q = BIT_RATE_NOMINAL))
                           else
                       '0';
 
     data_err_ctr_ce <= '1' when (mr_ctr_pres_efd_q = '1') or
                                 ((inc_one = '1' or inc_eight = '1') and
-                                 (sp_control = DATA_SAMPLE or sp_control = SECONDARY_SAMPLE))
+                                 (bit_rate_q = BIT_RATE_NOMINAL))
                            else
                        '0';
 

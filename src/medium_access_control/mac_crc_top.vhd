@@ -129,11 +129,8 @@ entity mac_crc_top is
         -- TX Data without Bit Stuffing
         data_tx_nbs         : in  std_logic;
 
-        -- RX Data with Bit Stuffing
-        data_rx_wbs         : in  std_logic;
-
-        -- RX Data without Bit Stuffing
-        data_rx_nbs         : in  std_logic;
+        -- RX Data
+        data_rx             : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Trigger signals to process the data on each CRC input.
@@ -219,24 +216,20 @@ begin
     -- Muxes for CRC 17,21. For Receiver choose crc from RX Stream, for Transmitter use CRC from
     -- TX Stream.
     -----------------------------------------------------------------------------------------------
-    crc_17_21_data_in <= data_rx_wbs when (crc_calc_from_rx = '1')
-                                     else
+    crc_17_21_data_in <= data_rx when (crc_calc_from_rx = '1') else
                          data_tx_wbs;
 
-    crc_17_21_trigger <= trig_rx_wbs when (crc_calc_from_rx = '1')
-                                     else
+    crc_17_21_trigger <= trig_rx_wbs when (crc_calc_from_rx = '1') else
                          trig_tx_wbs;
 
     -----------------------------------------------------------------------------------------------
     -- Muxes for CRC 15. For Receiver choose crc from RX Stream, for Transmitter use CRC from
     -- TX Stream.
     -----------------------------------------------------------------------------------------------
-    crc_15_data_in <= data_rx_nbs when (crc_calc_from_rx = '1')
-                                  else
+    crc_15_data_in <= data_rx when (crc_calc_from_rx = '1') else
                       data_tx_nbs;
 
-    crc_15_trigger <= trig_rx_nbs when (crc_calc_from_rx = '1')
-                                  else
+    crc_15_trigger <= trig_rx_nbs when (crc_calc_from_rx = '1') else
                       trig_tx_nbs;
 
     -----------------------------------------------------------------------------------------------

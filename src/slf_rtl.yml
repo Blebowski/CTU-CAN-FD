@@ -42,12 +42,7 @@ source_list:
     - file: bus_management/bm_top.vhd
 
     - file: bit_timing_logic/btl_fsm.vhd
-    - file: bit_timing_logic/btl_segment_end_detector.vhd
-    - file: bit_timing_logic/btl_trigger_generator.vhd
-    - file: bit_timing_logic/btl_segment_meter.vhd
-    - file: bit_timing_logic/btl_synchronisation_checker.vhd
-    - file: bit_timing_logic/btl_cfg_capture.vhd
-    - file: bit_timing_logic/btl_counters.vhd
+    - file: bit_timing_logic/btl_datapath.vhd
     - file: bit_timing_logic/btl_top.vhd
 
     - file: medium_access_control/mac_bus_traffic_counters.vhd

@@ -192,10 +192,10 @@ entity mac_pc_err_detector is
         -- Status output
         -------------------------------------------------------------------------------------------
         -- Error frame request
-        err_frm_req             : out std_logic;
+        err_detected_q          : out std_logic;
 
         -- Error detected (for Fault confinement)
-        err_detected            : out std_logic;
+        err_detected_d          : out std_logic;
 
         -- CRC match
         crc_match               : out std_logic;
@@ -208,7 +208,7 @@ end entity;
 architecture rtl of mac_pc_err_detector is
 
     -- Internal Error valid
-    signal err_frm_req_i        : std_logic;
+    signal err_detected_i       : std_logic;
 
     -- Error capture register
     signal err_capt_err_type_d  : std_logic_vector(2 downto 0);
@@ -250,13 +250,13 @@ begin
 
     -- Error frame request for any type of error which causes transition to Error frame in the
     -- next bit.
-    err_frm_req_i <= '1' when (bit_err = '1') else
-                     '1' when (stuff_err = '1') else
-                     '1' when (form_err = '1' or ack_err = '1') else
-                     '1' when (crc_err = '1') else
-                     '1' when (bit_err_arb = '1') else
-                     '1' when (tran_frame_parity_error = '1') else
-                     '0';
+    err_detected_i <= '1' when (bit_err = '1') else
+                      '1' when (stuff_err = '1') else
+                      '1' when (form_err = '1' or ack_err = '1') else
+                      '1' when (crc_err = '1') else
+                      '1' when (bit_err_arb = '1') else
+                      '1' when (tran_frame_parity_error = '1') else
+                      '0';
 
     -- Fixed stuff error shall be reported as Form Error!
     form_err_i <= '1' when (form_err = '1') else
@@ -266,9 +266,9 @@ begin
     p_err_valid_reg : process(rst_n, clk_sys)
     begin
         if (rst_n = '0') then
-            err_frm_req <= '0';
+            err_detected_q <= '0';
         elsif (rising_edge(clk_sys)) then
-            err_frm_req <= err_frm_req_i;
+            err_detected_q <= err_detected_i;
         end if;
     end process;
 
@@ -359,10 +359,6 @@ begin
                               else
                           '0';
 
-
-    -- Error is detected when error frame is requested
-    err_detected <= err_frm_req_i;
-
     -----------------------------------------------------------------------------------------------
     -- Error code, next value
     -----------------------------------------------------------------------------------------------
@@ -385,7 +381,7 @@ begin
             err_capt_err_pos_q <= ERR_POS_RSTVAL;
             err_capt_err_erp <= ERR_ERP_RSTVAL;
         elsif (rising_edge(clk_sys)) then
-            if (err_frm_req_i = '1') then
+            if (err_detected_i = '1') then
                 err_capt_err_type_q <= err_capt_err_type_d;
                 err_capt_err_pos_q <= err_pos;
                 err_capt_err_erp <= is_err_passive;
@@ -397,6 +393,7 @@ begin
     err_capt_err_type <= err_capt_err_type_q;
     err_capt_err_pos <= err_capt_err_pos_q;
     crc_match <= crc_match_q;
+    err_detected_d <= err_detected_i;
 
     -- <RELEASE_OFF>
     -----------------------------------------------------------------------------------------------

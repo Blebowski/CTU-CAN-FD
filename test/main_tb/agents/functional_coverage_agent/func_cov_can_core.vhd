@@ -129,14 +129,8 @@ architecture tb of func_cov_can_core is
     -----------------------------------------------------------------------------------------------
     -- Aliases to "mac_bit_stuffing" and "mac_bit_destuffing"
     -----------------------------------------------------------------------------------------------
-    alias bds_trigger is
-        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_bit_destuffing.bds_trigger : std_logic >>;
-
     alias non_fix_to_fix_chng is
         << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_bit_destuffing.non_fix_to_fix_chng : std_logic >>;
-
-    alias stuff_err_q is
-        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_bit_destuffing.stuff_err_q : std_logic >>;
 
     alias stuff_lvl_reached is
         << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_bit_destuffing.stuff_lvl_reached : std_logic >>;
@@ -214,9 +208,6 @@ architecture tb of func_cov_can_core is
     alias act_err_ovr_flag is
         << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_rules.act_err_ovr_flag : std_logic >>;
 
-    alias err_detected is
-        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_rules.err_detected : std_logic >>;
-
     alias err_delim_late is
         << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_fc_top.i_mac_fc_rules.err_delim_late : std_logic >>;
 
@@ -237,8 +228,8 @@ architecture tb of func_cov_can_core is
     alias next_state is
         << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_fsm.next_state : t_protocol_control_state >>;
 
-    alias err_frm_req is
-        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_fsm.err_frm_req : std_logic >>;
+    alias err_detected_q is
+        << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_fsm.err_detected_q : std_logic >>;
 
     alias pex_on_fdf_enable is
         << signal .tb_top_ctu_can_fd.i_dut.i_mac_top.i_mac_pc_top.i_mac_pc_fsm.pex_on_fdf_enable : std_logic >>;
@@ -458,18 +449,11 @@ begin
     -- Bit stuffing and destuffing
     -----------------------------------------------------------------------------------------------
 
-    -- psl bds_non_fix_to_fixed_change_cov : cover
-    --  {bds_trigger = '1' and non_fix_to_fix_chng = '1'};
-
-    -- psl bds_stuff_err_detect_cov : cover
-    --  {stuff_err_q = '1'};
-
     -- psl bds_stuff_lvl_reached_regular_cov : cover
     --  {stuff_lvl_reached = '1' and fixed_stuff = '0'};
 
     -- psl bds_stuff_lvl_reached_fixed_cov : cover
     --  {stuff_lvl_reached = '1' and fixed_stuff = '1'};
-
 
     -----------------------------------------------------------------------------------------------
     -- Error counters
@@ -544,18 +528,18 @@ begin
     --  {primary_err = '1' and is_receiver = '1'};
 
     -- psl err_ctr_inc_eight_B : cover
-    --  {(act_err_ovr_flag = '1' and err_detected = '1') and
+    --  {(act_err_ovr_flag = '1' and err_detected_q = '1') and
     --    (not(primary_err = '1' and is_receiver = '1'))};
 
     -- psl err_ctr_inc_eight_C : cover
-    --  {(is_transmitter = '1' and err_detected = '1' and err_ctrs_unchanged = '0') and
-    --    (not(act_err_ovr_flag = '1' and err_detected = '1')) and
+    --  {(is_transmitter = '1' and err_detected_q = '1' and err_ctrs_unchanged = '0') and
+    --    (not(act_err_ovr_flag = '1' and err_detected_q = '1')) and
     --    (not(primary_err = '1' and is_receiver = '1'))};
 
     -- psl err_ctr_inc_eight_D : cover
     --  { (err_delim_late = '1' or bit_err_after_ack_err = '1') and
-    --    (not(is_transmitter = '1' and err_detected = '1' and err_ctrs_unchanged = '0')) and
-    --    (not(act_err_ovr_flag = '1' and err_detected = '1')) and
+    --    (not(is_transmitter = '1' and err_detected_q = '1' and err_ctrs_unchanged = '0')) and
+    --    (not(act_err_ovr_flag = '1' and err_detected_q = '1')) and
     --    (not(primary_err = '1' and is_receiver = '1'))};
 
     -- psl err_ctr_dec_one_A : cover
@@ -574,71 +558,71 @@ begin
     -- Note: SOF must be actually previous cycle, since at time when error
     --       frame request arrives, it is already next state!
     --
-    -- psl err_frm_req_in_sof_cov : cover
-    --  {curr_state = s_pc_sof; err_frm_req = '1'};
+    -- psl err_detected_in_sof_cov : cover
+    --  {curr_state = s_pc_sof; err_detected_q = '1'};
 
-    -- psl err_frm_req_in_s_pc_base_id_in_base_cov : cover
-    --  {curr_state = s_pc_base_id and err_frm_req = '1'};
+    -- psl err_detected_in_s_pc_base_id_in_base_cov : cover
+    --  {curr_state = s_pc_base_id and err_detected_q = '1'};
 
-    -- psl err_frm_req_in_s_pc_ext_id_in_ext_id_cov : cover
-    --  {curr_state = s_pc_ext_id and err_frm_req = '1'};
+    -- psl err_detected_in_s_pc_ext_id_in_ext_id_cov : cover
+    --  {curr_state = s_pc_ext_id and err_detected_q = '1'};
 
-    -- psl err_frm_req_in_s_pc_ext_id_in_rtr_srr_r1_cov : cover
-    --  {curr_state = s_pc_rtr_srr_r1 and err_frm_req = '1'};
+    -- psl err_detected_in_s_pc_ext_id_in_rtr_srr_r1_cov : cover
+    --  {curr_state = s_pc_rtr_srr_r1 and err_detected_q = '1'};
 
-    -- psl err_frm_req_in_s_pc_ext_id_in_ide_cov : cover
-    --  {curr_state = s_pc_ide and err_frm_req = '1'};
+    -- psl err_detected_in_s_pc_ext_id_in_ide_cov : cover
+    --  {curr_state = s_pc_ide and err_detected_q = '1'};
 
-    -- psl err_frm_req_in_s_pc_rtr_r1_cov : cover
-    --  {curr_state = s_pc_rtr_r1 and err_frm_req = '1'};
+    -- psl err_detected_in_s_pc_rtr_r1_cov : cover
+    --  {curr_state = s_pc_rtr_r1 and err_detected_q = '1'};
 
-    -- psl err_frm_req_in_s_pc_edl_r1_cov : cover
-    --  {curr_state = s_pc_edl_r1 and err_frm_req = '1'};
+    -- psl err_detected_in_s_pc_edl_r1_cov : cover
+    --  {curr_state = s_pc_edl_r1 and err_detected_q = '1'};
 
-    -- psl err_frm_req_in_s_pc_r0_ext_cov : cover
-    --  {curr_state = s_pc_r0_ext and err_frm_req = '1'};
+    -- psl err_detected_in_s_pc_r0_ext_cov : cover
+    --  {curr_state = s_pc_r0_ext and err_detected_q = '1'};
 
-    -- psl err_frm_req_in_s_pc_r0_fd_cov : cover
-    --  {curr_state = s_pc_r0_fd and err_frm_req = '1'};
+    -- psl err_detected_in_s_pc_r0_fd_cov : cover
+    --  {curr_state = s_pc_r0_fd and err_detected_q = '1'};
 
-    -- psl err_frm_req_in_s_pc_edl_r0_cov : cover
-    --  {curr_state = s_pc_edl_r0 and err_frm_req = '1'};
+    -- psl err_detected_in_s_pc_edl_r0_cov : cover
+    --  {curr_state = s_pc_edl_r0 and err_detected_q = '1'};
 
-    -- psl err_frm_req_in_s_pc_esi_cov : cover
-    --  {curr_state = s_pc_esi and err_frm_req = '1'};
+    -- psl err_detected_in_s_pc_esi_cov : cover
+    --  {curr_state = s_pc_esi and err_detected_q = '1'};
 
-    -- psl err_frm_req_in_s_pc_dlc_cov : cover
-    --  {curr_state = s_pc_dlc and err_frm_req = '1'};
+    -- psl err_detected_in_s_pc_dlc_cov : cover
+    --  {curr_state = s_pc_dlc and err_detected_q = '1'};
 
-    -- psl err_frm_req_in_s_pc_data_cov : cover
-    --  {curr_state = s_pc_data and err_frm_req = '1'};
+    -- psl err_detected_in_s_pc_data_cov : cover
+    --  {curr_state = s_pc_data and err_detected_q = '1'};
 
-    -- psl err_frm_req_in_s_pc_stuff_count_cov : cover
-    --  {curr_state = s_pc_stuff_count and err_frm_req = '1'};
+    -- psl err_detected_in_s_pc_stuff_count_cov : cover
+    --  {curr_state = s_pc_stuff_count and err_detected_q = '1'};
 
-    -- psl err_frm_req_in_s_pc_crc_cov : cover
-    --  {curr_state = s_pc_crc and err_frm_req = '1'};
+    -- psl err_detected_in_s_pc_crc_cov : cover
+    --  {curr_state = s_pc_crc and err_detected_q = '1'};
 
-    -- psl err_frm_req_in_s_pc_crc_delim_cov : cover
-    --  {curr_state = s_pc_crc_delim and err_frm_req = '1'};
+    -- psl err_detected_in_s_pc_crc_delim_cov : cover
+    --  {curr_state = s_pc_crc_delim and err_detected_q = '1'};
 
-    -- psl err_frm_req_in_s_pc_ack_cov : cover
-    --  {curr_state = s_pc_ack and err_frm_req = '1'};
+    -- psl err_detected_in_s_pc_ack_cov : cover
+    --  {curr_state = s_pc_ack and err_detected_q = '1'};
 
-    -- psl err_frm_req_in_s_pc_eof_cov : cover
-    --  {curr_state = s_pc_eof and err_frm_req = '1'};
+    -- psl err_detected_in_s_pc_eof_cov : cover
+    --  {curr_state = s_pc_eof and err_detected_q = '1'};
 
-    -- psl err_frm_req_in_s_pc_act_err_flag_cov : cover
-    --  {curr_state = s_pc_act_err_flag and err_frm_req = '1'};
+    -- psl err_detected_in_s_pc_act_err_flag_cov : cover
+    --  {curr_state = s_pc_act_err_flag and err_detected_q = '1'};
 
-    -- psl err_frm_req_in_s_pc_ovr_flag_cov : cover
-    --  {curr_state = s_pc_ovr_flag and err_frm_req = '1'};
+    -- psl err_detected_in_s_pc_ovr_flag_cov : cover
+    --  {curr_state = s_pc_ovr_flag and err_detected_q = '1'};
 
-    -- psl err_frm_req_in_s_pc_ovr_delim_cov : cover
-    --  {curr_state = s_pc_ovr_delim and err_frm_req = '1'};
+    -- psl err_detected_in_s_pc_ovr_delim_cov : cover
+    --  {curr_state = s_pc_ovr_delim and err_detected_q = '1'};
 
-    -- psl err_frm_req_in_s_pc_err_delim_cov : cover
-    --  {curr_state = s_pc_err_delim and err_frm_req = '1'};
+    -- psl err_detected_in_s_pc_err_delim_cov : cover
+    --  {curr_state = s_pc_err_delim and err_detected_q = '1'};
 
 
     -- Overload frame requests

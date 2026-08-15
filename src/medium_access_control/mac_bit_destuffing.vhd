@@ -109,14 +109,11 @@ entity mac_bit_destuffing is
         -- Data input (from Bus Sampling)
         data_in             : in  std_logic;
 
-        -- Data output (to Protocol Control)
-        data_out            : out std_logic;
-
         -------------------------------------------------------------------------------------------
         -- Control signals
         -------------------------------------------------------------------------------------------
-        -- Bit Destuffing Trigger (in Sample point, from Prescaler).
-        bds_trigger         : in std_logic;
+        -- RX Trigger in Sample point from Bit time logic!
+        rx_trigger          : in  std_logic;
 
         -- Bit Destuffing is enabled.
         destuff_enable      : in  std_logic;
@@ -169,10 +166,6 @@ architecture rtl of mac_bit_destuffing is
     -- Register with flag that bit was destuffed from serial stream
     signal destuffed_q          : std_logic;
     signal destuffed_d          : std_logic;
-
-    -- Register with error flag signalling stuff error
-    signal stuff_err_q          : std_logic;
-    signal stuff_err_d          : std_logic;
 
     -- Counter of destuffed bits by non-fixed bit stuffing.
     signal dst_ctr_q            : unsigned(2 downto 0);
@@ -238,7 +231,7 @@ begin
     --  2. Store "fixed_stuff" configuration when data are processed
     -----------------------------------------------------------------------------------------------
     fixed_prev_d <= '0'         when (enable_prev = '0') else
-                    fixed_stuff when (bds_trigger = '1') else
+                    fixed_stuff when (rx_trigger = '1') else
                     fixed_prev_q;
 
     -----------------------------------------------------------------------------------------------
@@ -283,7 +276,7 @@ begin
     -----------------------------------------------------------------------------------------------
     dst_ctr_d <=       "000"  when (enable_prev = '0')
                               else
-                 dst_ctr_add  when (bds_trigger = '1' and stuff_lvl_reached = '1' and
+                 dst_ctr_add  when (rx_trigger = '1' and stuff_lvl_reached = '1' and
                                     fixed_stuff = '0')
                               else
                   dst_ctr_q;
@@ -309,8 +302,8 @@ begin
     --  3. Bit is processed by non-fixed bit stuffing, but it differs from previous processed bit.
     -----------------------------------------------------------------------------------------------
     same_bits_erase <= '1' when (destuff_enable = '0' or enable_prev = '0') else
-                       '1' when (bds_trigger = '1' and discard_stuff_bit = '1') else
-                       '1' when (bds_trigger = '1' and data_in /= prev_val_q and
+                       '1' when (rx_trigger = '1' and discard_stuff_bit = '1') else
+                       '1' when (rx_trigger = '1' and data_in /= prev_val_q and
                                  fixed_stuff = '0') else
                        '0';
 
@@ -326,7 +319,7 @@ begin
     --  3. Keep its value otherwise.
     -----------------------------------------------------------------------------------------------
     same_bits_d   <=         "001" when (same_bits_erase = '1') else
-                     same_bits_add when (bds_trigger = '1') else
+                     same_bits_add when (rx_trigger = '1') else
                      same_bits_q;
 
     -----------------------------------------------------------------------------------------------
@@ -348,10 +341,10 @@ begin
     --  3. Erase when bit is processed but should not be discarded.
     --  4. Keep value otherwise.
     -----------------------------------------------------------------------------------------------
-    destuffed_d   <= '0' when (destuff_enable = '0') else
-                     '1' when (bds_trigger = '1' and discard_stuff_bit = '1') else
-                     '0' when (bds_trigger = '1') else
-                     destuffed_q;
+    destuffed_d <= '0' when (destuff_enable = '0') else
+                   '1' when (rx_trigger = '1' and discard_stuff_bit = '1') else
+                   '0' when (rx_trigger = '1') else
+                   destuffed_q;
 
     -----------------------------------------------------------------------------------------------
     -- Destuffed flag - register assignment
@@ -369,37 +362,16 @@ begin
         reg_q              => destuffed_q       -- OUT
     );
 
-    -----------------------------------------------------------------------------------------------
-    -- Error register next value:
-    --  1. Set when bit should be processed and stuff rule is violated.
-    --  2. Cleared otherwise
-    -----------------------------------------------------------------------------------------------
-    stuff_err_d <= '1' when (bds_trigger = '1' and stuff_rule_violate = '1') else
-                   '0';
-
-    -----------------------------------------------------------------------------------------------
-    -- Error register - register assignment
-    -----------------------------------------------------------------------------------------------
-    i_dff_err_reg : entity ctu_can_fd_rtl.dff_arst
-    generic map (
-        G_RESET_POLARITY   => '0',
-        G_RST_VAL          => '0'
-    )
-    port map (
-        arst               => rst_n,            -- IN
-        clk                => clk_sys,          -- IN
-        reg_d              => stuff_err_d,      -- IN
-
-        reg_q              => stuff_err_q       -- OUT
-    );
+    stuff_err <= '1' when (rx_trigger = '1' and stuff_rule_violate = '1') else
+                 '0';
 
     -----------------------------------------------------------------------------------------------
     -- Previously processed value - next value:
     --  1. Set to RECESSIVE upon edge on enable
     --  2. Set to RECESSIVE when non-fixed bit stuffing changes to fixed bit stuffing.
     -----------------------------------------------------------------------------------------------
-    prev_val_d <= RECESSIVE when (bds_trigger = '1' and non_fix_to_fix_chng = '1') else
-                  data_in   when (bds_trigger = '1') else
+    prev_val_d <= RECESSIVE when (rx_trigger = '1' and non_fix_to_fix_chng = '1') else
+                  data_in   when (rx_trigger = '1') else
                   prev_val_q;
 
     -----------------------------------------------------------------------------------------------
@@ -418,31 +390,15 @@ begin
         reg_q              => prev_val_q        -- OUT
     );
 
-
-    -----------------------------------------------------------------------------------------------
-    -- Sampling of data value to output during operation. One clock cycle of delay is inserted so
-    -- that next pipeline stage always processes the same data!
-    -----------------------------------------------------------------------------------------------
-    i_dff_data_out_val_reg : entity ctu_can_fd_rtl.dff_arst_ce
-    generic map (
-        G_RESET_POLARITY   => '0',
-        G_RST_VAL          => RECESSIVE
-    )
-    port map (
-        arst               => rst_n,
-        clk                => clk_sys,
-
-        reg_d              => data_in,
-        ce                 => bds_trigger,
-        reg_q              => data_out
-    );
-
     -----------------------------------------------------------------------------------------------
     -- Propagation to output
     -----------------------------------------------------------------------------------------------
 
-    destuffed <= destuffed_q;
-    stuff_err <= stuff_err_q;
+    -- We need to update in the same cycle since both WBS and NBS CRCs are calculated from the
+    -- same RX trigger! Thus information about RX bit being destuffed must be available right in
+    -- the same cycle!
+    destuffed <= destuffed_d;
+
     dst_ctr   <= std_logic_vector(dst_ctr_q);
 
 end architecture;

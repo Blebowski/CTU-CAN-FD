@@ -134,14 +134,14 @@ entity mac_fc_top is
         -------------------------------------------------------------------------------------------
         -- Protocol control Interface
         -------------------------------------------------------------------------------------------
-        -- Sample control (Nominal, Data, Secondary)
-        sp_control              : in  std_logic_vector(1 downto 0);
+        -- Current bit-rate
+        bit_rate_q              : in  t_bit_rate;
 
         -- Set unit to error active (after re-integration). Erases eror counters to 0.
         set_err_active          : in  std_logic;
 
         -- Error is detected
-        err_detected            : in  std_logic;
+        err_detected_d          : in  std_logic;
 
         -- Error counter should remain unchanged
         err_ctrs_unchanged      : in  std_logic;
@@ -240,7 +240,7 @@ begin
         rst_n                   => rst_n,                    -- IN
         scan_mode               => scan_mode,                -- IN
 
-        sp_control              => sp_control,               -- IN
+        bit_rate_q              => bit_rate_q,               -- IN
         inc_one                 => inc_one,                  -- IN
         inc_eight               => inc_eight,                -- IN
         dec_one                 => dec_one,                  -- IN
@@ -269,7 +269,7 @@ begin
 
         is_transmitter          => is_transmitter,           -- IN
         is_receiver             => is_receiver,              -- IN
-        err_detected            => err_detected,             -- IN
+        err_detected_d          => err_detected_d,           -- IN
         err_ctrs_unchanged      => err_ctrs_unchanged,       -- IN
         primary_err             => primary_err,              -- IN
         act_err_ovr_flag        => act_err_ovr_flag,         -- IN

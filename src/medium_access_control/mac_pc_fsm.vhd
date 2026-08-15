@@ -117,8 +117,11 @@ entity mac_pc_fsm is
         -- RX Trigger
         rx_trigger              : in  std_logic;
 
-        -- Error frame request
-        err_frm_req             : in  std_logic;
+        -- Error was detected (registered)
+        err_detected_q          : in  std_logic;
+
+        -- Error is detected (same as err_detected_q but one cycle ahead)
+        err_detected_d          : in  std_logic;
 
         -------------------------------------------------------------------------------------------
         -- Memory registers interface
@@ -444,17 +447,12 @@ entity mac_pc_fsm is
         -------------------------------------------------------------------------------------------
         -- Other control signals
         -------------------------------------------------------------------------------------------
-        -- Sample control (Nominal, Data, Secondary)
-        sp_control              : out  std_logic_vector(1 downto 0);
+        -- Current bit-rate
+        bit_rate_d              : out t_bit_rate;
+        bit_rate_q              : out t_bit_rate;
 
-        -- Sample control (Registered)
-        sp_control_q            : out  std_logic_vector(1 downto 0);
-
-        -- Enable Nominal Bit time counters.
-        nbt_ctrs_en             : out  std_logic;
-
-        -- Enable Data Bit time counters.
-        dbt_ctrs_en             : out  std_logic;
+        -- Sample point control
+        is_secondary_sample     : out std_logic;
 
         -- Synchronisation control (No synchronisation, Hard Synchronisation, Resynchronisation)
         sync_control            : out  std_logic_vector(1 downto 0);
@@ -610,15 +608,11 @@ architecture rtl of mac_pc_fsm is
     signal bit_err_arb_i                : std_logic;
 
     -- Sample control (Bit Rate) signals
-    signal sp_control_switch_data       : std_logic;
-    signal sp_control_switch_nominal    : std_logic;
+    signal switch_to_data               : std_logic;
+    signal switch_to_nominal            : std_logic;
 
-    -- Secondary sampling point is used
-    signal switch_to_ssp                : std_logic;
-
-    signal sp_control_ce                : std_logic;
-    signal sp_control_d                 : std_logic_vector(1 downto 0);
-    signal sp_control_q_i               : std_logic_vector(1 downto 0);
+    signal bit_rate_d_i                 : t_bit_rate;
+    signal bit_rate_q_i                 : t_bit_rate;
 
     -- Synchronisation control
     signal sync_control_d               : std_logic_vector(1 downto 0);
@@ -648,6 +642,10 @@ architecture rtl of mac_pc_fsm is
     -- Bit stuffing disable
     signal destuff_enable_set           : std_logic;
     signal destuff_enable_clear         : std_logic;
+
+    -- Fixed bit stuffing
+    signal fixed_stuff_d                : std_logic;
+    signal fixed_stuff_q                : std_logic;
 
     -- Bit error disable (internal)
     -- Note: Bit Error is rather disabled than enabled, since it is disabled on less
@@ -962,14 +960,14 @@ begin
     -- Next state process
     -----------------------------------------------------------------------------------------------
     p_next_state : process(
-        curr_state, err_frm_req, ctrl_ctr_zero, no_data_field, is_receiver, is_fd_frame,
+        curr_state, err_detected_q, ctrl_ctr_zero, no_data_field, is_receiver, is_fd_frame,
         is_bus_off, go_to_suspend, tran_frame_valid, mr_command_ercrst_q, reinteg_ctr_expired,
         rx_data_nbs, is_err_active, go_to_stuff_count, pex_on_fdf_enable, pex_on_res_enable,
         mr_mode_rom)
     begin
         next_state <= curr_state;
 
-        if (err_frm_req = '1') then
+        if (err_detected_q = '1') then
             if (mr_mode_rom = ROM_DISABLED) then
                 if (is_err_active = '1') then
                     next_state <= s_pc_act_err_flag;
@@ -1356,7 +1354,7 @@ begin
     -- Current state process
     -----------------------------------------------------------------------------------------------
     p_curr_state : process(
-        curr_state, err_frm_req, sp_control_q_i, tx_failed, mr_settings_ena, rx_data_nbs,
+        curr_state, err_detected_q, tx_failed, mr_settings_ena, rx_data_nbs,
         ctrl_ctr_zero, arbitration_lost_condition, tx_data_wbs, is_transmitter, tran_ident_type,
         tran_frame_type_i, tran_is_rtr, ide_is_arbitration, mr_mode_fde, tran_brs, rx_trigger,
         is_err_active, no_data_field, ctrl_counted_byte, ctrl_counted_byte_index, is_fd_frame,
@@ -1440,8 +1438,8 @@ begin
         set_receiver_i          <= '0';
         set_idle_i              <= '0';
 
-        sp_control_switch_data      <= '0';
-        sp_control_switch_nominal   <= '0';
+        switch_to_data          <= '0';
+        switch_to_nominal       <= '0';
 
         -- Transceiver delay measurement
         ssp_reset               <= '0';
@@ -1461,7 +1459,7 @@ begin
         br_shifted_i            <= '0';
 
         -- Bit Stuffing/Destuffing control
-        fixed_stuff             <= '0';
+        fixed_stuff_d           <= '0';
         stuff_enable_set        <= '0';
         stuff_enable_clear      <= '0';
         destuff_enable_set      <= '0';
@@ -1478,10 +1476,6 @@ begin
         crc_enable              <= '0';
         crc_spec_enable_i       <= '0';
         load_init_vect_i        <= '0';
-
-        -- Bit time counters enabling
-        nbt_ctrs_en             <= '1';
-        dbt_ctrs_en             <= '0';
 
         -- Clear block register for retransmitt counter add signal.
         retr_ctr_add_block_clr  <= '0';
@@ -1512,7 +1506,7 @@ begin
         rec_lbpf_d              <= rec_lbpf_q;
         rec_ivld_i              <= rec_ivld_q;
 
-        if (err_frm_req = '1') then
+        if (err_detected_q = '1') then
             tick_state_reg <= '1';
             ctrl_ctr_pload_i <= '1';
             if (mr_mode_rom = ROM_DISABLED) then
@@ -1526,10 +1520,10 @@ begin
             destuff_enable_clear <= '1';
             stuff_enable_clear <= '1';
 
-            if (sp_control_q_i = DATA_SAMPLE or
-                sp_control_q_i = SECONDARY_SAMPLE)
-            then
-                sp_control_switch_nominal <= '1';
+            if (bit_rate_q_i = BIT_RATE_FD) then
+                -- TODO: This needs to move since bit_rate_d changes in RX trigger,
+                --       and therefore one cycle after RX trigger when err_detected_q
+                --       is active bit_rate_q will already be set to "nominal"!
                 br_shifted_i <= '1';
             end if;
 
@@ -1540,11 +1534,6 @@ begin
                     txtb_hw_cmd_d.err     <= '1';
                 end if;
             end if;
-
-            -- Keep both counters enabled to make sure that Error frame starts at proper time when
-            -- error occurred in Data Bit-rate.
-            dbt_ctrs_en <= '1';
-
         else
             case curr_state is
 
@@ -1553,7 +1542,6 @@ begin
             ---------------------------------------------------------------------------------------
             when s_pc_off =>
                 if (mr_settings_ena = CTU_CAN_ENABLED) then
-                    nbt_ctrs_en <= '1';
                     tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
                     bit_err_disable <= '1';
@@ -1565,8 +1553,6 @@ begin
                     else
                         ctrl_ctr_pload_val <= C_FIRST_INTEGRATION_DURATION;
                     end if;
-                else
-                    nbt_ctrs_en <= '0';
                 end if;
 
             ---------------------------------------------------------------------------------------
@@ -1944,7 +1930,6 @@ begin
                 crc_enable <= '1';
                 pc_dbg.is_control <= '1';
                 bit_err_disable_receiver <= '1';
-                dbt_ctrs_en <= '1';
                 btmc_reset  <= '1';
 
                 if (is_transmitter = '1' and tran_brs = BR_NO_SHIFT) then
@@ -1952,7 +1937,7 @@ begin
                 end if;
 
                 if (rx_data_nbs = RECESSIVE and rx_trigger = '1') then
-                    sp_control_switch_data <= '1';
+                    switch_to_data <= '1';
                     br_shifted_i <= '1';
                 end if;
 
@@ -1969,14 +1954,14 @@ begin
                 crc_enable <= '1';
                 pc_dbg.is_control <= '1';
                 bit_err_disable_receiver <= '1';
-                dbt_ctrs_en <= '1';
 
                 if (is_transmitter = '1' and is_err_active = '1') then
                     tx_dominant <= '1';
                 end if;
 
                 -- Transmitter transmitts via SSP
-                if (sp_control_q_i = SECONDARY_SAMPLE) then
+                if (is_transmitter = '1' and tran_brs = BR_SHIFT and
+                    mr_ssp_cfg_ssp_src /= SSP_SRC_NO_SSP) then
                     dbt_measure_start <= '1';
                     gen_first_ssp     <= '1';
                 end if;
@@ -1992,10 +1977,6 @@ begin
                 crc_enable <= '1';
                 pc_dbg.is_control <= '1';
                 bit_err_disable_receiver <= '1';
-
-                if (sp_control_q_i /= NOMINAL_SAMPLE) then
-                    dbt_ctrs_en <= '1';
-                end if;
 
                 -- Address first Data Word in TXT Buffer RAM in advance to account for DFF delay
                 -- and RAM delay! Do it only when transmitting to avoid toggling of RAM signals
@@ -2045,10 +2026,6 @@ begin
                 compl_ctr_ena_i <= '1';
                 bit_err_disable_receiver <= '1';
 
-                if (sp_control_q_i /= NOMINAL_SAMPLE) then
-                    dbt_ctrs_en <= '1';
-                end if;
-
                 -- Address next word (the one after actually transmitted one), so that when current
                 -- word ends, TXT Buffer RAM already provides data on its output! Counter is divided
                 -- by 32 since each memory word contains 32 bits!
@@ -2093,11 +2070,7 @@ begin
                 crc_enable <= '1';
                 pc_dbg.is_stuff_count <= '1';
                 bit_err_disable_receiver <= '1';
-                fixed_stuff <= '1';
-
-                if (sp_control_q_i /= NOMINAL_SAMPLE) then
-                    dbt_ctrs_en <= '1';
-                end if;
+                fixed_stuff_d <= '1';
 
                 if (ctrl_ctr_zero = '1') then
                     tick_state_reg <= '1';
@@ -2118,12 +2091,8 @@ begin
                 pc_dbg.is_crc <= '1';
                 bit_err_disable_receiver <= '1';
 
-                if (sp_control_q_i /= NOMINAL_SAMPLE) then
-                    dbt_ctrs_en <= '1';
-                end if;
-
                 if (is_fd_frame = '1') then
-                    fixed_stuff <= '1';
+                    fixed_stuff_d <= '1';
                 end if;
 
                 if (ctrl_ctr_zero = '1') then
@@ -2138,16 +2107,13 @@ begin
                 err_pos <= ERC_POS_ACK;
                 pc_dbg.is_crc_delim  <= '1';
 
+                -- OBSOLETE:
                 -- Bit Error detection must be enabled for SSP
                 -- Special enable used only in CRC delimiter when SSP is enabled and
                 -- a SSP that reaches into TSEG1 of CRC delimiter shall detect error
                 -- from a previous bit !
                 -- In the moment of sample point, this must be already disabled though!
-                -- So use rx_trigger to gate this. Do not gate by sp_control_d to avoid
-                -- potential combo loop.
-                --if (sp_control_q_i /= SECONDARY_SAMPLE and rx_trigger = '0') then
-                --    bit_err_disable <= '1';
-                --end if;
+                -- So use rx_trigger to gate this.
 
                 -- Theoretically, we should enable bit error detection here when in SECONDARY_SAMPLE.
                 -- (see commented code above). This would allow us to detect e.g. bit error of last bit
@@ -2163,7 +2129,6 @@ begin
                 -- based on certification results.
                 bit_err_disable <= '1';
 
-                dbt_ctrs_en <= '1';
                 destuff_enable_clear <= '1';
                 stuff_enable_clear <= '1';
 
@@ -2174,8 +2139,8 @@ begin
                         form_err_i <= '1';
                     end if;
 
-                    if (sp_control_q_i = DATA_SAMPLE or sp_control_q_i = SECONDARY_SAMPLE) then
-                        sp_control_switch_nominal <= '1';
+                    if (bit_rate_q_i = BIT_RATE_FD) then
+                        switch_to_nominal <= '1';
                         br_shifted_i <= '1';
                     end if;
                 end if;
@@ -2187,7 +2152,6 @@ begin
                 tick_state_reg <= '1';
                 err_pos <= ERC_POS_ACK;
                 pc_dbg.is_ack <= '1';
-                dbt_ctrs_en <= '1';
 
                 if (tx_dominant_ack = '1') then
                     tx_dominant <= '1';
@@ -2212,7 +2176,6 @@ begin
                 tick_state_reg <= '1';
                 err_pos <= ERC_POS_ACK;
                 pc_dbg.is_ack <= '1';
-                dbt_ctrs_en <= '1';
 
                 if (tx_dominant_ack = '1') then
                     tx_dominant <= '1';
@@ -2233,7 +2196,6 @@ begin
                 tick_state_reg <= '1';
                 err_pos <= ERC_POS_ACK;
                 pc_dbg.is_ack <= '1';
-                dbt_ctrs_en <= '1';
 
                 -- No ACK sent now, but dominant or recessive should be tolerated.
                 bit_err_disable <= '1';
@@ -2807,12 +2769,12 @@ begin
                 rec_valid          <= '0';
             end if;
 
-            rec_abort              <= err_frm_req;
+            rec_abort              <= err_detected_q;
 
         end if;
     end process;
 
-    ctrl_signal_upd <= '1' when (rx_trigger = '1' or err_frm_req = '1')
+    ctrl_signal_upd <= '1' when (rx_trigger = '1' or err_detected_q = '1')
                            else
                        '0';
 
@@ -2893,48 +2855,43 @@ begin
     ack_err <= ack_err_i and rx_trigger;
     crc_err <= crc_err_i and rx_trigger;
     bit_err_arb <= bit_err_arb_i and rx_trigger;
-
-    -- decrement_rec is special. It is only set upon sampling dominant bit in ACK field.
-    -- Thus previous bit must have been recessive (CRC Delimiter) - otherwise there would be
-    -- error frame.
-    -- Since Protocol Control FSM processes rx_trigger wbs, the rx_data_nbs must have changed
-    -- to dominant in the very same cycle as the rx_trigger used for gating.
-    -- See no_decrement_rec_without_rx_trigger_asrt below which checks for this case
-    decrement_rec <= decrement_rec_i;
+    decrement_rec <= decrement_rec_i and rx_trigger;
 
     -----------------------------------------------------------------------------------------------
-    -- Switching of Bit-rate
+    -- Switching of Bit-rate and SSP
     -----------------------------------------------------------------------------------------------
-    switch_to_ssp <= '1' when (sp_control_switch_data = '1' and is_transmitter = '1' and
-                               mr_ssp_cfg_ssp_src /= SSP_SRC_NO_SSP)
-                         else
-                     '0';
+    -- We must switch back to nominal by combinatorially detected error since this is active in
+    -- sample point where RX trigger is active!
+    bit_rate_d_i <= BIT_RATE_NOMINAL when (switch_to_nominal = '1' or err_detected_d = '1') else
+                       BIT_RATE_FD when (switch_to_data = '1') else
+                          bit_rate_q_i;
 
-    sp_control_d <=   NOMINAL_SAMPLE when (sp_control_switch_nominal = '1')
-                                     else
-                    SECONDARY_SAMPLE when (switch_to_ssp = '1')
-                                     else
-                         DATA_SAMPLE when (sp_control_switch_data = '1')
-                                     else
-                        sp_control_q_i;
-
-    sp_control_ce <= '1' when (sp_control_switch_nominal = '1') else
-                     '1' when (sp_control_switch_data = '1') else
-                     '0';
-
-    p_sp_control_reg : process(clk_sys, rst_n)
+    p_bit_rate_and_ssp_reg : process(clk_sys, rst_n)
     begin
         if (rst_n = '0') then
-            sp_control_q_i <= NOMINAL_SAMPLE;
+            bit_rate_q_i <= BIT_RATE_NOMINAL;
+            is_secondary_sample <= '0';
         elsif (rising_edge(clk_sys)) then
-            if (sp_control_ce = '1') then
-                sp_control_q_i <= sp_control_d;
+            bit_rate_q_i <= bit_rate_d_i;
+
+            if (switch_to_data = '1' and is_transmitter = '1' and
+                mr_ssp_cfg_ssp_src /= SSP_SRC_NO_SSP) then
+                is_secondary_sample <= '1';
+            elsif (switch_to_nominal = '1' or err_detected_d = '1') then
+                is_secondary_sample <= '0';
             end if;
         end if;
     end process;
 
-    sp_control <= sp_control_d when (br_shifted_i = '1') else
-                  sp_control_q_i;
+    -- We provide both "next" and "registered value" to BTL
+    -- The D (next) value is valid for "new" bit rate in the moment of RX trigger when a bit-rate
+    -- is switched. This is used to compute value of TSEG2 for correct bit-rate and preload segment
+    -- counter for correct bit-rate.
+    -- The Q (current) value is used for gating positive resynchronization. If positive resynchronization
+    -- edge occurs exactly when rx_trigger internally in BTL was generated to be 1, the trigger must
+    -- be gated, and resynchronization must take effect instead of ending the TSEG1!
+    bit_rate_d <= bit_rate_d_i;
+    bit_rate_q <= bit_rate_q_i;
 
     -----------------------------------------------------------------------------------------------
     -- Indicates that Active Error or Overload flag is being transmitted! Can't be part of current
@@ -2996,7 +2953,7 @@ begin
     retr_ctr_add_i <= '0' when (retr_ctr_clear_i = '1' or mr_settings_rtrle = '0'
                                  or is_receiver = '1' or retr_ctr_add_block = '1') else
                       '1' when (arbitration_lost_i = '1' and rx_trigger = '1') else
-                      '1' when (err_frm_req = '1') else
+                      '1' when (err_detected_q = '1') else
                       '0';
 
     -----------------------------------------------------------------------------------------------
@@ -3046,13 +3003,7 @@ begin
                            else
                        '0';
 
-    -- No need to gate "set_receiver_i" by rx_trigger since this is always set in frame fields
-    -- where previous bits are recessive and dominant is sampled. Since Protocol control operates
-    -- with RX trigger one cycle after RX data are destuffed, it must be first cycle where such
-    -- condition is true. Thus gating by rx_data_nbs=DOMINANT is sufficient, and in the cycle
-    -- where this signal is set, the Protocol control FSM changes state. Thus it may never happed
-    -- that the "set_receiver" would hold for multiple cycles.
-    set_receiver <= '1' when (set_receiver_i = '1')
+    set_receiver <= '1' when (set_receiver_i = '1' and rx_trigger = '1')
                         else
                     '0';
 
@@ -3061,7 +3012,7 @@ begin
     -- upon any kind of error, unit should go to integrating and therefore stop being transmitter
     -- or receiver!
     -----------------------------------------------------------------------------------------------
-    set_idle <= '1' when (set_idle_i = '1' and (rx_trigger = '1' or err_frm_req = '1'))
+    set_idle <= '1' when (set_idle_i = '1' and (rx_trigger = '1' or err_detected_q = '1'))
                     else
                 '0';
 
@@ -3069,9 +3020,9 @@ begin
     -- CRC select source for calculation:
     --  1. When speculative enable is selected, always use RX Data. This is in idle/intermission/
     --     suspend when dominant is sampled and cosidered as SOF.
-    --  2. When we are in arbitration, always use idle. This is to make sure that transmitting
+    --  2. When we are in arbitration, always use RX Data. This is to make sure that transmitting
     --     recessive and receiving dominant (loosing arbitration) will calculate data from
-    --     DOMINANT value
+    --     DOMINANT value received!
     --  3. In other cases Transmitter uses TX Data, Receiver uses RX Data.
     -----------------------------------------------------------------------------------------------
     crc_calc_from_rx <= '1' when (crc_spec_enable_i = '1') else
@@ -3123,12 +3074,8 @@ begin
     -----------------------------------------------------------------------------------------------
     -- Synchronisation type
     -----------------------------------------------------------------------------------------------
-    sync_control_d <= NO_SYNC when ((sp_control_switch_data = '1' and is_transmitter = '1') or
-                                    sp_control_q_i = SECONDARY_SAMPLE or
-                                    (sp_control_q_i = DATA_SAMPLE and is_transmitter = '1'))
-                              else
-                    HARD_SYNC when (perform_hsync = '1')
-                              else
+    sync_control_d <= NO_SYNC when (bit_rate_q = BIT_RATE_FD and is_transmitter = '1') else
+                    HARD_SYNC when (perform_hsync = '1') else
                       RE_SYNC;
 
     p_sync_control_reg : process(clk_sys, rst_n)
@@ -3233,6 +3180,18 @@ begin
     end process;
 
     -----------------------------------------------------------------------------------------------
+    -- Fixed bit stuffing register
+    -----------------------------------------------------------------------------------------------
+    p_fixed_stuff_reg : process(clk_sys, rst_n)
+    begin
+        if (rst_n = '0') then
+            fixed_stuff_q <= '0';
+        elsif (rising_edge(clk_sys)) then
+            fixed_stuff_q <= fixed_stuff_d;
+        end if;
+    end process;
+
+    -----------------------------------------------------------------------------------------------
     -- Internal signals to output propagation
     -----------------------------------------------------------------------------------------------
     crc_src <= crc_src_i;
@@ -3241,7 +3200,6 @@ begin
     sync_control <= sync_control_q;
     txtb_ptr <= txtb_ptr_q;
     br_shifted <= br_shifted_i;
-    sp_control_q <= sp_control_q_i;
     crc_spec_enable <= crc_spec_enable_i;
     retr_ctr_clear <= retr_ctr_clear_i;
     arbitration_lost <= arbitration_lost_i;
@@ -3251,6 +3209,7 @@ begin
     pc_dbg.is_arbitration  <= is_arbitration_i;
     rec_lbpf <= rec_lbpf_q;
     rec_ivld <= rec_ivld_q;
+    fixed_stuff <= fixed_stuff_q;
 
 
     -----------------------------------------------------------------------------------------------
@@ -3266,7 +3225,7 @@ begin
     --  report "Can't use simultaneously CRC 17 and CRC 21";
 
     -- psl no_simul_rx_trigger_err_req_asrt : assert never
-    --  (rx_trigger = '1' and err_frm_req = '1')
+    --  (rx_trigger = '1' and err_detected_q = '1')
     --  report "RX Trigger and Error frame request can't be active at once since they should occur in different pipeline stages!";
 
     -- psl no_simul_rx_rtr_and_fd_frame_asrt : assert never
@@ -3280,15 +3239,15 @@ begin
     --  (dominant bit is new frame), Error delimiter wait (Accepts
     --  both dominant and recessive and waits for recessive)
 
-    -- psl no_err_frm_req_in_off : assert never
-    --  (err_frm_req = '1') and
+    -- psl no_err_detected_q_in_off : assert never
+    --  (err_detected_q = '1') and
     --  (curr_state = s_pc_off or
     --   curr_state = s_pc_idle or curr_state = s_pc_intermission or
     --   curr_state = s_pc_suspend or curr_state = s_pc_reintegrating)
     --  report "Error frame request in invalid Protocol control field!";
 
     -- psl no_secondary_sample_receiver : assert never
-    --  (sp_control_q_i = SECONDARY_SAMPLE) and (is_receiver = '1')
+    --  (is_secondary_sample = '1') and (is_receiver = '1')
     --  report "Receiver shall never use secondary sample point!";
 
     -- psl no_sof_receiver : assert never
@@ -3309,10 +3268,5 @@ begin
     --  (stuff_enable = '1' or destuff_enable = '1') and
     --  (curr_state = s_pc_eof)
     -- report "Bit stuffing destuffin should be never enabled during EOF!";
-
-    -- psl no_decrement_rec_without_rx_trigger_asrt : assert never
-    --  (decrement_rec_i = '1' and rx_trigger = '0')
-    --  report "decrement_rec_i shall never be 1 without rx_trigger being 1!";
-
 
 end architecture;
