@@ -1387,8 +1387,11 @@ static int ctucan_get_berr_counter(const struct net_device *ndev, struct can_ber
 static const struct net_device_ops ctucan_netdev_ops = {
 	.ndo_open	= ctucan_open,
 	.ndo_stop	= ctucan_close,
-	.ndo_start_xmit	= ctucan_start_xmit,
-	.ndo_change_mtu	= can_change_mtu,
+	.ndo_start_xmit	= ctucan_start_xmit
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 19, 0)
+	,
+	.ndo_change_mtu	= can_change_mtu
+#endif
 };
 
 int ctucan_suspend(struct device *dev)
