@@ -77,7 +77,7 @@ use ieee.std_logic_1164.all;
 Library ctu_can_fd_tb;
 use ctu_can_fd_tb.tb_reg_map_defs_pkg.all;
 Library ctu_can_fd_rtl;
-use ctu_can_fd_rtl.CAN_FD_register_map.all;
+use ctu_can_fd_rtl.can_fd_register_map.all;
 
 package can_fd_tb_register_map is
 

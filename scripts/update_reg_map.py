@@ -108,6 +108,7 @@ def ctu_can_update_header(specPath, licensePath, memMap, wordWidthBit, outPath, 
 	headerGeneratorWrapper.outFile = outPath
 	headerGeneratorWrapper.headName = headName
 	headerGeneratorWrapper.use_kern_style = useKernStyle
+	headerGeneratorWrapper.prefix = "ctu_can_fd"
 
 	headerGeneratorWrapper.do_update()
 
@@ -147,7 +148,7 @@ def ctu_can_update_vhdl_rtl(specPath, licensePath, memMap, wordWidthBit, outDir,
 
 
 def ctu_can_update_vhdl_tb_package(specPath, licensePath, memMap,
-								wordWidthBit, outPath, packName):
+								wordWidthBit, outPath, packName, library):
 	"""
 	Update VHDL Testbench packages of CTU CAN FD register maps.
 	"""
@@ -159,6 +160,11 @@ def ctu_can_update_vhdl_tb_package(specPath, licensePath, memMap,
 	tbAddrGeneratorWrapper.wordWidth = wordWidthBit
 	tbAddrGeneratorWrapper.outFile = outPath
 	tbAddrGeneratorWrapper.packName = packName
+
+	tbAddrGeneratorWrapper.defsLibrary = "ctu_can_fd_tb"
+	tbAddrGeneratorWrapper.defsPackage = "tb_reg_map_defs_pkg"
+	tbAddrGeneratorWrapper.regMapLibrary = "ctu_can_fd_rtl"
+	tbAddrGeneratorWrapper.regMapPackage = "can_fd_register_map"
 
 	tbAddrGeneratorWrapper.do_update()
 
@@ -302,7 +308,8 @@ if __name__ == '__main__':
 									   memMap="CAN_Registers",
 									   wordWidthBit=32,
 									   outPath="../test/main_tb/pkg/can_fd_tb_register_map.vhd",
-									   packName="can_fd_tb_register_map")
+									   packName="can_fd_tb_register_map",
+									   library="ctu_can_fd_tb")
 		print("\nDone\n")
 
 
