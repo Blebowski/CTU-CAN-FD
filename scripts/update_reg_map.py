@@ -109,6 +109,7 @@ def ctu_can_update_header(specPath, licensePath, memMap, wordWidthBit, outPath, 
 	headerGeneratorWrapper.headName = headName
 	headerGeneratorWrapper.use_kern_style = useKernStyle
 	headerGeneratorWrapper.prefix = "ctu_can_fd"
+	headerGeneratorWrapper.kernel_reg_name_prefix = "CTUCANFD"
 
 	headerGeneratorWrapper.do_update()
 
